@@ -1,0 +1,3 @@
+- no datasources, only document upload for MVP
+- no need to support images in RAG
+- assume cloud deploy (alternatively could deploy locally and skip building authentication/authorization features)
