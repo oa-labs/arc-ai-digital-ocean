@@ -134,7 +134,7 @@ iChat AI Assistant MVP
 # Technical Approach
 - Architecture:
   - Frontend: React web app (user chat, admin interface)
-  - Backend: ASP.NET Core API
+  - Backend: Hono API with tRPC
   - Data: Supabase Postgres with pgvector; Supabase Storage for files
   - LLM: OpenAI initially, with abstraction to support Anthropic or others
   - Auth: Supabase Auth (OAuth2) with RLS for data security
