@@ -5,8 +5,19 @@
  * to workplace safety questions using Evalite metrics.
  */
 
+import { config } from 'dotenv';
 import { evalite } from 'evalite';
 import { Factuality, Levenshtein } from 'autoevals';
+import OpenAI from 'openai';
+
+// Load environment variables from .env file
+config();
+
+// Initialize OpenAI client with OpenRouter support
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+  baseURL: process.env.OPENAI_BASE_URL || "https://openrouter.ai/api/v1",
+});
 
 /**
  * Workplace Safety Q&A Evaluation
@@ -14,10 +25,7 @@ import { Factuality, Levenshtein } from 'autoevals';
 evalite("Workplace Safety Q&A Evaluation", {
   data: async () => [
     {
-      input: {
-        question: "What are the steps to use a fire extinguisher?",
-        actualOutput: "To use a fire extinguisher, remember the acronym PASS: Pull the pin, Aim at the base of the fire, Squeeze the handle, and Sweep from side to side. Always ensure you have a clear exit path and only fight small fires. If the fire is too large or you feel unsafe, evacuate immediately and call emergency services."
-      },
+      input: "What are the steps to use a fire extinguisher?",
       expected: "The PASS method should be used: Pull the pin, Aim at the base, Squeeze the handle, Sweep side to side.",
       context: [
         "Fire Safety Protocol: Use the PASS method for fire extinguishers - Pull, Aim, Squeeze, Sweep.",
@@ -26,10 +34,7 @@ evalite("Workplace Safety Q&A Evaluation", {
       ]
     },
     {
-      input: {
-        question: "What PPE is required when working in the warehouse?",
-        actualOutput: "When working in the warehouse, you must wear: steel-toed safety boots, high-visibility vest, hard hat in designated areas, safety glasses, and work gloves when handling materials. Ear protection is required in high-noise zones marked with yellow signage. All PPE must meet OSHA standards and be inspected before use."
-      },
+      input: "What PPE is required when working in the warehouse?",
       expected: "Required PPE includes safety boots, high-visibility vest, hard hat, safety glasses, and gloves.",
       context: [
         "Warehouse Safety Requirements: All personnel must wear steel-toed boots, high-visibility vests, and safety glasses.",
@@ -39,10 +44,7 @@ evalite("Workplace Safety Q&A Evaluation", {
       ]
     },
     {
-      input: {
-        question: "What should I do if I hear the fire alarm?",
-        actualOutput: "When you hear the fire alarm: immediately stop work, leave all personal belongings, proceed calmly to the nearest marked exit, use stairs only (never elevators), and gather at the designated assembly point in the north parking lot. Do not re-enter the building until authorized by emergency personnel or management. If you encounter smoke, stay low and use an alternate exit."
-      },
+      input: "What should I do if I hear the fire alarm?",
       expected: "Stop work, leave belongings, exit via nearest marked exit using stairs, gather at assembly point, and wait for clearance.",
       context: [
         "Emergency Evacuation: Upon hearing the alarm, cease all activities and evacuate immediately.",
@@ -53,10 +55,7 @@ evalite("Workplace Safety Q&A Evaluation", {
       ]
     },
     {
-      input: {
-        question: "What should I do if there's a chemical spill?",
-        actualOutput: "If you witness a chemical spill: evacuate the immediate area and alert others nearby, notify your supervisor and call the emergency hotline (ext. 911), do not attempt to clean up the spill unless you are trained and authorized, use the emergency eyewash station if you have skin or eye contact, and block off the area to prevent others from entering. The hazmat team will handle cleanup according to the material's SDS."
-      },
+      input: "What should I do if there's a chemical spill?",
       expected: "Evacuate the area, alert others, notify supervisor and emergency services, don't clean unless trained, use eyewash if exposed, and block the area.",
       context: [
         "Chemical Spill Protocol: Immediately evacuate the affected area and warn others.",
@@ -68,10 +67,7 @@ evalite("Workplace Safety Q&A Evaluation", {
       ]
     },
     {
-      input: {
-        question: "How do I report a workplace injury?",
-        actualOutput: "To report a workplace injury: seek immediate medical attention if needed, notify your supervisor within 24 hours, complete an Incident Report Form available on the intranet or from HR, provide details including date, time, location, witnesses, and nature of injury, submit the form to HR and your supervisor, and follow up with any required medical documentation. All injuries, no matter how minor, must be reported to maintain accurate safety records."
-      },
+      input: "How do I report a workplace injury?",
       expected: "Seek medical help if needed, notify supervisor within 24 hours, complete Incident Report Form with details, submit to HR and supervisor, and provide medical documentation.",
       context: [
         "Injury Reporting: All workplace injuries must be reported within 24 hours.",
@@ -83,6 +79,40 @@ evalite("Workplace Safety Q&A Evaluation", {
       ]
     }
   ],
-  task: async (input) => input.actualOutput,
+  task: async (testCase) => {
+    // Call OpenAI API to generate response
+    const question = testCase.input;
+    const context = testCase.context || [];
+
+    const contextStr = Array.isArray(context)
+      ? context.join('\n')
+      : context;
+
+    const messages = [
+      {
+        role: 'system',
+        content: 'You are a workplace safety expert. Answer questions about workplace safety clearly and accurately. Use the provided context to inform your response.'
+      },
+      {
+        role: 'user',
+        content: `${question}\n\nContext:\n${contextStr}`
+      }
+    ];
+
+    try {
+      const model = process.env.OPENAI_MODEL || 'meta-llama/llama-3.2-3b-instruct';
+      const completion = await openai.chat.completions.create({
+        model: model,
+        messages: messages,
+        max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS || '300'),
+        temperature: parseFloat(process.env.OPENAI_TEMPERATURE || '0.3'),
+      });
+
+      return completion.choices[0].message.content;
+    } catch (error) {
+      console.error('Error calling OpenAI API:', error);
+      throw new Error(`Failed to generate response: ${error.message}`);
+    }
+  },
   scorers: [Levenshtein]
 });
