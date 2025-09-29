@@ -14,6 +14,9 @@ import OpenAI from 'openai';
 config();
 
 // Initialize OpenAI client with OpenRouter support
+// Supports both OpenAI and OpenRouter APIs
+// For OpenRouter: Set OPENAI_BASE_URL=https://openrouter.ai/api/v1 and use your OpenRouter API key
+// For OpenAI: Use default base URL and your OpenAI API key
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
   baseURL: process.env.OPENAI_BASE_URL || "https://openrouter.ai/api/v1",

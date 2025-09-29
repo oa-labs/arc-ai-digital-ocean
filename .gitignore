@@ -1,32 +1,57 @@
+# Dependencies
 node_modules/
+.pnp
+.pnp.js
+
+# Bun
+.bun/
+bun.lockb
 
 # Environment variables
 .env
 .env.local
+.env.*.local
 .env.production
+!.env.example
+
+# Build outputs
+dist/
+build/
+.vite/
+.next/
+out/
+
+# TypeScript
+*.tsbuildinfo
+.tsbuildinfo
 
 # Logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+bun-debug.log*
+lerna-debug.log*
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
+# Testing
 coverage/
+*.lcov
+.nyc_output/
 
-# IDE files
-.vscode/
+# IDEs and editors
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
 .idea/
 *.swp
 *.swo
+*~
+.DS_Store
+*.sublime-workspace
+.code-workspace
 
-# OS generated files
+# OS files
 .DS_Store
 .DS_Store?
 ._*
@@ -34,3 +59,29 @@ coverage/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Supabase
+.supabase/
+supabase/.branches/
+supabase/.temp/
+
+# Docker
+docker-compose.override.yml
+*.pid
+
+# CLI config
+.ichat/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+.parcel-cache/
+
+# Debug
+*.cpuprofile
+*.heapsnapshot
+
+# Misc
+.turbo/
+.vercel
