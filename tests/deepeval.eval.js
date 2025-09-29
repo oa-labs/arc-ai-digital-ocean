@@ -19,7 +19,11 @@ config();
 // For OpenAI: Use default base URL and your OpenAI API key
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-  baseURL: process.env.OPENAI_BASE_URL || "https://openrouter.ai/api/v1",
+  baseURL: process.env.OPENAI_BASE_URL || "https://api.openai.com/v1",
+  defaultHeaders: process.env.OPENAI_BASE_URL?.includes('openrouter.ai') ? {
+    'HTTP-Referer': process.env.OPENROUTER_REFERER || 'https://github.com/evalite',
+    'X-Title': process.env.OPENROUTER_TITLE || 'Evalite Workplace Safety Test',
+  } : {},
 });
 
 /**
@@ -82,10 +86,16 @@ evalite("Workplace Safety Q&A Evaluation", {
       ]
     }
   ],
-  task: async (testCase) => {
-    // Call OpenAI API to generate response
-    const question = testCase.input;
-    const context = testCase.context || [];
+  task: async (input, testCase) => {
+    // Evalite passes input as first parameter, full testCase as second
+    // Debug: Log what we receive
+    console.log('\n=== Received Parameters ===');
+    console.log('input:', input);
+    console.log('testCase:', testCase);
+
+    // Get question and context from the correct source
+    const question = input || testCase?.input;
+    const context = testCase?.context || [];
 
     const contextStr = Array.isArray(context)
       ? context.join('\n')
@@ -94,26 +104,51 @@ evalite("Workplace Safety Q&A Evaluation", {
     const messages = [
       {
         role: 'system',
-        content: 'You are a workplace safety expert. Answer questions about workplace safety clearly and accurately. Use the provided context to inform your response.'
+        content: 'You are a workplace safety expert. Answer questions about workplace safety clearly and accurately based on the provided context information.'
       },
       {
         role: 'user',
-        content: `${question}\n\nContext:\n${contextStr}`
+        content: `Question: ${question}\n\nContext Information:\n${contextStr}\n\nPlease answer the question based on the context provided above.`
       }
     ];
 
+    // Debug: Log the actual messages being sent
+    console.log('\n=== Request Details ===');
+    console.log('Question:', question);
+    console.log('Context:', contextStr);
+
     try {
-      const model = process.env.OPENAI_MODEL || 'meta-llama/llama-3.2-3b-instruct';
-      const completion = await openai.chat.completions.create({
+      const model = process.env.OPENAI_MODEL || 'microsoft/wizardlm-2-8x22b';
+      const isOpenRouter = process.env.OPENAI_BASE_URL?.includes('openrouter.ai');
+
+      // Build request parameters with proper compatibility
+      const requestParams = {
         model: model,
         messages: messages,
-        max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS || '300'),
-        temperature: parseFloat(process.env.OPENAI_TEMPERATURE || '0.3'),
+        temperature: parseFloat(process.env.OPENAI_TEMPERATURE || '1'),
+      };
+
+      // OpenRouter uses 'max_tokens', OpenAI uses 'max_completion_tokens'
+      if (isOpenRouter) {
+        requestParams.max_tokens = parseInt(process.env.OPENAI_MAX_TOKENS || '300');
+      } else {
+        requestParams.max_completion_tokens = parseInt(process.env.OPENAI_MAX_TOKENS || '300');
+      }
+
+      const completion = await openai.chat.completions.create(requestParams);
+
+      completion.choices.forEach(element => {
+        console.log(element.message);
       });
 
       return completion.choices[0].message.content;
     } catch (error) {
-      console.error('Error calling OpenAI API:', error);
+      console.error('Error calling API:', error);
+      // Provide more detailed error information for debugging
+      if (error.response) {
+        console.error('Response status:', error.response.status);
+        console.error('Response data:', error.response.data);
+      }
       throw new Error(`Failed to generate response: ${error.message}`);
     }
   },
