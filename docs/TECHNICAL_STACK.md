@@ -271,6 +271,70 @@ export const EscalatedQuery = z.object({
 - **Context Assembly**: Relevant sections assembled with document metadata
 - **Confidence Scoring**: Section-level confidence based on embedding similarity scores
 
+## Testing & Quality Assurance
+
+### RAG Quality Evaluation
+
+#### Ragas Integration
+
+- **Framework**: [Ragas](https://github.com/explodinggradients/ragas) - Python framework for evaluating RAG systems
+- **Evaluation Metrics**: Context precision, context recall, faithfulness, answer relevance
+- **Automated Testing**: End-to-end RAG pipeline quality assessment
+- **Integration**: Python-based evaluation service for continuous quality monitoring
+
+```python
+# Example Ragas evaluation setup
+from ragas import evaluate
+from ragas.metrics import (
+    faithfulness,
+    context_recall,
+    context_precision,
+    answer_relevancy
+)
+
+# Evaluate RAG responses
+result = evaluate(
+    dataset=ragas_dataset,
+    metrics=[
+        faithfulness,
+        context_recall,
+        context_precision,
+        answer_relevancy,
+    ],
+)
+```
+
+#### DeepEval Integration
+
+- **Framework**: [DeepEval](https://github.com/confident-ai/deepeval) - TypeScript framework for unit testing LLM applications
+- **Test Categories**: Factual consistency, response quality, context relevance, toxicity detection
+- **Custom Metrics**: Domain-specific evaluation criteria for chat responses
+- **CI/CD Integration**: Automated testing pipeline for LLM response quality
+
+```typescript
+// Example DeepEval test setup
+import { assertTest } from 'deepeval/test';
+import { LLMTestCase } from 'deepeval/testCase';
+import { AnswerRelevancyMetric } from 'deepeval/metrics';
+
+assertTest({
+  name: "Chat Response Quality Test",
+  testCase: new LLMTestCase({
+    input: "What are the company policies on remote work?",
+    actualOutput: "Our remote work policy allows employees...",
+    context: ["Company policy document section on remote work"]
+  }),
+  metrics: [new AnswerRelevancyMetric()]
+});
+```
+
+### Testing Architecture
+
+- **RAG Quality Pipeline**: Automated evaluation of retrieval and generation quality
+- **Unit Test Coverage**: LLM response validation and consistency testing
+- **Performance Monitoring**: Response time and quality metrics tracking
+- **Continuous Evaluation**: Integration with CI/CD for ongoing quality assurance
+
 ## Document Processing
 
 ### File Processing Stack

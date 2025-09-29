@@ -1,0 +1,72 @@
+{
+  "name": "iChat Development with Supabase",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "configureZshAsDefaultShell": true,
+      "installOhMyZsh": true,
+      "upgradePackages": true,
+      "userUid": "automatic",
+      "userGid": "automatic"
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "ppa": true,
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "installDirectlyFromGitHubRelease": true,
+      "version": "latest"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bradlc.vscode-tailwindcss",
+        "ms-vscode.vscode-json",
+        "esbenp.prettier-vscode",
+        "supabase.supabase",
+        "ms-vscode.vscode-typescript-next",
+        "dbaeumer.vscode-eslint",
+        "unifiedjs.vscode-mdx",
+        "ms-vscode.vscode-docker",
+        "ms-vscode.vscode-postgresql",
+        "ms-playwright.playwright",
+        "formulahendry.auto-rename-tag",
+        "christian-kohler.path-intellisense",
+        "ms-vscode.vscode-css-peek",
+        "zignd.html-css-class-completion",
+        "patcx.vscode-nuget-gallery",
+        "sourcegraph.amp",
+        "kilocode.kilo-code",
+        "editorconfig.editorconfig"
+      ]
+    }
+  },
+  "forwardPorts": [3000, 5173, 54321],
+  "portsAttributes": {
+    "3000": {
+      "label": "Backend API",
+      "onAutoForward": "notify"
+    },
+    "5173": {
+      "label": "Frontend Dev Server",
+      "onAutoForward": "notify"
+    },
+    "54321": {
+      "label": "Supabase Local Studio",
+      "onAutoForward": "notify"
+    }
+  },
+  "postCreateCommand": "bun add -g supabase",
+  "remoteEnv": {
+    "NODE_ENV": "development",
+    "PATH": "${containerEnv:PATH}:/usr/local/bin"
+  },
+  "mounts": [
+    "source=ichat-bun-cache,target=/root/.bun,type=volume"
+  ]
+}
