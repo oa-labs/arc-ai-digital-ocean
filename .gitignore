@@ -38,6 +38,7 @@ lerna-debug.log*
 coverage/
 *.lcov
 .nyc_output/
+evalite-report.jsonl
 
 # IDEs and editors
 .vscode/*

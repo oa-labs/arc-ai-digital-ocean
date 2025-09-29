@@ -88,12 +88,6 @@ evalite("Workplace Safety Q&A Evaluation", {
   ],
   task: async (input, testCase) => {
     // Evalite passes input as first parameter, full testCase as second
-    // Debug: Log what we receive
-    console.log('\n=== Received Parameters ===');
-    console.log('input:', input);
-    console.log('testCase:', testCase);
-
-    // Get question and context from the correct source
     const question = input || testCase?.input;
     const context = testCase?.context || [];
 
@@ -111,11 +105,6 @@ evalite("Workplace Safety Q&A Evaluation", {
         content: `Question: ${question}\n\nContext Information:\n${contextStr}\n\nPlease answer the question based on the context provided above.`
       }
     ];
-
-    // Debug: Log the actual messages being sent
-    console.log('\n=== Request Details ===');
-    console.log('Question:', question);
-    console.log('Context:', contextStr);
 
     try {
       const model = process.env.OPENAI_MODEL || 'microsoft/wizardlm-2-8x22b';
@@ -136,11 +125,6 @@ evalite("Workplace Safety Q&A Evaluation", {
       }
 
       const completion = await openai.chat.completions.create(requestParams);
-
-      completion.choices.forEach(element => {
-        console.log(element.message);
-      });
-
       return completion.choices[0].message.content;
     } catch (error) {
       console.error('Error calling API:', error);
