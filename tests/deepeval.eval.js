@@ -32,6 +32,10 @@ const openai = new OpenAI({
  */
 const testCaseMetadata = new Map();
 
+// Track the most recent test invocation to support scorer context when meta is unavailable
+let currentQuestion = '';
+let currentContext = '';
+
 /**
  * Workplace Safety Q&A Evaluation
  */
@@ -105,45 +109,49 @@ evalite("Workplace Safety Q&A Evaluation", {
     return testCases;
   },
   task: async (input) => {
-    // Retrieve context from metadata Map
-    const metadata = testCaseMetadata.get(input);
-    const context = metadata?.context || [];
+    // Normalize test case shape
+    const question = typeof input === 'string'
+      ? input
+      : (input && typeof input === 'object' ? input.input : String(input));
 
-    const contextStr = Array.isArray(context)
-      ? context.join('\n')
-      : context;
+    // Prefer context from the provided test case, fall back to metadata map
+    const rawContext =
+      (input && typeof input === 'object' && 'context' in input ? input.context : undefined)
+      ?? testCaseMetadata.get(question)?.context
+      ?? [];
+
+    const contextStr = Array.isArray(rawContext) ? rawContext.join('\n') : String(rawContext || '');
+
+    // Persist for scorers that don't receive meta
+    currentQuestion = question;
+    currentContext = contextStr;
 
     const messages = [
       {
         role: 'system',
-        content: 'You are a workplace safety expert. Answer questions about workplace safety clearly and accurately based on the provided context information.'
+        content:
+          'You are a workplace safety expert. Answer questions about workplace safety clearly and accurately based on the provided context information.',
       },
       {
         role: 'user',
-        content: `Question: ${input.input}\n\nContext Information:\n${contextStr}\n\nPlease answer the question based on the context provided above.`
-      }
+        content: `Question: ${question}\n\nContext Information:\n${contextStr}\n\nPlease answer the question based on the context provided above.`,
+      },
     ];
 
     try {
-      const model = process.env.OPENAI_MODEL || 'microsoft/wizardlm-2-8x22b';
-      const isOpenRouter = process.env.OPENAI_BASE_URL?.includes('openrouter.ai');
+      const isOpenRouter = !!process.env.OPENAI_BASE_URL?.includes('openrouter.ai');
+      const defaultModel = isOpenRouter ? 'microsoft/wizardlm-2-8x22b' : 'gpt-4o-mini';
+      const model = process.env.OPENAI_MODEL || defaultModel;
 
-      // Build request parameters with proper compatibility
       const requestParams = {
-        model: model,
-        messages: messages,
-        temperature: parseFloat(process.env.OPENAI_TEMPERATURE || '1'),
+        model,
+        messages,
+        temperature: Number.parseFloat(process.env.OPENAI_TEMPERATURE || '.2'),
+        max_tokens: Number.parseInt(process.env.OPENAI_MAX_TOKENS || '300', 10),
       };
 
-      // OpenRouter uses 'max_tokens', OpenAI uses 'max_completion_tokens'
-      if (isOpenRouter) {
-        requestParams.max_tokens = parseInt(process.env.OPENAI_MAX_TOKENS || '300');
-      } else {
-        requestParams.max_completion_tokens = parseInt(process.env.OPENAI_MAX_TOKENS || '300');
-      }
-
       const completion = await openai.chat.completions.create(requestParams);
-      return completion.choices[0].message.content;
+      return completion.choices?.[0]?.message?.content ?? '';
     } catch (error) {
       console.error('Error calling API:', error);
       // Provide more detailed error information for debugging
@@ -157,18 +165,43 @@ evalite("Workplace Safety Q&A Evaluation", {
   scorers: [
     Factuality,
     AnswerCorrectness,
-    // Custom scorer wrapper to pass context to AnswerRelevancy
-    async (output, { xin }) => {
-      // Retrieve context from metadata Map
-      const metadata = testCaseMetadata.get(xin);
-      const context = Array.isArray(metadata?.context)
+    // Custom scorer wrapper to pass context to AnswerRelevancy (robust to different invocation signatures)
+    async function RelevancyWithContext(...args) {
+      let output;
+      let meta;
+
+      if (args.length === 1) {
+        output = args[0];
+      } else if (args.length >= 2) {
+        const [a, b] = args;
+        if (typeof a === 'string' && typeof b !== 'string') {
+          output = a;
+          meta = b;
+        } else if (typeof b === 'string' && typeof a !== 'string') {
+          output = b;
+          meta = a;
+        } else {
+          output = typeof a === 'string' ? a : (typeof b === 'string' ? b : '');
+          meta = typeof a === 'object' ? a : (typeof b === 'object' ? b : undefined);
+        }
+      }
+
+      const question =
+        (typeof meta === 'string'
+          ? meta
+          : meta && typeof meta === 'object'
+            ? (meta.input ?? meta.question ?? '')
+            : '') || currentQuestion;
+
+      const metadata = testCaseMetadata.get(question);
+      const contextStr = Array.isArray(metadata?.context)
         ? metadata.context.join('\n')
-        : metadata?.context || '';
+        : (metadata?.context ?? currentContext ?? '');
 
       return await AnswerRelevancy({
-        input: xin,
-        output: output,
-        context: context
+        input: question,
+        output: output ?? '',
+        context: contextStr
       });
     }
   ]
