@@ -136,6 +136,136 @@ export const registerHandlers = (app) => {
 
 export const createSlackApp = (options) => {
   const app = new App(options);
+
+  // Add error event listeners for better troubleshooting
+  app.error(async (error) => {
+    console.error('[ERROR] Slack app error:', {
+      message: error.message,
+      code: error.code,
+      stack: error.stack,
+      timestamp: new Date().toISOString()
+    });
+  });
+
+  // Add socket mode specific error handling if using socket mode
+  if (options.socketMode) {
+    console.log('[DEBUG] Setting up socket mode error handlers');
+    console.log('[DEBUG] Client object keys:', Object.keys(app.client));
+
+    // Try to access socket mode client after app is created
+    const setupSocketModeHandlers = () => {
+      try {
+        // The socket mode client might be available as a property
+        if (app.client.socketMode) {
+          console.log('[DEBUG] Found socketMode client, setting up handlers');
+
+          // Listen for connection events
+          app.client.socketMode.on('connect', () => {
+            console.log('[DEBUG] Socket mode connected successfully');
+          });
+
+          app.client.socketMode.on('disconnect', (reason) => {
+            console.log('[DEBUG] Socket mode disconnected:', {
+              reason,
+              timestamp: new Date().toISOString()
+            });
+          });
+
+          app.client.socketMode.on('error', (error) => {
+            console.error('[ERROR] Socket mode error:', {
+              message: error.message,
+              code: error.code,
+              stack: error.stack,
+              timestamp: new Date().toISOString()
+            });
+          });
+
+          // Listen for WebSocket events
+          app.client.socketMode.on('ws_open', () => {
+            console.log('[DEBUG] WebSocket connection opened');
+          });
+
+          app.client.socketMode.on('ws_close', (code, reason) => {
+            console.log('[DEBUG] WebSocket connection closed:', {
+              code,
+              reason,
+              timestamp: new Date().toISOString()
+            });
+          });
+
+          app.client.socketMode.on('ws_error', (error) => {
+            console.error('[ERROR] WebSocket error:', {
+              message: error.message,
+              code: error.code,
+              stack: error.stack,
+              timestamp: new Date().toISOString()
+            });
+          });
+
+          // Listen for message events
+          app.client.socketMode.on('message', (event, payload) => {
+            console.log('[DEBUG] Socket mode message received:', {
+              event,
+              payload: JSON.stringify(payload, null, 2),
+              timestamp: new Date().toISOString()
+            });
+          });
+
+          // Listen for unhandled events (this is where the error is coming from)
+          app.client.socketMode.on('unhandled_event', (event, state, context) => {
+            console.error('[ERROR] Unhandled socket event:', {
+              event,
+              state,
+              context: JSON.stringify(context, null, 2),
+              timestamp: new Date().toISOString()
+            });
+          });
+        } else {
+          console.log('[DEBUG] socketMode client not found, trying alternative access');
+          // Try alternative ways to access the socket mode client
+          if (app.socketModeClient) {
+            console.log('[DEBUG] Found socketModeClient as direct property');
+
+            app.socketModeClient.on('connect', () => {
+              console.log('[DEBUG] Socket mode connected successfully');
+            });
+
+            app.socketModeClient.on('disconnect', (reason) => {
+              console.log('[DEBUG] Socket mode disconnected:', {
+                reason,
+                timestamp: new Date().toISOString()
+              });
+            });
+
+            app.socketModeClient.on('error', (error) => {
+              console.error('[ERROR] Socket mode error:', {
+                message: error.message,
+                code: error.code,
+                stack: error.stack,
+                timestamp: new Date().toISOString()
+              });
+            });
+
+            app.socketModeClient.on('unhandled_event', (event, state, context) => {
+              console.error('[ERROR] Unhandled socket event:', {
+                event,
+                state,
+                context: JSON.stringify(context, null, 2),
+                timestamp: new Date().toISOString()
+              });
+            });
+          }
+        }
+      } catch (error) {
+        console.error('[ERROR] Failed to setup socket mode handlers:', error.message);
+      }
+    };
+
+    // Setup handlers immediately and also after a short delay
+    setupSocketModeHandlers();
+    setTimeout(setupSocketModeHandlers, 1000);
+  }
+
   registerHandlers(app);
   return app;
 };
