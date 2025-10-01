@@ -19,6 +19,7 @@ export interface AgentConfig {
     temperature?: number;
     maxTokens?: number;
     organization?: string;
+    endpoint?: string;
 }
 export interface AgentError {
     message: string;
