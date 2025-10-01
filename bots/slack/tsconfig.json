@@ -7,7 +7,7 @@
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@lib/*": ["../../lib/dist/*"]
+      "@lib/*": ["../../lib/dist/src/*"]
     },
     "strict": true,
     "esModuleInterop": true,
