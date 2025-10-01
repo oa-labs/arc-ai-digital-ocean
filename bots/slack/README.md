@@ -24,7 +24,7 @@ bun run dev
 ### Path Aliases
 The project uses TypeScript path mapping with the `@lib` alias to import from the shared library:
 ```typescript
-import { AgentService, getConfig, validateConfig } from '@lib/index.js';
+import { OpenAiAgentService, getConfig, validateConfig } from '@lib/index.js';
 ```
 
 This is configured in `tsconfig.json` and `bunfig.toml` for runtime resolution.

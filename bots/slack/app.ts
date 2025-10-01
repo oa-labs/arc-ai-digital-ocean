@@ -1,5 +1,5 @@
 import { App, AppOptions, AllMiddlewareArgs, SlackEventMiddlewareArgs } from '@slack/bolt';
-import { AgentService, getConfig, validateConfig } from '@lib/index.js';
+import { OpenAiAgentService,  getConfig, validateConfig } from '@lib/index.js';
 
 const debug = (...args: any[]): void => {
   if (process.env.DEBUG === '1') {
@@ -8,7 +8,7 @@ const debug = (...args: any[]): void => {
 };
 
 // Initialize shared configuration and agent service at module level
-let agentService: AgentService | { sendSystemMessage: () => Promise<never> };
+let agentService: OpenAiAgentService | { sendSystemMessage: () => Promise<never> };
 try {
   const config = getConfig();
   const configValidation = validateConfig();
@@ -18,7 +18,7 @@ try {
     throw new Error(`Configuration validation failed: ${configValidation.errors.join(', ')}`);
   }
 
-  agentService = new AgentService(config.agent);
+  agentService = new OpenAiAgentService(config.agent);
   console.log('[INFO] Agent service initialized successfully');
 } catch (error) {
   console.error('[ERROR] Failed to initialize agent service:', (error as Error).message);

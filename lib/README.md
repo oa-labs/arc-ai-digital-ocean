@@ -22,11 +22,11 @@ npm run build:shared
 ### Agent Service
 
 ```typescript
-import { AgentService, getConfig } from '@ichat-ocean/shared';
+import { OpenAiAgentService, getConfig } from '@ichat-ocean/shared';
 
 // Initialize with configuration
 const config = getConfig();
-const agent = new AgentService(config.agent);
+const agent = new OpenAiAgentService(config.agent);
 
 // Send a message
 const response = await agent.sendMessage("Hello, how can I help?");
@@ -59,7 +59,7 @@ lib/
 ├── types/
 │   └── index.ts              # TypeScript definitions
 ├── services/
-│   └── agent-service.ts      # AI agent service implementation
+│   └── openai-agent-service.ts      # OpenAI agent service implementation
 ├── config/
 │   └── index.ts              # Configuration management
 ├── package.json              # Library package configuration

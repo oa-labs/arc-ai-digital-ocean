@@ -1,5 +1,5 @@
 import { AgentMessage, AgentResponse, AgentConfig } from '../types/index.js';
-export declare class AgentService {
+export declare class OpenAiAgentService {
     private client;
     private config;
     constructor(config: AgentConfig);
@@ -28,4 +28,4 @@ export declare class AgentService {
      */
     getConfig(): AgentConfig;
 }
-//# sourceMappingURL=agent-service.d.ts.map
+//# sourceMappingURL=openai-agent-service.d.ts.map

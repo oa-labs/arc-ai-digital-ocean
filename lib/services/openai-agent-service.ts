@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 import { AgentMessage, AgentResponse, AgentConfig, AgentError } from '../types/index.js';
 
-export class AgentService {
+export class OpenAiAgentService {
   private client: OpenAI;
   private config: AgentConfig;
 

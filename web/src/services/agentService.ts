@@ -1,7 +1,7 @@
-import { AgentService, getConfig, validateConfig, AgentMessage, AgentResponse } from '../../../lib/src/index.js';
+import { OpenAiAgentService, getConfig, validateConfig, AgentMessage, AgentResponse } from '../../../lib/src/index.js';
 
 class WebAgentService {
-  private agentService: AgentService;
+  private agentService: OpenAiAgentService;
 
   constructor() {
     const config = getConfig();
@@ -11,7 +11,7 @@ class WebAgentService {
       throw new Error(`Configuration validation failed: ${configValidation.errors.join(', ')}`);
     }
 
-    this.agentService = new AgentService(config.agent);
+    this.agentService = new OpenAiAgentService(config.agent);
   }
 
   /**
