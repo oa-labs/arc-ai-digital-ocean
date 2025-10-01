@@ -10,6 +10,7 @@ export const handleMessage = async ({ message, say }) => {
 
 export const registerHandlers = (app) => {
   app.message(handleMessage);
+  app.event('app_mention', handleMessage);
   return app;
 };
 
