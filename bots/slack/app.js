@@ -89,10 +89,9 @@ export const handleMessage = async ({ message, event, say }) => {
         tokens: response.usage?.totalTokens
       });
 
-      // Send both the AI response and interactive blocks
+      // Send only the AI response
       await say({
-        text: response.content,
-        ...interactiveBlocks()
+        text: response.content
       });
     } catch (error) {
       console.error('[ERROR] Failed to generate AI response for DM:', error);
