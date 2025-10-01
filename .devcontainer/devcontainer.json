@@ -42,7 +42,8 @@
         "patcx.vscode-nuget-gallery",
         "sourcegraph.amp",
         "kilocode.kilo-code",
-        "editorconfig.editorconfig"
+        "editorconfig.editorconfig",
+        "Augment.vscode-augment"
       ]
     }
   },
