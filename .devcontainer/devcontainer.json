@@ -63,19 +63,23 @@
     }
   },
   "postCreateCommand": "bash .devcontainer/setup.sh",
+  "remoteUser": "vscode",
   "remoteEnv": {
     "PODMAN_USERNS": "keep-id",
     "BUILDAH_ISOLATION": "chroot",
     "GITHUB_USERNAME": "${localEnv:GITHUB_USERNAME}",
     "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}",
     "GIT_USER_NAME": "${localEnv:GIT_USER_NAME}",
-    "GIT_USER_EMAIL": "${localEnv:GIT_USER_EMAIL}"
-  },
-  "remoteEnv": {
+    "GIT_USER_EMAIL": "${localEnv:GIT_USER_EMAIL}",
     "NODE_ENV": "development",
     "PATH": "${containerEnv:PATH}:/usr/local/bin"
   },
+  "runArgs": [
+    "--privileged"
+  ],
+  "containerUser": "vscode",
   "mounts": [
-    "source=ichat-bun-cache,target=/root/.bun,type=volume"
+    "source=ichat-bun-cache,target=/root/.bun,type=volume",
+    "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
   ]
 }
