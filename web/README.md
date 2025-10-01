@@ -43,12 +43,16 @@ A modern, secure file management web application for S3-compatible object storag
 ### 1. Install Dependencies
 
 ```bash
+cd web
+
 # Using npm
 npm install
 
 # Using bun
 bun install
 ```
+
+**Note:** Make sure you're in the `web/` directory before running install commands.
 
 ### 2. Configure Environment Variables
 

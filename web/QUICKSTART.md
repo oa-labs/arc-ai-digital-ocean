@@ -11,6 +11,13 @@ npm install
 bun install
 ```
 
+**Important:** Make sure you're in the `web/` directory. This will install all required packages including:
+- React and TypeScript
+- AWS SDK for S3
+- Supabase client
+- Tailwind CSS
+- And all other dependencies
+
 ## 2. Set Up Environment Variables
 
 ```bash
