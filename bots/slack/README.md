@@ -26,6 +26,17 @@ bun node bots/slack/index.js
 
 The bot will reply `hello` to every message directed at it.
 
+### Debug Mode
+To enable detailed debug logging:
+```bash
+DEBUG=1 bun node bots/slack/index.js
+```
+
+### App Home (Home tab)
+- In your Slack app settings → App Home → enable the Home tab.
+- Ensure the bot token has `chat:write` scope (required for `views.publish`).
+- When a user opens the app’s Home, the bot publishes a Home view with a button to open a modal.
+
 ## Tests
 ```bash
 bunx vitest run
