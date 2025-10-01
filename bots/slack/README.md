@@ -1,12 +1,24 @@
 # Slack Bot Setup
 
 ## Prerequisites
-- Node.js 18+ and Bun installed
+- Node.js 18+ or Bun installed
 - Slack workspace with a Bolt app configured (Bot Token, Signing Secret, optional App Token for Socket Mode)
 
 ## Installation
 ```bash
+cd bots/slack
 bun install
+```
+
+## Build
+The bot is written in TypeScript and needs to be compiled before running:
+```bash
+bun run build
+```
+
+For development with auto-rebuild on changes:
+```bash
+bun run dev
 ```
 
 ## Configuration
@@ -20,16 +32,22 @@ SLACK_PORT=3000          # optional
 ```
 
 ## Running the Bot
+After building, run the bot with:
 ```bash
-bun node bots/slack/index.js
+bun run start
 ```
 
-The bot will reply `hello` to every message directed at it.
+Or build and run in one command:
+```bash
+bun run start:dev
+```
+
+The bot will reply with AI-generated responses to messages directed at it.
 
 ### Debug Mode
 To enable detailed debug logging:
 ```bash
-DEBUG=1 bun node bots/slack/index.js
+DEBUG=1 bun run start
 ```
 
 ### App Home (Home tab)
