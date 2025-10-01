@@ -7,6 +7,29 @@ const debug = (...args) => {
   }
 };
 
+// Initialize shared configuration and agent service at module level
+let agentService;
+try {
+  const config = getConfig();
+  const configValidation = validateConfig();
+
+  if (!configValidation.valid) {
+    console.error('[ERROR] Invalid configuration:', configValidation.errors);
+    throw new Error(`Configuration validation failed: ${configValidation.errors.join(', ')}`);
+  }
+
+  agentService = new AgentService(config.agent);
+  console.log('[INFO] Agent service initialized successfully');
+} catch (error) {
+  console.error('[ERROR] Failed to initialize agent service:', error.message);
+  // Create a fallback agent service that will throw errors when used
+  agentService = {
+    sendSystemMessage: async () => {
+      throw new Error('Agent service not properly initialized. Check your configuration.');
+    }
+  };
+}
+
 const isDirectMessage = (message) => {
   // channel_type is the most reliable, fallback to channel id starting with 'D'
   return message?.channel_type === 'im' || (typeof message?.channel === 'string' && message.channel.startsWith('D'));
@@ -41,21 +64,24 @@ const interactiveBlocks = () => ({
   ]
 });
 
-export const handleMessage = async ({ message, say }) => {
-  debug('Received message:', JSON.stringify(message, null, 2));
+export const handleMessage = async ({ message, event, say }) => {
+  // For app_mention events, the message data is in 'event', not 'message'
+  const msg = message || event;
 
-  if (message?.subtype === 'bot_message') {
+  debug('Received message:', JSON.stringify(msg, null, 2));
+
+  if (msg?.subtype === 'bot_message') {
     debug('Ignoring bot message');
     return;
   }
 
-  if (isDirectMessage(message)) {
+  if (isDirectMessage(msg)) {
     debug('DM detected, generating AI response');
 
     try {
       // Use the shared agent service to generate AI response for DM
       const systemPrompt = 'You are a helpful AI assistant for workplace safety and internal communications. Provide clear, professional responses to direct messages.';
-      const response = await agentService.sendSystemMessage(systemPrompt, message.text);
+      const response = await agentService.sendSystemMessage(systemPrompt, msg.text);
 
       debug('AI response generated for DM:', {
         contentLength: response.content.length,
@@ -81,7 +107,7 @@ export const handleMessage = async ({ message, say }) => {
   try {
     // Use the shared agent service to generate AI response
     const systemPrompt = 'You are a helpful AI assistant for workplace safety and internal communications. Provide clear, professional responses.';
-    const response = await agentService.sendSystemMessage(systemPrompt, message.text);
+    const response = await agentService.sendSystemMessage(systemPrompt, msg.text);
 
     debug('AI response generated:', {
       contentLength: response.content.length,
@@ -174,17 +200,6 @@ export const registerHandlers = (app) => {
 
 export const createSlackApp = (options) => {
   const app = new App(options);
-
-  // Initialize shared configuration and agent service
-  const config = getConfig();
-  const configValidation = validateConfig();
-
-  if (!configValidation.valid) {
-    console.error('[ERROR] Invalid configuration:', configValidation.errors);
-    throw new Error(`Configuration validation failed: ${configValidation.errors.join(', ')}`);
-  }
-
-  const agentService = new AgentService(config.agent);
 
   // Add error event listeners for better troubleshooting
   app.error(async (error) => {
