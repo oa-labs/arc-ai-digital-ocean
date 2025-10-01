@@ -1,5 +1,5 @@
 import { App, AppOptions, AllMiddlewareArgs, SlackEventMiddlewareArgs } from '@slack/bolt';
-import { AgentService, getConfig, validateConfig } from '../../lib/dist/index.js';
+import { AgentService, getConfig, validateConfig } from '@lib/index.js';
 
 const debug = (...args: any[]): void => {
   if (process.env.DEBUG === '1') {
