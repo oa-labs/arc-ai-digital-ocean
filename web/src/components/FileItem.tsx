@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FileText, Download, Trash2, Edit2, MoreVertical } from 'lucide-react';
+import { FileText, Download, Trash2, Edit2 } from 'lucide-react';
 import { S3File } from '@/types/file';
 import { s3Service } from '@/services/s3Service';
 
@@ -10,7 +10,6 @@ interface FileItemProps {
 }
 
 export function FileItem({ file, onDelete, onRename }: FileItemProps) {
-  const [showMenu, setShowMenu] = useState(false);
   const [downloading, setDownloading] = useState(false);
 
   const formatFileSize = (bytes: number): string => {
@@ -48,7 +47,6 @@ export function FileItem({ file, onDelete, onRename }: FileItemProps) {
       alert('Failed to download file');
     } finally {
       setDownloading(false);
-      setShowMenu(false);
     }
   };
 
