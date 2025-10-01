@@ -4,10 +4,16 @@
   "description": "AI-powered internal chat agent for workplace safety",
   "type": "module",
   "scripts": {
-    "test:deepeval": "evalite tests/deepeval.eval.js"
+    "test:deepeval": "evalite tests/deepeval.eval.js",
+    "build:shared": "cd lib && npm run build",
+    "dev:shared": "cd lib && npm run dev",
+    "clean:shared": "cd lib && npm run clean",
+    "build:all": "npm run build:shared",
+    "install:shared": "cd lib && npm install"
   },
   "dependencies": {
-    "@slack/bolt": "^3.17.1"
+    "@slack/bolt": "^3.17.1",
+    "openai": "^4.0.0"
   },
   "devDependencies": {
     "autoevals": "^0.0.104",

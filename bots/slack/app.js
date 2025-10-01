@@ -1,4 +1,5 @@
 import { App } from '@slack/bolt';
+import { AgentService, getConfig, validateConfig } from '../../lib/src/index.js';
 
 const debug = (...args) => {
   if (process.env.DEBUG === '1') {
@@ -49,13 +50,50 @@ export const handleMessage = async ({ message, say }) => {
   }
 
   if (isDirectMessage(message)) {
-    debug('DM detected, sending interactive blocks');
-    await say({ text: 'Interactive message', ...interactiveBlocks() });
+    debug('DM detected, generating AI response');
+
+    try {
+      // Use the shared agent service to generate AI response for DM
+      const systemPrompt = 'You are a helpful AI assistant for workplace safety and internal communications. Provide clear, professional responses to direct messages.';
+      const response = await agentService.sendSystemMessage(systemPrompt, message.text);
+
+      debug('AI response generated for DM:', {
+        contentLength: response.content.length,
+        model: response.model,
+        tokens: response.usage?.totalTokens
+      });
+
+      // Send both the AI response and interactive blocks
+      await say({
+        text: response.content,
+        ...interactiveBlocks()
+      });
+    } catch (error) {
+      console.error('[ERROR] Failed to generate AI response for DM:', error);
+      // Fallback to just interactive blocks if AI fails
+      await say({ text: 'Sorry, I encountered an error. Here are some interactive options:', ...interactiveBlocks() });
+    }
     return;
   }
 
-  debug('Channel/context message: replying with "hello"');
-  await say('hello');
+  debug('Channel/context message: processing with AI agent');
+
+  try {
+    // Use the shared agent service to generate AI response
+    const systemPrompt = 'You are a helpful AI assistant for workplace safety and internal communications. Provide clear, professional responses.';
+    const response = await agentService.sendSystemMessage(systemPrompt, message.text);
+
+    debug('AI response generated:', {
+      contentLength: response.content.length,
+      model: response.model,
+      tokens: response.usage?.totalTokens
+    });
+
+    await say(response.content);
+  } catch (error) {
+    console.error('[ERROR] Failed to generate AI response:', error);
+    await say('Sorry, I encountered an error while processing your message. Please try again.');
+  }
 };
 
 export const registerHandlers = (app) => {
@@ -136,6 +174,17 @@ export const registerHandlers = (app) => {
 
 export const createSlackApp = (options) => {
   const app = new App(options);
+
+  // Initialize shared configuration and agent service
+  const config = getConfig();
+  const configValidation = validateConfig();
+
+  if (!configValidation.valid) {
+    console.error('[ERROR] Invalid configuration:', configValidation.errors);
+    throw new Error(`Configuration validation failed: ${configValidation.errors.join(', ')}`);
+  }
+
+  const agentService = new AgentService(config.agent);
 
   // Add error event listeners for better troubleshooting
   app.error(async (error) => {
