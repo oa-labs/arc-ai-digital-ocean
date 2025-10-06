@@ -1,0 +1,16 @@
+{
+  "name": "@ichat-ocean/cli",
+  "version": "1.0.0",
+  "description": "Command line tool for interacting with the iChat Ocean agent service",
+  "type": "module",
+  "bin": {
+    "ichat-cli": "./index.js"
+  },
+  "scripts": {
+    "start": "node ./index.js",
+    "lint": "echo 'No linter configured'"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3"
+  }
+}
