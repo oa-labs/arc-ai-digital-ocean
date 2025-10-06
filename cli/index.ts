@@ -5,14 +5,14 @@ import { pathToFileURL } from 'node:url';
 import { stdin as defaultInput, stdout as defaultOutput } from 'node:process';
 import { Readable, Writable } from 'node:stream';
 import { createRequire } from 'node:module';
-import { 
-  createAgentService, 
+import {
+  createAgentService,
   validateConfig,
-  type AgentService 
-} from '../lib/dist/src/index.js';
+  type AgentService
+} from '@lib/index.js';
 
 const require = createRequire(import.meta.url);
-const { version: cliVersion } = require('./package.json');
+const { version: cliVersion } = require('../package.json');
 
 await import('dotenv/config').catch(() => {});
 
