@@ -1,4 +1,4 @@
-import { OpenAiAgentService, getConfig, validateConfig, AgentMessage, AgentResponse } from '../../../lib/src/index.js';
+import { OpenAiAgentService, getConfig, validateConfig, AgentMessage, AgentResponse } from '@lib/index';
 
 class WebAgentService {
   private agentService: OpenAiAgentService;

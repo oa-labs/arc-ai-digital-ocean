@@ -1,14 +1,12 @@
 import { useState, useCallback } from 'react';
 import { webAgentService } from '../services/agentService';
-import { AgentMessage, AgentResponse } from '../../../lib/src/index';
+import { AgentMessage, AgentResponse } from '@lib/index';
 
 interface UseAgentState {
   isLoading: boolean;
   error: string | null;
   response: AgentResponse | null;
 }
-
-type StateUpdater = (prevState: UseAgentState) => UseAgentState;
 
 interface UseAgentActions {
   sendMessage: (message: string, context?: AgentMessage[]) => Promise<AgentResponse | null>;
