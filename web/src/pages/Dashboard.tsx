@@ -53,7 +53,7 @@ export function Dashboard() {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">
-                  S3 File Manager
+                  iChat KB Manager
                 </h1>
                 <p className="text-sm text-gray-500">{user?.email}</p>
               </div>

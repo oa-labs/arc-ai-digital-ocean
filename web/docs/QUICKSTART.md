@@ -1,6 +1,6 @@
 # Quick Start Guide
 
-Get the S3 File Manager up and running in 5 minutes!
+Get the iChat KB Manager up and running in 5 minutes!
 
 ## 1. Install Dependencies
 

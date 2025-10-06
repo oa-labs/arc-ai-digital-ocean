@@ -1,4 +1,4 @@
-# S3 File Manager - Project Summary
+# iChat KB Manager - Project Summary
 
 ## Overview
 

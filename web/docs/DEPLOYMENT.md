@@ -1,6 +1,6 @@
 # Deployment Guide
 
-This guide covers deploying the S3 File Manager application to various hosting platforms.
+This guide covers deploying the iChat KB Manager application to various hosting platforms.
 
 ## Prerequisites
 
@@ -36,7 +36,7 @@ Vercel provides excellent support for Vite applications with zero configuration.
      - Output Directory: `dist`
 
 3. **Add Environment Variables**
-   
+
    In Vercel project settings, add all variables from `.env`:
    - `VITE_SUPABASE_URL`
    - `VITE_SUPABASE_ANON_KEY`
@@ -51,7 +51,7 @@ Vercel provides excellent support for Vite applications with zero configuration.
    - Vercel will build and deploy automatically
 
 5. **Update CORS**
-   
+
    Add your Vercel domain to DigitalOcean Space CORS settings:
    ```json
    {
@@ -89,7 +89,7 @@ Netlify is another excellent option for static site hosting.
    - Netlify will auto-detect settings from `netlify.toml`
 
 3. **Add Environment Variables**
-   
+
    In Netlify site settings > Environment variables, add all variables from `.env`
 
 4. **Deploy**
@@ -113,7 +113,7 @@ Deploy directly on DigitalOcean alongside your Spaces.
    - Output Directory: `web/dist`
 
 3. **Add Environment Variables**
-   
+
    Add all variables from `.env` in the app settings
 
 4. **Deploy**
@@ -153,7 +153,7 @@ If you prefer AWS ecosystem:
    ```
 
 3. **Add Environment Variables**
-   
+
    In Amplify app settings, add all variables from `.env`
 
 4. **Deploy**
@@ -282,7 +282,7 @@ After deploying to any platform:
 ### Build Failures
 
 **Issue:** Build fails with module errors
-**Solution:** 
+**Solution:**
 ```bash
 # Clear cache and reinstall
 rm -rf node_modules package-lock.json

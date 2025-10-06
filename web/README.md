@@ -1,4 +1,4 @@
-# S3 File Manager
+# iChat KB Manager
 
 A modern, secure file management web application for S3-compatible object storage (DigitalOcean Spaces) with Supabase authentication.
 
