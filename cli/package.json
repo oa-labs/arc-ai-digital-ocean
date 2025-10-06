@@ -3,14 +3,24 @@
   "version": "1.0.0",
   "description": "Command line tool for interacting with the iChat Ocean agent service",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "bin": {
-    "ichat-cli": "./index.js"
+    "ichat-cli": "./dist/index.js"
   },
   "scripts": {
-    "start": "node ./index.js",
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit",
+    "start": "node ./dist/index.js",
     "lint": "echo 'No linter configured'"
   },
   "dependencies": {
     "dotenv": "^17.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.9.3"
   }
 }
