@@ -5,6 +5,7 @@
       "name": "ichat-ocean",
       "dependencies": {
         "@slack/bolt": "^3.17.1",
+        "openai": "^4.0.0",
       },
       "devDependencies": {
         "autoevals": "^0.0.104",

@@ -19,7 +19,6 @@
     "autoevals": "^0.0.104",
     "dotenv": "^17.2.3",
     "evalite": "^0.4.0",
-    "openai": "^4.0.0",
     "vitest": "^2.0.0"
   },
   "engines": {
