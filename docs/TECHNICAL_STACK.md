@@ -31,7 +31,7 @@ graph TD
 
 ### Core Framework
 
-- **Runtime**: Node.js
+- **Runtime**: Node.js 22+
 - **Language**: TypeScript
 - **Web Framework**: Hono for backend API
 - **API Framework**: tRPC for type-safe procedures
@@ -208,7 +208,7 @@ export const EscalatedQuery = z.object({
 - **Project**: `packages/frontend` - React web application
 - **Framework**: React (v18+) with TypeScript
 - **Build Tool**: Vite (v4.0+)
-- **Runtime/Package Manager**: Node.js
+- **Runtime/Package Manager**: Node.js 22+
 - **State Management**: Zustand or TanStack Query
 - **UI Framework**: Tailwind CSS + Headless UI
 - **Real-time**: Supabase Realtime client for live chat
@@ -532,11 +532,11 @@ const config = {
 
 ```dockerfile
 # Development Dockerfile for Node.js backend
-FROM node:20
+FROM node:22
 WORKDIR /app
 
 # Install Supabase CLI for local development
-RUN npm install -g supabase
+RUN pnpm install -g supabase
 
 # Set up development environment
 ENV NODE_ENV=development
@@ -701,7 +701,7 @@ volumes:
 // .devcontainer/devcontainer.json
 {
   "name": "iChat Development with Supabase",
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:20",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:22",
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
@@ -727,7 +727,7 @@ volumes:
     }
   },
   "forwardPorts": [3000, 5173],
-  "postCreateCommand": "npm install",
+  "postCreateCommand": "pnpm install",
   "remoteUser": "vscode",
   "mounts": [
     "source=${localEnv:HOME}/.supabase,target=/home/vscode/.supabase,type=volume"
@@ -739,7 +739,7 @@ volumes:
 
 ```bash
 # Install Supabase CLI
-npm install -g supabase
+pnpm install -g supabase
 
 # Start local Supabase development environment
 supabase start
@@ -748,16 +748,16 @@ supabase start
 cp .env.example .env.local
 
 # Install dependencies
-npm install
+pnpm install
 
 # Run backend server
-cd packages/backend && npm run dev
+cd packages/backend && pnpm run dev
 
 # Run frontend development server
-cd packages/frontend && npm run dev
+cd packages/frontend && pnpm run dev
 
 # Run CLI (for admin tasks)
-cd packages/cli && npm run start
+cd packages/cli && pnpm run start
 ```
 
 ### Supabase Local Development

@@ -1,24 +1,24 @@
 # Slack Bot Setup
 
 ## Prerequisites
-- Node.js 18+
+- Node.js 22+
 - Slack workspace with a Bolt app configured (Bot Token, Signing Secret, optional App Token for Socket Mode)
 
 ## Installation
 ```bash
 cd bots/slack
-npm install
+pnpm install
 ```
 
 ## Build
 The bot is written in TypeScript and needs to be compiled before running:
 ```bash
-npm run build
+pnpm run build
 ```
 
 For development with auto-rebuild on changes:
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 ### Path Aliases
@@ -42,12 +42,12 @@ SLACK_PORT=3000          # optional
 ## Running the Bot
 After building, run the bot with:
 ```bash
-npm run start
+pnpm run start
 ```
 
 Or build and run in one command:
 ```bash
-npm run start:dev
+pnpm run start:dev
 ```
 
 The bot will reply with AI-generated responses to messages directed at it.
@@ -55,7 +55,7 @@ The bot will reply with AI-generated responses to messages directed at it.
 ### Debug Mode
 To enable detailed debug logging:
 ```bash
-DEBUG=1 npm run start
+DEBUG=1 pnpm run start
 ```
 
 ### App Home (Home tab)
@@ -65,5 +65,5 @@ DEBUG=1 npm run start
 
 ## Tests
 ```bash
-npx vitest run
+pnpm dlx vitest run
 ```

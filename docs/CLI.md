@@ -3,8 +3,8 @@
 ## CLI Framework
 - **Language**: TypeScript
 - **Runtime**: Node.js
-- **Distribution**: npm package or standalone executable
-- **Package Manager**: npm for installs and execution
+- **Distribution**: pnpm package or standalone executable
+- **Package Manager**: pnpm for installs and execution
 
 ```json
 {
@@ -19,11 +19,11 @@
 
 ## CLI Usage
 ```bash
-# Install CLI globally via npm
-npm install -g @ichat/cli
+# Install CLI globally via pnpm
+pnpm install -g @ichat/cli
 
-# Or run directly with npx
-npx @ichat/cli auth login
+# Or run directly with pnpm dlx
+pnpm dlx @ichat/cli auth login
 
 # Run CLI commands
 ichat-cli auth login                    # Authenticate with API key

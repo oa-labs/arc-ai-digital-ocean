@@ -100,7 +100,7 @@ web/
 - **ESLint** - Code linting
 - **TypeScript** - Static typing
 - **Zod** - Runtime validation
-- **Node.js** - Runtime environment
+- **Node.js 22+** - Runtime environment
 
 ## 🔧 Configuration Files
 
@@ -117,17 +117,17 @@ web/
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18+
+- Node.js 22+
 - Supabase account
 - DigitalOcean Spaces (or S3-compatible storage)
 
 ### Quick Start
 ```bash
 cd web
-npm install
+pnpm install
 cp .env.example .env
 # Edit .env with your credentials
-npm run dev
+pnpm run dev
 ```
 
 See [QUICKSTART.md](./QUICKSTART.md) for detailed setup instructions.

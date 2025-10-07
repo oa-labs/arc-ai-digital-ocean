@@ -152,19 +152,19 @@ cli/
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Build TypeScript
-npm run build
+pnpm run build
 
 # Watch mode for development
-npm run dev
+pnpm run dev
 
 # Type check without building
-npm run type-check
+pnpm run type-check
 
 # Clean build artifacts
-npm run clean
+pnpm run clean
 ```
 
 ### Running the CLI
@@ -174,14 +174,14 @@ npm run clean
 node dist/index.js --help
 
 # Using the start script
-npm start --help
+pnpm start --help
 ```
 
 ### Testing Integration
 
 ```bash
 # Build and run verification script
-npm run build
+pnpm run build
 node dist/verify-integration.js
 ```
 
@@ -216,7 +216,7 @@ DIGITALOCEAN_MAX_TOKENS=1000
 - Environment variables are backward compatible
 
 ### For Developers
-- Must run `npm run build` before running the CLI
+- Must run `pnpm run build` before running the CLI
 - Source code is now in `index.ts` instead of `index.js`
 - Compiled output is in `dist/` directory
 - TypeScript and @types/node are now required dev dependencies
@@ -247,8 +247,8 @@ To verify the migration was successful:
 
 ```bash
 cd cli
-npm install
-npm run build
+pnpm install
+pnpm run build
 node dist/verify-integration.js
 node dist/index.js --help
 node dist/index.js --version

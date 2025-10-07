@@ -1,4 +1,7 @@
-FROM node:20-bookworm
+FROM node:22-bookworm
+
+# Enable pnpm via corepack
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # Install additional dependencies
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \

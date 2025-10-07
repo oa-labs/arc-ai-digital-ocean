@@ -37,7 +37,7 @@ DeepEval is used to evaluate the quality of AI-generated responses to workplace 
 
 1. **Install Dependencies**
    ```bash
-   npm install
+   pnpm install
    ```
 
 2. **Set Up Environment Variables**
@@ -49,7 +49,7 @@ DeepEval is used to evaluate the quality of AI-generated responses to workplace 
 
 3. **Run DeepEval Tests**
    ```bash
-   npm run test:deepeval
+   pnpm run test:deepeval
    ```
 
 #### Test Metrics
@@ -83,7 +83,7 @@ A passing test indicates the AI response meets quality standards for accuracy, r
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 22+
 - Supabase CLI
 - OpenAI API key
 - PostgreSQL with pgvector (via Supabase)
@@ -92,19 +92,19 @@ A passing test indicates the AI response meets quality standards for accuracy, r
 
 ```bash
 # Install Supabase CLI
-npm install -g supabase
+pnpm install -g supabase
 
 # Start local Supabase environment
 supabase start
 
 # Install project dependencies
-npm install
+pnpm install
 
 # Copy environment variables
 cp .env.example .env.local
 
 # Run development server (when packages are set up)
-npm run dev
+pnpm run dev
 ```
 
 ## Documentation

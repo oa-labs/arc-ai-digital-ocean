@@ -1,5 +1,8 @@
 # Build stage
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
+
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /workspace
 
@@ -11,8 +14,8 @@ COPY web/ ./web/
 
 # Install dependencies and build from web directory
 WORKDIR /workspace/web
-RUN npm ci
-RUN npm run build
+RUN pnpm install --frozen-lockfile
+RUN pnpm run build
 
 # Production stage
 FROM nginx:alpine

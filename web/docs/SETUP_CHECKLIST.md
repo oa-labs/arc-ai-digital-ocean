@@ -4,7 +4,7 @@ Use this checklist to ensure your iChat KB Manager is properly configured.
 
 ## ☐ Prerequisites
 
-- [ ] Node.js 18+ installed
+- [ ] Node.js 22+ installed
 - [ ] Git installed
 - [ ] Code editor (VS Code recommended)
 - [ ] Modern web browser (Chrome, Firefox, Safari, Edge)
@@ -82,7 +82,7 @@ doctl spaces cors set YOUR-BUCKET-NAME --config cors.json
 ### Clone and Install
 - [ ] Clone the repository
 - [ ] Navigate to `web/` directory
-- [ ] Run `npm install`
+- [ ] Run `pnpm install`
 - [ ] Wait for dependencies to install
 
 ### Configure Environment
@@ -107,7 +107,7 @@ VITE_S3_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 - [ ] Verify no trailing spaces or quotes
 
 ### Start Development Server
-- [ ] Run `npm run dev`
+- [ ] Run `pnpm run dev`
 - [ ] Wait for server to start
 - [ ] Open browser to `http://localhost:5173`
 - [ ] Verify app loads without errors
@@ -248,9 +248,9 @@ If you encounter issues, check:
 
 5. **Build Issues**
    - Dependencies installed
-   - Node version 18+
+   - Node version 22+
    - No TypeScript errors
-   - Run `npm run build` to test
+   - Run `pnpm run build` to test
 
 ## 📞 Getting Help
 
