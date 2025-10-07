@@ -14,7 +14,7 @@ COPY web/ ./web/
 
 # Install dependencies and build from web directory
 WORKDIR /workspace/web
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 RUN pnpm run build
 
 # Production stage
