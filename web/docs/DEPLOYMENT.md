@@ -221,7 +221,7 @@ server {
 docker build -t s3-file-manager .
 
 # Run container
-docker run -d -p 80:80 s3-file-manager
+docker run -d -p 80:80 -p 443:443 -e HOSTNAME=yourdomain.com your-app
 ```
 
 ## Post-Deployment Checklist
