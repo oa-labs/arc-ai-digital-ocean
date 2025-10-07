@@ -14,6 +14,7 @@ COPY web/ ./web/
 
 # Install dependencies and build from web directory
 WORKDIR /workspace/web
+ENV CI=true
 RUN pnpm install
 RUN pnpm run build
 
