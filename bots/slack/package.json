@@ -10,8 +10,8 @@
     "dev": "tsc --watch",
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit",
-    "start": "bun run dist/index.js",
-    "start:dev": "tsc && bun run dist/index.js"
+    "start": "node dist/index.js",
+    "start:dev": "tsc && node dist/index.js"
   },
   "dependencies": {
     "@slack/bolt": "^3.17.1",

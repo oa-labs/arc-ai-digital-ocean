@@ -1,5 +1,0 @@
-[run]
-# Path aliases for runtime resolution
-[run.alias]
-"@lib" = "../../lib/dist/src"
-

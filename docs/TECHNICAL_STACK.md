@@ -2,7 +2,7 @@ a# Technical Stack Specifications
 
 ## Overview
 
-This document provides detailed technical specifications for the AI-powered internal chat agent system, leveraging Supabase for managed database, authentication, real-time features, and storage, with a modern full-stack JavaScript/TypeScript architecture using Bun, Vite, React, Hono, and tRPC.
+This document provides detailed technical specifications for the AI-powered internal chat agent system, leveraging Supabase for managed database, authentication, real-time features, and storage, with a modern full-stack JavaScript/TypeScript architecture using Node.js, Vite, React, Hono, and tRPC.
 
 ## Backend Architecture
 
@@ -31,7 +31,7 @@ graph TD
 
 ### Core Framework
 
-- **Runtime**: Bun (fast JavaScript runtime)
+- **Runtime**: Node.js
 - **Language**: TypeScript
 - **Web Framework**: Hono for backend API
 - **API Framework**: tRPC for type-safe procedures
@@ -208,7 +208,7 @@ export const EscalatedQuery = z.object({
 - **Project**: `packages/frontend` - React web application
 - **Framework**: React (v18+) with TypeScript
 - **Build Tool**: Vite (v4.0+)
-- **Runtime/Package Manager**: Bun
+- **Runtime/Package Manager**: Node.js
 - **State Management**: Zustand or TanStack Query
 - **UI Framework**: Tailwind CSS + Headless UI
 - **Real-time**: Supabase Realtime client for live chat
@@ -531,12 +531,12 @@ const config = {
 ### Development Environment
 
 ```dockerfile
-# Development Dockerfile for Node.js/Bun backend
-FROM oven/bun:latest
+# Development Dockerfile for Node.js backend
+FROM node:20
 WORKDIR /app
 
 # Install Supabase CLI for local development
-RUN bun add -g supabase
+RUN npm install -g supabase
 
 # Set up development environment
 ENV NODE_ENV=development
@@ -548,7 +548,7 @@ WORKDIR /workspace
 
 - **Supabase Edge Functions**: Serverless deployment for API logic (Hono compatible)
 - **Static Frontend**: Deploy React app to Supabase hosting or CDN
-- **Container Optional**: Node.js backend can be containerized if needed for complex processing
+- **Container Optional**: Backend can be containerized if needed for complex processing
 - **Recommended**: Use Supabase managed services for simplified deployment
 
 ### Supabase Local Development
@@ -701,10 +701,9 @@ volumes:
 // .devcontainer/devcontainer.json
 {
   "name": "iChat Development with Supabase",
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:18",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:20",
   "features": {
-    "ghcr.io/devcontainers/features/github-cli:1": {},
-    "ghcr.io/oven-sh/bun/feature/bun:1": {}
+    "ghcr.io/devcontainers/features/github-cli:1": {}
   },
   "customizations": {
     "vscode": {
@@ -728,7 +727,7 @@ volumes:
     }
   },
   "forwardPorts": [3000, 5173],
-  "postCreateCommand": "bun install",
+  "postCreateCommand": "npm install",
   "remoteUser": "vscode",
   "mounts": [
     "source=${localEnv:HOME}/.supabase,target=/home/vscode/.supabase,type=volume"
@@ -740,7 +739,7 @@ volumes:
 
 ```bash
 # Install Supabase CLI
-bun add -g supabase
+npm install -g supabase
 
 # Start local Supabase development environment
 supabase start
@@ -749,16 +748,16 @@ supabase start
 cp .env.example .env.local
 
 # Install dependencies
-bun install
+npm install
 
 # Run backend server
-cd packages/backend && bun run dev
+cd packages/backend && npm run dev
 
 # Run frontend development server
-cd packages/frontend && bun run dev
+cd packages/frontend && npm run dev
 
 # Run CLI (for admin tasks)
-cd packages/cli && bun run start
+cd packages/cli && npm run start
 ```
 
 ### Supabase Local Development

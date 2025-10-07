@@ -1,4 +1,4 @@
-FROM oven/bun:latest
+FROM node:20-bookworm
 
 # Install additional dependencies
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \

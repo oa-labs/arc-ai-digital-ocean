@@ -100,7 +100,7 @@ web/
 - **ESLint** - Code linting
 - **TypeScript** - Static typing
 - **Zod** - Runtime validation
-- **Bun/Node.js** - Runtime environment
+- **Node.js** - Runtime environment
 
 ## 🔧 Configuration Files
 
@@ -117,7 +117,7 @@ web/
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18+ or Bun
+- Node.js 18+
 - Supabase account
 - DigitalOcean Spaces (or S3-compatible storage)
 

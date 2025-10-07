@@ -7,8 +7,6 @@ Get the iChat KB Manager up and running in 5 minutes!
 ```bash
 cd web
 npm install
-# or
-bun install
 ```
 
 **Important:** Make sure you're in the `web/` directory. This will install all required packages including:
@@ -80,8 +78,6 @@ doctl spaces cors set my-bucket-name --config cors.json
 
 ```bash
 npm run dev
-# or
-bun run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173) in your browser.

@@ -34,7 +34,7 @@ A modern, secure file management web application for S3-compatible object storag
 
 ## Prerequisites
 
-- Node.js 18+ or Bun runtime
+- Node.js 18+
 - Supabase account and project
 - DigitalOcean Spaces (or S3-compatible storage)
 
@@ -44,12 +44,7 @@ A modern, secure file management web application for S3-compatible object storag
 
 ```bash
 cd web
-
-# Using npm
 npm install
-
-# Using bun
-bun install
 ```
 
 **Note:** Make sure you're in the `web/` directory before running install commands.
@@ -106,11 +101,7 @@ VITE_S3_SECRET_ACCESS_KEY=your-secret-access-key
 ### 5. Run Development Server
 
 ```bash
-# Using npm
 npm run dev
-
-# Using bun
-bun run dev
 ```
 
 The application will be available at `http://localhost:5173`
@@ -118,11 +109,7 @@ The application will be available at `http://localhost:5173`
 ## Building for Production
 
 ```bash
-# Using npm
 npm run build
-
-# Using bun
-bun run build
 ```
 
 The production build will be in the `dist/` directory.

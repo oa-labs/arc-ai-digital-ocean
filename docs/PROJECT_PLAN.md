@@ -5,11 +5,11 @@
 **Project Name**: iChat AI-Powered Internal Chat Agent (MVP)
 **Duration**: 6 weeks (5 sprints × 1-1.2 weeks each)
 **Team Size**: 1-2 developers
-**Technology Stack**: Bun, TypeScript, React, Vite, Hono, tRPC, Supabase (PostgreSQL with pgvector, Auth, Storage, Realtime), OpenAI
+**Technology Stack**: Node.js, TypeScript, React, Vite, Hono, tRPC, Supabase (PostgreSQL with pgvector, Auth, Storage, Realtime), OpenAI
 
 ## MVP Focus
 
-This streamlined plan leverages Supabase managed services and modern JavaScript/TypeScript stack to accelerate development while maintaining robust functionality. The architecture uses Hono with tRPC for type-safe APIs, Bun for fast runtime, and Supabase for managed database, auth, storage, and real-time features. This approach reduces infrastructure complexity and development time by 25-30%.
+This streamlined plan leverages Supabase managed services and modern JavaScript/TypeScript stack to accelerate development while maintaining robust functionality. The architecture uses Hono with tRPC for type-safe APIs, Node.js runtime, and Supabase for managed database, auth, storage, and real-time features. This approach reduces infrastructure complexity and development time by 25-30%.
 
 ## Sprint Structure
 
@@ -45,8 +45,8 @@ Each sprint follows a 1-1.5 week cycle with the following phases:
 - ✅ TypeScript configuration for all packages
 - ✅ Supabase SDK integration for JavaScript/TypeScript
 - ✅ Prettier and ESLint setup with consistent rules
-- ✅ Package.json files with Bun and Supabase dependencies
-- ✅ DevContainer setup for VS Code with Supabase CLI and Bun
+- ✅ Package.json files with npm and Supabase dependencies
+- ✅ DevContainer setup for VS Code with Supabase CLI
 - ✅ Git hooks with pre-commit validation
 - ✅ Basic project structure and starter files
 - ✅ Shared types, schemas, and utilities with Zod
@@ -390,7 +390,7 @@ Each sprint follows a 1-1.5 week cycle with the following phases:
 ### Features Simplified with Modern Stack
 
 ✅ Type-safe APIs (tRPC instead of REST)
-✅ Fast development (Bun runtime and Hono framework)
+✅ Fast development (Node.js runtime and Hono framework)
 ✅ Real-time chat (Supabase Realtime)
 ✅ Escalation and feedback system (simplified with Supabase)
 ✅ CLI tool (TypeScript CLI with modern tooling)

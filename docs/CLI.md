@@ -2,9 +2,9 @@
 
 ## CLI Framework
 - **Language**: TypeScript
-- **Runtime**: Bun (fast JavaScript runtime)
+- **Runtime**: Node.js
 - **Distribution**: npm package or standalone executable
-- **Package Manager**: Bun for fast installs and execution
+- **Package Manager**: npm for installs and execution
 
 ```json
 {
@@ -19,11 +19,11 @@
 
 ## CLI Usage
 ```bash
-# Install CLI globally via npm/bun
-bun add -g @ichat/cli
+# Install CLI globally via npm
+npm install -g @ichat/cli
 
-# Or run directly with bun
-bun run @ichat/cli auth login
+# Or run directly with npx
+npx @ichat/cli auth login
 
 # Run CLI commands
 ichat-cli auth login                    # Authenticate with API key

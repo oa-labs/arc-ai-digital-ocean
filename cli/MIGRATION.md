@@ -33,12 +33,8 @@ Implemented `@lib` module alias for clean imports:
 }
 ```
 
-**Bun (Runtime):**
-```toml
-# bunfig.toml
-[run.alias]
-"@lib" = "../../lib/dist/src"
-```
+**Node.js (Runtime):**
+Module resolution is handled through package.json exports and tsconfig paths.
 
 **Usage:**
 ```typescript
@@ -97,7 +93,6 @@ export interface RunCliOptions {
 
 **New Files:**
 - `cli/tsconfig.json` - TypeScript compiler configuration
-- `cli/bunfig.toml` - Bun runtime module alias configuration
 
 **Updated Files:**
 - `cli/package.json` - Added build scripts and TypeScript dependencies
@@ -142,7 +137,6 @@ cli/
 ├── index.ts                  # TypeScript source (NEW)
 ├── verify-integration.ts     # Integration verification script (NEW)
 ├── tsconfig.json            # TypeScript config (NEW)
-├── bunfig.toml              # Bun runtime config (NEW)
 ├── package.json             # Updated with build scripts
 ├── README.md                # Updated documentation
 ├── MIGRATION.md             # This file (NEW)
@@ -158,40 +152,37 @@ cli/
 
 ```bash
 # Install dependencies
-bun install
+npm install
 
 # Build TypeScript
-bun run build
+npm run build
 
 # Watch mode for development
-bun run dev
+npm run dev
 
 # Type check without building
-bun run type-check
+npm run type-check
 
 # Clean build artifacts
-bun run clean
+npm run clean
 ```
 
 ### Running the CLI
 
 ```bash
-# Using bun
-bun run dist/index.js --help
-
 # Using node (after build)
 node dist/index.js --help
 
 # Using the start script
-bun start --help
+npm start --help
 ```
 
 ### Testing Integration
 
 ```bash
 # Build and run verification script
-bun run build
-bun run dist/verify-integration.js
+npm run build
+node dist/verify-integration.js
 ```
 
 ## Environment Variables
@@ -225,7 +216,7 @@ DIGITALOCEAN_MAX_TOKENS=1000
 - Environment variables are backward compatible
 
 ### For Developers
-- Must run `bun run build` before running the CLI
+- Must run `npm run build` before running the CLI
 - Source code is now in `index.ts` instead of `index.js`
 - Compiled output is in `dist/` directory
 - TypeScript and @types/node are now required dev dependencies
@@ -238,7 +229,6 @@ DIGITALOCEAN_MAX_TOKENS=1000
 - [x] Integrate createAgentService factory
 - [x] Add type definitions for all functions
 - [x] Update package.json with build scripts
-- [x] Add Bun runtime configuration
 - [x] Create verification script
 - [x] Update documentation
 - [x] Remove old JavaScript file
@@ -257,11 +247,11 @@ To verify the migration was successful:
 
 ```bash
 cd cli
-bun install
-bun run build
-bun run dist/verify-integration.js
-bun run dist/index.js --help
-bun run dist/index.js --version
+npm install
+npm run build
+node dist/verify-integration.js
+node dist/index.js --help
+node dist/index.js --version
 ```
 
 Expected output:

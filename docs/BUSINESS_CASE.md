@@ -32,7 +32,7 @@ The iChat AI Assistant MVP represents a strategic investment in knowledge manage
 - Supabase-managed infrastructure for reliability and scalability
 
 ### Technical Foundation
-- Modern JavaScript/TypeScript stack with Bun runtime
+- Modern JavaScript/TypeScript stack with Node.js
 - Hono backend with tRPC for type-safe APIs
 - React frontend with Vite build tool
 - Supabase managed services (database, auth, storage, real-time)

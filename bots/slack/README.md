@@ -1,24 +1,24 @@
 # Slack Bot Setup
 
 ## Prerequisites
-- Node.js 18+ or Bun installed
+- Node.js 18+
 - Slack workspace with a Bolt app configured (Bot Token, Signing Secret, optional App Token for Socket Mode)
 
 ## Installation
 ```bash
 cd bots/slack
-bun install
+npm install
 ```
 
 ## Build
 The bot is written in TypeScript and needs to be compiled before running:
 ```bash
-bun run build
+npm run build
 ```
 
 For development with auto-rebuild on changes:
 ```bash
-bun run dev
+npm run dev
 ```
 
 ### Path Aliases
@@ -27,7 +27,7 @@ The project uses TypeScript path mapping with the `@lib` alias to import from th
 import { OpenAiAgentService, getConfig, validateConfig } from '@lib/index.js';
 ```
 
-This is configured in `tsconfig.json` and `bunfig.toml` for runtime resolution.
+This is configured in `tsconfig.json` for build-time resolution.
 
 ## Configuration
 Create a `.env` file in the project root containing:
@@ -42,12 +42,12 @@ SLACK_PORT=3000          # optional
 ## Running the Bot
 After building, run the bot with:
 ```bash
-bun run start
+npm run start
 ```
 
 Or build and run in one command:
 ```bash
-bun run start:dev
+npm run start:dev
 ```
 
 The bot will reply with AI-generated responses to messages directed at it.
@@ -55,7 +55,7 @@ The bot will reply with AI-generated responses to messages directed at it.
 ### Debug Mode
 To enable detailed debug logging:
 ```bash
-DEBUG=1 bun run start
+DEBUG=1 npm run start
 ```
 
 ### App Home (Home tab)
@@ -65,5 +65,5 @@ DEBUG=1 bun run start
 
 ## Tests
 ```bash
-bunx vitest run
+npx vitest run
 ```

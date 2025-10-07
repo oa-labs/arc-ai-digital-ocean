@@ -1,20 +1,24 @@
 # Build stage
-FROM oven/bun:1-alpine AS builder
+FROM node:20-alpine AS builder
 
-WORKDIR /app
+WORKDIR /workspace
 
-COPY web/package.json web/bun.lock* ./
-RUN bun install --frozen-lockfile
-
-COPY web/ ./
+# Copy the lib directory first
 COPY lib/ ./lib/
-RUN bun run build
+
+# Copy web files
+COPY web/ ./web/
+
+# Install dependencies and build from web directory
+WORKDIR /workspace/web
+RUN npm ci
+RUN npm run build
 
 # Production stage
 FROM nginx:alpine
 
-COPY --from=builder /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /workspace/web/dist /usr/share/nginx/html
+COPY web/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
