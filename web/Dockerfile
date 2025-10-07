@@ -28,9 +28,12 @@ COPY --from=builder /workspace/web/dist /usr/share/nginx/html
 COPY web/nginx.conf /etc/nginx/conf.d/default.conf
 COPY web/startup.sh /startup.sh
 
-# Create certbot directories
-RUN mkdir -p /var/www/certbot /etc/letsencrypt
+# Create necessary directories
+RUN mkdir -p /var/www/certbot /etc/letsencrypt /etc/nginx/ssl
 
 EXPOSE 80 443
+
+# Make startup script executable
+RUN chmod +x /startup.sh
 
 CMD ["/bin/sh", "/startup.sh"]
