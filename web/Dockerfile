@@ -21,17 +21,13 @@ RUN pnpm run build
 # Production stage
 FROM nginx:alpine
 
-# Install certbot and dependencies
-RUN apk add --no-cache certbot python3 py3-pip certbot-nginx 
+# No additional dependencies needed for simple HTTP serving
 
 COPY --from=builder /workspace/web/dist /usr/share/nginx/html
 COPY web/nginx.conf /etc/nginx/conf.d/default.conf
 COPY web/startup.sh /startup.sh
 
-# Create necessary directories
-RUN mkdir -p /var/www/certbot /etc/letsencrypt /etc/nginx/ssl
-
-EXPOSE 80 443
+EXPOSE 3000
 
 # Make startup script executable
 RUN chmod +x /startup.sh
