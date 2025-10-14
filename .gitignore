@@ -6,6 +6,8 @@ node_modules/
 # Bun
 .bun/
 
+cli/lib/bin/ichat-cli
+
 # Environment variables
 .env
 .env.local
