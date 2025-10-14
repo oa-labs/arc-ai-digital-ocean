@@ -12,34 +12,28 @@ echo
 TEST_DIR=$(mktemp -d)
 echo "📁 Created test directory: $TEST_DIR"
 
-# Copy package files to test directory
-echo "📦 Copying package files..."
-cp -r . "$TEST_DIR/"
+# Create a package and install it
+echo "📦 Creating package..."
+PACKAGE_FILE=$(npm pack)
 
+echo "📁 Moving to test directory..."
+mv "$PACKAGE_FILE" "$TEST_DIR/"
 cd "$TEST_DIR"
 
-# Remove node_modules to simulate fresh install
-rm -rf node_modules package-lock.json
+echo "🔧 Installing package..."
+npm install "$PACKAGE_FILE"
 
-echo "🔧 Installing package (with postinstall build)..."
-SKIP_CLI_BINARY_BUILD= npm install
-
-echo "✅ Verifying packaged binary..."
-if [ ! -f "bin/ichat-cli" ] && [ ! -f "bin/ichat-cli.exe" ]; then
-  echo "❌ Binary not found after install"
+echo "✅ Verifying Node.js executable..."
+if [ ! -f "node_modules/@ichat-ocean/cli/bin/ichat-cli.js" ]; then
+  echo "❌ Node.js executable not found after install"
   exit 1
 fi
 
-EXECUTABLE="bin/ichat-cli"
-if [ "$(uname -s)" = "MINGW" ] || [[ "$(uname -s)" == CYGWIN* ]]; then
-  EXECUTABLE="bin/ichat-cli.exe"
-fi
-
 echo "🧪 Running --version test..."
-"./$EXECUTABLE" --version
+npx ichat-cli --version
 
 echo "🧪 Running --help test..."
-"./$EXECUTABLE" --help
+npx ichat-cli --help
 
 echo
 echo "✅ All tests passed! The package is ready for npm install."

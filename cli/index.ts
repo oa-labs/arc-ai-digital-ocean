@@ -9,7 +9,7 @@ import {
   validateConfig,
   type AgentService
 } from './lib/index.js';
-import packageJson from './package.json';
+import packageJson from './package.json' with { type: 'json' };
 
 declare const require: any;
 declare const module: any;

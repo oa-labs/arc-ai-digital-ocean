@@ -12,16 +12,25 @@ Command line tool for interacting with the iChat Ocean agent service.
 
 ## Installation
 
+### Global Installation (Recommended)
+
+```bash
+npm install -g @ichat-ocean/cli
+```
+
+### Local Installation
+
+```bash
+npm install @ichat-ocean/cli
+```
+
+### Development Setup
+
+For development, clone the repository and build from source:
+
 ```bash
 cd cli
 npm install
-```
-
-## Build
-
-The CLI is written in TypeScript and needs to be compiled before running:
-
-```bash
 npm run build
 ```
 
