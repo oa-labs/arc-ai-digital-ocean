@@ -65,6 +65,32 @@ const executablePath = path.join(binDir, executableName);
     chmodSync(executablePath, 0o755);
   }
 
+  const npmBinDir = path.resolve(projectRoot, '..', '.bin');
+  if (existsSync(npmBinDir)) {
+    const posixWrapper = path.join(npmBinDir, cliName);
+    const cmdWrapper = `${posixWrapper}.cmd`;
+    const ps1Wrapper = `${posixWrapper}.ps1`;
+
+    try { rmSync(posixWrapper); } catch {}
+    try { rmSync(cmdWrapper); } catch {}
+    try { rmSync(ps1Wrapper); } catch {}
+
+    const relativeBinaryPathPosix = path.relative(npmBinDir, executablePath);
+    const relativeBinaryPathWin = relativeBinaryPathPosix.replace(/[\\/]/g, '\\');
+    const winPrefix = relativeBinaryPathWin.startsWith('\\') || relativeBinaryPathWin.startsWith('/') ? '' : '\\';
+
+    if (process.platform === 'win32') {
+      writeFileSync(cmdWrapper, `@ECHO OFF\r\nSET "BIN_DIR=%~dp0"\r\n"%BIN_DIR%${winPrefix}${relativeBinaryPathWin}" %*\r\n`);
+      writeFileSync(ps1Wrapper, `#!/usr/bin/env pwsh\r\n$binDir = Split-Path -Parent $MyInvocation.MyCommand.Path\r\n& "$binDir${winPrefix}${relativeBinaryPathWin}" $args\r\n`);
+    } else {
+      writeFileSync(
+        posixWrapper,
+        `#!/bin/sh\nBIN_DIR="$(cd "$(dirname "$0")" && pwd)"\nexec "$BIN_DIR/${relativeBinaryPathPosix}" "$@"\n`,
+        { mode: 0o755 }
+      );
+    }
+  }
+
   console.log(`[ichat-cli] Built ${cliName} binary for target ${target}`);
 })().catch(error => {
   console.error(`[ichat-cli] Failed to build binary: ${error instanceof Error ? error.message : String(error)}`);
