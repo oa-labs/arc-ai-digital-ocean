@@ -63,7 +63,7 @@
     }
   },
   "postCreateCommand": "bash .devcontainer/setup.sh",
-  "remoteUser": "vscode",
+  "remoteUser": "node",
   "remoteEnv": {
     "PODMAN_USERNS": "keep-id",
     "BUILDAH_ISOLATION": "chroot",
@@ -77,7 +77,7 @@
   "runArgs": [
     "--privileged"
   ],
-  "containerUser": "vscode",
+  "containerUser": "node",
   "mounts": [
     "source=ichat-bun-cache,target=/root/.bun,type=volume",
     "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",

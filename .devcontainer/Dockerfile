@@ -1,4 +1,5 @@
-FROM node:22-bookworm
+FROM node:24-alpine
+USER 1000  # node
 
 # Enable pnpm via corepack
 RUN corepack enable && corepack prepare pnpm@latest --activate
