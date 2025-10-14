@@ -14,6 +14,7 @@
     "start:dev": "tsc && node dist/index.js"
   },
   "dependencies": {
+    "@ichat-ocean/shared": "workspace:*",
     "@slack/bolt": "^3.17.1",
     "dotenv": "^17.2.3"
   },

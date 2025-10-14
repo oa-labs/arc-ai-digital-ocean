@@ -4,7 +4,7 @@
  * This script shows the integration between the CLI and the shared library
  */
 
-import { createAgentService, getAgentProvider, validateConfig } from '@lib/index.js';
+import { createAgentService, getAgentProvider, validateConfig } from '@ichat-ocean/shared';
 
 console.log('=== CLI Integration Verification ===\n');
 

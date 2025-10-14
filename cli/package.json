@@ -10,22 +10,21 @@
   },
   "files": [
     "dist/",
-    "lib/",
     "bin/",
     "package.json",
     "README.md"
   ],
   "scripts": {
-    "build": "tsc && node ./scripts/sync-lib.js && node ./scripts/create-bin.js",
+    "build": "tsc && node ./scripts/create-bin.js",
     "dev": "tsc --watch",
     "clean": "rm -rf dist bin",
     "type-check": "tsc --noEmit",
     "start": "node ./dist/index.js",
-    "install": "npm --prefix ./lib install",
     "prepublishOnly": "npm run build",
     "lint": "echo 'No linter configured'"
   },
   "dependencies": {
+    "@ichat-ocean/shared": "workspace:*",
     "dotenv": "^17.2.3",
     "openai": "^4.0.0"
   },

@@ -3,8 +3,7 @@ node_modules/
 .pnp
 .pnp.js
 
-# Bun
-.bun/
+.pnpm-store/
 
 cli/lib/bin/ichat-cli
 

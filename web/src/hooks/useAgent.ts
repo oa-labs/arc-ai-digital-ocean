@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { webAgentService } from '../services/agentService';
-import { AgentMessage, AgentResponse } from '@lib/index';
+import { AgentMessage, AgentResponse } from '@ichat-ocean/shared';
 
 interface UseAgentState {
   isLoading: boolean;

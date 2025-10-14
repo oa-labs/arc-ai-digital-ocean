@@ -2,14 +2,13 @@
   "name": "ichat-ocean",
   "version": "1.0.0",
   "description": "AI-powered internal chat agent for workplace safety",
+  "private": true,
   "type": "module",
   "scripts": {
-    "test:deepeval": "evalite tests/deepeval.eval.js",
-    "build:shared": "cd lib && npm run build",
-    "dev:shared": "cd lib && npm run dev",
-    "clean:shared": "cd lib && npm run clean",
-    "build:all": "npm run build:shared",
-    "install:shared": "cd lib && npm install"
+    "build": "pnpm -r build",
+    "dev": "pnpm --filter @ichat-ocean/shared dev",
+    "clean": "pnpm -r clean",
+    "test:deepeval": "evalite tests/deepeval.eval.js"
   },
   "dependencies": {
     "@slack/bolt": "^3.17.1",

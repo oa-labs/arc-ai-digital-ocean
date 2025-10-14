@@ -1,5 +1,5 @@
 import { App, AppOptions, AllMiddlewareArgs, SlackEventMiddlewareArgs } from '@slack/bolt';
-import { createAgentService, AgentService, getConfig, validateConfig } from '@lib/index.js';
+import { createAgentService, AgentService, getConfig, validateConfig } from '@ichat-ocean/shared';
 
 const debug = (...args: any[]): void => {
   if (process.env.DEBUG === '1') {
