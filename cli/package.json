@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "dotenv": "^17.2.3",
+    "openai": "^4.0.0",
     "esbuild": "^0.25.10",
     "pkg": "^5.8.1"
   },

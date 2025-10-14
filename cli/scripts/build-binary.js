@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-import { execFileSync } from 'node:child_process';
 import { chmodSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
+import { exec as pkgExec } from 'pkg';
 
 const SKIP_FLAG = process.env.SKIP_CLI_BINARY_BUILD === '1';
 
@@ -43,20 +43,20 @@ const cliName = 'ichat-cli';
 const executableName = process.platform === 'win32' ? `${cliName}.exe` : cliName;
 const executablePath = path.join(binDir, executableName);
 
-try {
+(async () => {
   if (existsSync(executablePath)) {
     rmSync(executablePath);
   }
 
-  const pkgBinary = process.platform === 'win32'
-    ? path.join(projectRoot, 'node_modules', '.bin', 'pkg.cmd')
-    : path.join(projectRoot, 'node_modules', '.bin', 'pkg');
+  process.chdir(projectRoot);
 
-  execFileSync(
-    pkgBinary,
-    [bundledEntryRelative, '--target', target, '--output', executablePath],
-    { stdio: 'inherit', cwd: projectRoot }
-  );
+  await pkgExec([
+    bundledEntryRelative,
+    '--target',
+    target,
+    '--output',
+    executablePath
+  ]);
 
   if (process.platform === 'win32') {
     const shimPath = path.join(binDir, cliName);
@@ -66,7 +66,7 @@ try {
   }
 
   console.log(`[ichat-cli] Built ${cliName} binary for target ${target}`);
-} catch (error) {
+})().catch(error => {
   console.error(`[ichat-cli] Failed to build binary: ${error instanceof Error ? error.message : String(error)}`);
   process.exitCode = 1;
-}
+});
