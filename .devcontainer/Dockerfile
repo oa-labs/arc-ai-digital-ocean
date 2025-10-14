@@ -1,31 +1,25 @@
-FROM node:24-alpine
-USER 1000  # node
+FROM node:24-trixie-slim
 
-# Enable pnpm via corepack
+# Enable pnpm via corepack (must run as root before switching user)
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Install additional dependencies
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends \
+# Install additional dependencies (using apt for Debian)
+RUN apt update && apt install --no-install-recommends -y \
         curl \
         wget \
         git \
         unzip \
         sudo \
         build-essential \
-        software-properties-common \
-        apt-transport-https \
-        ca-certificates \
         postgresql-client \
-        gnupg \
-        lsb-release \
         jq \
         vim \
         nano \
         htop \
         tree \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+        ca-certificates
+
+USER 1000
 
 # Set working directory
 WORKDIR /workspace

@@ -16,6 +16,9 @@ node_modules/
 # Build outputs
 dist/
 build/
+cli/bin/
+cli/pkg/
+cli/build/
 .vite/
 .next/
 out/
@@ -85,3 +88,4 @@ docker-compose.override.yml
 # Misc
 .turbo/
 .vercel
+cli/ichat-ocean-cli-1.0.0.tgz

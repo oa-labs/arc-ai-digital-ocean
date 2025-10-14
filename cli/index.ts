@@ -1,20 +1,27 @@
 #!/usr/bin/env node
 import process from 'node:process';
 import { createInterface } from 'node:readline/promises';
-import { pathToFileURL } from 'node:url';
 import { stdin as defaultInput, stdout as defaultOutput } from 'node:process';
 import { Readable, Writable } from 'node:stream';
-import { createRequire } from 'node:module';
+import { config as loadEnv } from 'dotenv';
 import {
   createAgentService,
   validateConfig,
   type AgentService
-} from '@lib/index.js';
+} from './lib/index.js';
+import packageJson from './package.json';
 
-const require = createRequire(import.meta.url);
-const { version: cliVersion } = require('../package.json');
+declare const require: any;
+declare const module: any;
 
-await import('dotenv/config').catch(() => {});
+const { version: cliVersion } = packageJson as { version: string };
+
+try {
+  if (typeof process !== 'undefined' && process.env) {
+    process.env.DOTENV_DISABLE_LOGGING ??= 'true';
+  }
+  loadEnv();
+} catch {}
 
 export const DEFAULT_SYSTEM_PROMPT = 'You are a helpful AI assistant for workplace safety and internal communications. Provide clear, professional responses to direct messages.';
 
@@ -237,7 +244,11 @@ export async function runCli(options: RunCliOptions = {}): Promise<void> {
   await interactiveChat(service, parsed.systemPrompt, input, output);
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+const shouldAutoRun = typeof require !== 'undefined'
+  && typeof module !== 'undefined'
+  && require.main === module;
+
+if (shouldAutoRun) {
   runCli().catch(error => {
     console.error('[ERROR]', error?.message || error);
     process.exit(1);

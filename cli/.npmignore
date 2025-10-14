@@ -1,0 +1,43 @@
+# Source files (only include dist/)
+*.ts
+!*.d.ts
+tsconfig.json
+
+# Development files
+test-install.sh
+MIGRATION.md
+verify-integration.ts
+verify-integration.js
+verify-integration.d.ts
+verify-integration.d.ts.map
+bin/
+pkg/
+build/
+*.tgz
+
+# Dependencies that should be resolved by npm
+node_modules/
+package-lock.json
+bun.lock
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Temporary files
+*.tmp
+*.temp

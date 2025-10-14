@@ -6,22 +6,34 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "ichat-cli": "./dist/index.js"
+    "ichat-cli": "./bin/ichat-cli"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node ./scripts/sync-lib.js",
     "dev": "tsc --watch",
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit",
     "start": "node ./dist/index.js",
+    "build:binary": "node ./scripts/build-binary-entry.mjs && node ./scripts/build-binary.js",
     "install": "npm --prefix ./lib install",
+    "postinstall": "npm run build:binary -- --postinstall",
     "lint": "echo 'No linter configured'"
   },
   "dependencies": {
-    "dotenv": "^17.2.3"
+    "dotenv": "^17.2.3",
+    "esbuild": "^0.25.10",
+    "pkg": "^5.8.1"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "typescript": "^5.9.3"
+  },
+  "pkg": {
+    "scripts": [
+      "pkg/index.js"
+    ],
+    "assets": [
+      "package.json"
+    ]
   }
 }
