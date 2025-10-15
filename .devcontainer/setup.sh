@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-bun add -g supabase
+sudo npm install -g supabase
 
 # Install make (should already be available but ensure it's there)
 sudo apt-get update
