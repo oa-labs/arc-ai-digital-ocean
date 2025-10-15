@@ -1,6 +1,6 @@
-# iChat KB Manager
+# iChat Ocean Web Application
 
-A modern, secure file management web application for S3-compatible object storage (DigitalOcean Spaces) with Supabase authentication.
+A modern, secure file management web application for S3-compatible object storage (DigitalOcean Spaces) with Supabase authentication. Part of the iChat Ocean ecosystem for workplace safety AI assistance.
 
 ## Features
 
@@ -206,6 +206,14 @@ If uploads fail:
 ## License
 
 MIT
+
+## Project Context
+
+This web application is part of the iChat Ocean ecosystem. For more information about the overall project:
+
+- [Main Project README](../README.md) - Overview of the complete iChat Ocean system
+- [Business Case](../docs/BUSINESS_CASE.md) - Project justification and ROI analysis
+- [CLI Documentation](../docs/CLI.md) - Command-line interface for AI interactions
 
 ## Support
 

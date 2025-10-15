@@ -138,7 +138,7 @@ cli/
 ├── verify-integration.ts     # Integration verification script (NEW)
 ├── tsconfig.json            # TypeScript config (NEW)
 ├── package.json             # Updated with build scripts
-├── README.md                # Updated documentation
+├── (README.md moved to ../docs/CLI.md) # Updated documentation
 ├── MIGRATION.md             # This file (NEW)
 └── dist/                    # Compiled output (NEW)
     ├── index.js             # Compiled JavaScript

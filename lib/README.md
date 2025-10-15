@@ -124,6 +124,14 @@ When adding new shared functionality:
 4. Update this README with usage examples
 5. Build and test in both projects
 
+## Project Context
+
+This shared library is the core of the iChat Ocean ecosystem, providing common functionality used by:
+
+- [Slack Bot](../bots/slack/README.md) - Slack integration for workplace safety queries
+- [CLI Tool](../docs/CLI.md) - Command-line interface for AI interactions
+- [Web Application](../web/README.md) - File management web interface
+
 ## License
 
 Part of the iChat Ocean project.

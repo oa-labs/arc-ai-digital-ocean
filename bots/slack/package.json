@@ -11,7 +11,8 @@
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit",
     "start": "node dist/index.js",
-    "start:dev": "tsc && node dist/index.js"
+    "start:dev": "tsc && node dist/index.js",
+    "build:docker": "SEMVER=$(node -p \"require('./package.json').version\") && SHORT_HASH=$(git rev-parse --short HEAD) && docker build -t ghcr.io/oa-labs/ichat-slack-bot:${SEMVER}-${SHORT_HASH} ."
   },
   "dependencies": {
     "@ichat-ocean/shared": "workspace:*",

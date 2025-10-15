@@ -11,14 +11,19 @@ iChat Ocean provides intelligent, context-aware responses to workplace safety qu
 ```
 ichat-ocean/
 ├── docs/                    # Project documentation
-│   ├── TECHNICAL_STACK.md   # Technical architecture details
+│   ├── BUSINESS_CASE.md     # Business case and ROI analysis
+│   ├── CLI.md              # CLI tool documentation
+│   ├── MILESTONES.md       # Project development milestones
 │   ├── ASSUMPTIONS.md       # Project assumptions
-│   ├── PROJECT_PLAN.md      # Development plan
 │   └── ...
-├── tests/                   # Test suites
-│   └── deepeval.test.js     # DeepEval quality tests
-├── package.json             # Project dependencies
-└── README.md               # This file
+├── bots/slack/             # Slack bot integration
+├── cli/                    # Command-line interface
+├── lib/                    # Shared library package
+├── web/                    # Web application
+├── tests/                  # Test suites
+│   └── deepeval.test.js    # DeepEval quality tests
+├── package.json            # Project dependencies
+└── README.md              # This file
 ```
 
 ## Testing
@@ -41,7 +46,7 @@ DeepEval is used to evaluate the quality of AI-generated responses to workplace 
    ```
 
 2. **Set Up Environment Variables**
-   
+
    Create a `.env` file with your OpenAI API key (required for DeepEval metrics):
    ```bash
    OPENAI_API_KEY=your_api_key_here
@@ -109,10 +114,16 @@ pnpm run dev
 
 ## Documentation
 
-- [Technical Stack](docs/TECHNICAL_STACK.md) - Detailed architecture and technology choices
-- [Project Plan](docs/PROJECT_PLAN.md) - Development roadmap and milestones
+- [Business Case](docs/BUSINESS_CASE.md) - Value proposition and ROI analysis
+- [CLI Documentation](docs/CLI.md) - Command-line interface guide
+- [Project Milestones](docs/MILESTONES.md) - Development roadmap and milestones
 - [Assumptions](docs/ASSUMPTIONS.md) - Project constraints and assumptions
-- [Business Case](docs/BUSINESS_CASE.md) - Value proposition and ROI
+
+### Component Documentation
+
+- [Slack Bot](bots/slack/README.md) - Slack integration setup and configuration
+- [Shared Library](lib/README.md) - Common functionality and agent services
+- [Web Application](web/README.md) - File management web interface
 
 ## License
 
