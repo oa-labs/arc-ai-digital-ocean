@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-sudo npm install -g supabase
 
 # Install make (should already be available but ensure it's there)
 sudo apt-get update
@@ -55,7 +54,6 @@ sudo chmod 644 /etc/subuid /etc/subgid
 
 # Initialize podman (skip if it fails due to namespace issues)
 podman system migrate 2>/dev/null || echo "Warning: podman system migrate failed, but this may not affect basic functionality"
-
 
 # Setup GitHub Container Registry authentication if credentials are provided
 if [ -n "$GITHUB_USERNAME" ] && [ -n "$GITHUB_TOKEN" ]; then
