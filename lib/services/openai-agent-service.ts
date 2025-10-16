@@ -18,34 +18,37 @@ export class OpenAiAgentService {
    */
   async sendMessage(message: string, context?: AgentMessage[]): Promise<AgentResponse> {
     try {
-      const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+      // Build input array from context and message using EasyInputMessage format
+      const input = [
         ...(context || []).map(msg => ({
-          role: msg.role as 'user' | 'assistant' | 'system',
+          role: msg.role as 'user' | 'assistant' | 'system' | 'developer',
           content: msg.content,
         })),
-        { role: 'user', content: message },
+        { role: 'user' as const, content: message },
       ];
 
-      const completion = await this.client.chat.completions.create({
+      // Use the Responses API instead of Chat Completions
+      const response = await this.client.responses.create({
         model: this.config.model || 'gpt-3.5-turbo',
-        messages,
+        input,
         temperature: this.config.temperature || 0.7,
-        max_tokens: this.config.maxTokens || 1000,
+        max_output_tokens: this.config.maxTokens || 1000,
+        store: false, // Disable storage for privacy/compliance
       });
 
-      const choice = completion.choices[0];
-      if (!choice.message?.content) {
+      // Extract content from response using output_text helper
+      if (!response.output_text) {
         throw new Error('No response content received from OpenAI');
       }
 
       return {
-        content: choice.message.content,
+        content: response.output_text,
         usage: {
-          promptTokens: completion.usage?.prompt_tokens || 0,
-          completionTokens: completion.usage?.completion_tokens || 0,
-          totalTokens: completion.usage?.total_tokens || 0,
+          promptTokens: response.usage?.input_tokens || 0,
+          completionTokens: response.usage?.output_tokens || 0,
+          totalTokens: (response.usage?.input_tokens || 0) + (response.usage?.output_tokens || 0),
         },
-        model: completion.model || this.config.model || 'gpt-3.5-turbo',
+        model: response.model || this.config.model || 'gpt-3.5-turbo',
         timestamp: new Date(),
       };
     } catch (error: any) {
@@ -70,10 +73,41 @@ export class OpenAiAgentService {
    * Send a system message followed by a user message
    */
   async sendSystemMessage(systemPrompt: string, userMessage: string): Promise<AgentResponse> {
-    const context: AgentMessage[] = [
-      { role: 'system', content: systemPrompt, timestamp: new Date() },
-    ];
-    return this.sendMessage(userMessage, context);
+    try {
+      // Use the Responses API with instructions parameter for cleaner semantics
+      const response = await this.client.responses.create({
+        model: this.config.model || 'gpt-3.5-turbo',
+        instructions: systemPrompt,
+        input: userMessage,
+        temperature: this.config.temperature || 0.7,
+        max_output_tokens: this.config.maxTokens || 1000,
+        store: false, // Disable storage for privacy/compliance
+      });
+
+      // Extract content from response using output_text helper
+      if (!response.output_text) {
+        throw new Error('No response content received from OpenAI');
+      }
+
+      return {
+        content: response.output_text,
+        usage: {
+          promptTokens: response.usage?.input_tokens || 0,
+          completionTokens: response.usage?.output_tokens || 0,
+          totalTokens: (response.usage?.input_tokens || 0) + (response.usage?.output_tokens || 0),
+        },
+        model: response.model || this.config.model || 'gpt-3.5-turbo',
+        timestamp: new Date(),
+      };
+    } catch (error: any) {
+      const agentError: AgentError = {
+        message: error.message || 'Unknown error occurred',
+        code: error.code,
+        status: error.status,
+        timestamp: new Date(),
+      };
+      throw agentError;
+    }
   }
 
   /**
