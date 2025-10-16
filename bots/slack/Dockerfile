@@ -1,5 +1,5 @@
 # Multi-stage build for production Slack bot
-FROM node:18-alpine AS builder
+FROM node:22-alpine AS builder
 
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate

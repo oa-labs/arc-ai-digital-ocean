@@ -7,7 +7,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "build:container": "node scripts/build-container.js"
+    "build:container": "SEMVER=$(node -p \"require('./package.json').version\") && SHORT_HASH=$(git rev-parse --short HEAD) && podman build --platform linux/amd64 -f Dockerfile -t ghcr.io/oa-labs/ichat-kb-manager:${SEMVER}-${SHORT_HASH} ..",
+    "push:container": "SEMVER=$(node -p \"require('./package.json').version\") && SHORT_HASH=$(git rev-parse --short HEAD) && podman push -q ghcr.io/oa-labs/ichat-kb-manager:${SEMVER}-${SHORT_HASH}"
   },
   "dependencies": {
     "@ichat-ocean/shared": "workspace:*",

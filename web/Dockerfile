@@ -6,16 +6,22 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /workspace
 
-# Copy the lib directory first
-COPY lib/ ./lib/
+# Copy workspace files
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
 
-# Copy web files
-COPY web/ ./web/
+# Copy all workspace packages
+COPY lib ./lib
+COPY web ./web
 
-# Install dependencies and build from web directory
+# Install all dependencies
+RUN pnpm install --frozen-lockfile
+
+# Build the shared lib
+RUN pnpm --filter @ichat-ocean/shared build
+
+# Build the web app
 WORKDIR /workspace/web
 ENV CI=true
-RUN pnpm install
 RUN pnpm run build
 
 # Production stage
