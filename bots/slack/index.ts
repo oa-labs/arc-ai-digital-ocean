@@ -8,9 +8,19 @@ const debug = (...args: any[]): void => {
   }
 };
 
+// Log environment variable status for debugging
+console.log('[INFO] Environment check:');
+console.log('[INFO]  - SLACK_BOT_TOKEN:', process.env.SLACK_BOT_TOKEN ? `Set (${process.env.SLACK_BOT_TOKEN.substring(0, 10)}...)` : 'NOT SET');
+console.log('[INFO]  - SLACK_SIGNING_SECRET:', process.env.SLACK_SIGNING_SECRET ? 'Set' : 'NOT SET');
+console.log('[INFO]  - SLACK_APP_TOKEN:', process.env.SLACK_APP_TOKEN ? `Set (${process.env.SLACK_APP_TOKEN.substring(0, 10)}...)` : 'NOT SET');
+console.log('[INFO]  - SLACK_SOCKET_MODE:', process.env.SLACK_SOCKET_MODE || 'NOT SET');
+
 const requireEnv = (name: string): string => {
-  const value = process.env[name];
+  const value = process.env[name]?.split('#')[0].trim();
   if (!value) {
+    console.error(`[ERROR] Missing required environment variable: ${name}`);
+    console.error('[ERROR] Please ensure environment variables are passed to the container.');
+    console.error('[ERROR] Example: docker run --env-file .env ... or use -e flags');
     throw new Error(`Missing environment variable: ${name}`);
   }
   return value;
