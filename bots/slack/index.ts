@@ -16,7 +16,7 @@ const requireEnv = (name: string): string => {
   return value;
 };
 
-const useSocketMode = process.env.SLACK_SOCKET_MODE === 'true';
+const useSocketMode = ['true', '1', 'yes', 'on'].includes(process.env.SLACK_SOCKET_MODE?.toLowerCase() || '');
 debug('Socket mode:', useSocketMode);
 
 interface UnhandledEventHook {
