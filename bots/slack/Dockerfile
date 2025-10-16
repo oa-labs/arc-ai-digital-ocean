@@ -1,38 +1,48 @@
 # Multi-stage build for production Slack bot
 FROM node:18-alpine AS builder
 
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
 WORKDIR /app
 
-# Build shared lib first
-COPY lib/package*.json ./lib/
-WORKDIR /app/lib
-RUN npm ci
-COPY lib ./
-RUN npm run build
+# Copy workspace files
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
 
-# Build slack bot
-WORKDIR /app/bots/slack
-COPY bots/slack/package*.json ./
-RUN npm ci
-COPY bots/slack ./
-RUN npm run build
+# Copy all workspace packages
+COPY lib ./lib
+COPY bots/slack ./bots/slack
+
+# Install all dependencies
+RUN pnpm install --frozen-lockfile
+
+# Build the shared lib
+RUN pnpm --filter @ichat-ocean/shared build
+
+# Build the slack bot
+RUN pnpm --filter @ichat-ocean/slack-bot build
 
 # Production stage
 FROM node:18-alpine
 
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
 WORKDIR /app
 
-# Copy built lib with dependencies
-COPY --from=builder /app/lib/package*.json ./lib/
-COPY --from=builder /app/lib/dist ./lib/dist
-WORKDIR /app/lib
-RUN npm ci --omit=dev
+# Copy workspace configuration
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
 
-# Copy built slack bot with dependencies
-WORKDIR /app/bots/slack
-COPY --from=builder /app/bots/slack/package*.json ./
-COPY --from=builder /app/bots/slack/dist ./dist/
-RUN npm ci --omit=dev
+# Copy package.json files for all packages
+COPY lib/package.json ./lib/
+COPY bots/slack/package.json ./bots/slack/
+
+# Install production dependencies only
+RUN pnpm install --frozen-lockfile --prod
+
+# Copy built artifacts
+COPY --from=builder /app/lib/dist ./lib/dist
+COPY --from=builder /app/bots/slack/dist ./bots/slack/dist
 
 # Set working directory to slack bot
 WORKDIR /app/bots/slack
