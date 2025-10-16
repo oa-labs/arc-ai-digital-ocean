@@ -1,4 +1,6 @@
-import { App, AppOptions, AllMiddlewareArgs, SlackEventMiddlewareArgs } from '@slack/bolt';
+import pkg from '@slack/bolt';
+const { App } = pkg;
+import type { App as AppType, AppOptions, AllMiddlewareArgs, SlackEventMiddlewareArgs } from '@slack/bolt';
 import { createAgentService, AgentService, getConfig, validateConfig } from '@ichat-ocean/shared';
 
 const debug = (...args: any[]): void => {
@@ -178,13 +180,13 @@ export const handleAppMention = async ({ event, say }: SlackEventMiddlewareArgs<
   }
 };
 
-export const registerHandlers = (app: App): App => {
+export const registerHandlers = (app: AppType): AppType => {
   debug('Registering message, app_mention, app_home_opened, and action handlers');
   app.message(handleMessage);
   app.event('app_mention', handleAppMention);
 
   // App Home: publish Home tab when opened
-  app.event('app_home_opened', async ({ event, client }) => {
+  app.event('app_home_opened', async ({ event, client }: any) => {
     debug('app_home_opened for user', event?.user);
     try {
       await client.views.publish({
@@ -206,7 +208,7 @@ export const registerHandlers = (app: App): App => {
   });
 
   // Button: say hi back (only works in message contexts)
-  app.action('btn_say_hi', async ({ ack, body, say, respond }) => {
+  app.action('btn_say_hi', async ({ ack, body, say, respond }: any) => {
     await ack();
     debug('btn_say_hi clicked by user', body?.user?.id);
     // In Home tab, respond/say are not available; this is for message threads only
@@ -218,7 +220,7 @@ export const registerHandlers = (app: App): App => {
   });
 
   // Button: open a modal (requires chat:write scope)
-  app.action('btn_open_modal', async ({ ack, body, client }) => {
+  app.action('btn_open_modal', async ({ ack, body, client }: any) => {
     await ack();
     debug('btn_open_modal clicked; opening modal');
     try {
@@ -249,7 +251,7 @@ export const registerHandlers = (app: App): App => {
   });
 
   // Handle modal submission
-  app.view('demo_modal', async ({ ack, body }) => {
+  app.view('demo_modal', async ({ ack, body }: any) => {
     await ack();
     debug('Modal submitted by user', body?.user?.id);
   });
@@ -257,7 +259,7 @@ export const registerHandlers = (app: App): App => {
   return app;
 };
 
-export const createSlackApp = (options: AppOptions): App => {
+export const createSlackApp = (options: AppOptions): AppType => {
   const app = new App(options);
 
   // Add error event listeners for better troubleshooting
