@@ -54,12 +54,13 @@ RUN addgroup -g 1001 -S nodejs && \
 
 USER nodejs
 
-# Expose port (default 3000)
+# Expose port (default 3000) - only needed for HTTP mode, not socket mode
 EXPOSE 3000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
+# Health check disabled for socket mode (no HTTP server)
+# For HTTP mode, uncomment and add a /health endpoint:
+# HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+#   CMD node -e "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
 
 # Start the bot
 CMD ["node", "dist/index.js"]

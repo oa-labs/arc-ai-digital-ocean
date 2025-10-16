@@ -1,6 +1,6 @@
 {
   "name": "@ichat-ocean/slack-bot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Slack bot for iChat Ocean",
   "type": "module",
   "main": "./dist/index.js",

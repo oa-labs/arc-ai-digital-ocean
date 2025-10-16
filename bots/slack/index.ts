@@ -63,13 +63,18 @@ const app = createSlackApp(appOptions);
 const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
 
 const startWithRetry = async (maxRetries: number = 5): Promise<void> => {
-  const port = Number(process.env.SLACK_PORT) || 3000;
-
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      debug(`Starting app on port: ${port} (attempt ${attempt}/${maxRetries})`);
-      await app.start({ port });
-      console.log(`⚡️ Slack bot is running on port ${port}`);
+      if (useSocketMode) {
+        debug('Starting app in socket mode (no port binding)');
+        await app.start();
+        console.log('⚡️ Slack bot is running in socket mode');
+      } else {
+        const port = Number(process.env.SLACK_PORT) || 3000;
+        debug(`Starting app on port: ${port} (attempt ${attempt}/${maxRetries})`);
+        await app.start({ port, host: '0.0.0.0' });
+        console.log(`⚡️ Slack bot is running on port ${port}`);
+      }
       debug('App started successfully');
       return; // Success, exit the retry loop
     } catch (error) {
