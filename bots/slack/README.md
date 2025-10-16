@@ -76,11 +76,11 @@ docker build -t ichat-slack-bot .
 ### Running the Container
 Run the container with your environment variables:
 ```bash
-docker run -d \
- --name ichat-slack-bot \
- -p 3000:3000 \
- --env-file .env \
- ichat-slack-bot
+    docker run -d \
+    --name ichat-slack-bot \
+    -p 3000:3000 \
+    --env-file .env \
+    ichat-slack-bot
 ```
 
 ### Environment Variables for Docker
