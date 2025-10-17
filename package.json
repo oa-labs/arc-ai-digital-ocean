@@ -8,7 +8,7 @@
     "build": "pnpm -r build",
     "dev": "pnpm --filter @ichat-ocean/shared dev",
     "clean": "pnpm -r clean",
-    "test:deepeval": "evalite tests/deepeval.eval.js"
+    "test:deepeval": "vitest run tests/deepeval.test.js"
   },
   "dependencies": {
     "@slack/bolt": "^4.5.0",
@@ -17,8 +17,8 @@
   "devDependencies": {
     "autoevals": "^0.0.104",
     "dotenv": "^17.2.3",
-    "evalite": "^0.4.0",
-    "vitest": "^2.0.0"
+    "vitest": "^2.0.0",
+    "vitest-evals": "^0.5.0"
   },
   "engines": {
     "node": ">=18.0.0"

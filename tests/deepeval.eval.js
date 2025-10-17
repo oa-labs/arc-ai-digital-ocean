@@ -8,23 +8,20 @@
 import { config } from 'dotenv';
 import { evalite } from 'evalite';
 import { Factuality, AnswerCorrectness, AnswerRelevancy } from 'autoevals';
-import OpenAI from 'openai';
+import { createAgentService } from '../lib/dist/services/agent-service-factory.js';
 
 // Load environment variables from .env file
 config();
 
-// Initialize OpenAI client with OpenRouter support
-// Supports both OpenAI and OpenRouter APIs
-// For OpenRouter: Set OPENAI_BASE_URL=https://openrouter.ai/api/v1 and use your OpenRouter API key
-// For OpenAI: Use default base URL and your OpenAI API key
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-  baseURL: process.env.OPENAI_BASE_URL || "https://api.openai.com/v1",
-  defaultHeaders: process.env.OPENAI_BASE_URL?.includes('openrouter.ai') ? {
-    'HTTP-Referer': process.env.OPENROUTER_REFERER || 'https://github.com/evalite',
-    'X-Title': process.env.OPENROUTER_TITLE || 'Evalite Workplace Safety Test',
-  } : {},
-});
+// Initialize agent service lazily (supports both OpenAI and DigitalOcean)
+let agentService = null;
+
+function getAgentService() {
+  if (!agentService) {
+    agentService = createAgentService();
+  }
+  return agentService;
+}
 
 /**
  * Store test case metadata (context and expected) indexed by input question
@@ -126,39 +123,14 @@ evalite("Workplace Safety Q&A Evaluation", {
     currentQuestion = question;
     currentContext = contextStr;
 
-    const messages = [
-      {
-        role: 'system',
-        content:
-          'You are a workplace safety expert. Answer questions about workplace safety clearly and accurately based on the provided context information.',
-      },
-      {
-        role: 'user',
-        content: `Question: ${question}\n\nContext Information:\n${contextStr}\n\nPlease answer the question based on the context provided above.`,
-      },
-    ];
+    const systemPrompt = 'You are a workplace safety expert. Answer questions about workplace safety clearly and accurately based on the provided context information.';
+    const userMessage = `Question: ${question}\n\nContext Information:\n${contextStr}\n\nPlease answer the question based on the context provided above.`;
 
     try {
-      const isOpenRouter = !!process.env.OPENAI_BASE_URL?.includes('openrouter.ai');
-      const defaultModel = isOpenRouter ? 'microsoft/wizardlm-2-8x22b' : 'gpt-4o-mini';
-      const model = process.env.OPENAI_MODEL || defaultModel;
-
-      const requestParams = {
-        model,
-        messages,
-        temperature: Number.parseFloat(process.env.OPENAI_TEMPERATURE || '.2'),
-        max_tokens: Number.parseInt(process.env.OPENAI_MAX_TOKENS || '300', 10),
-      };
-
-      const completion = await openai.chat.completions.create(requestParams);
-      return completion.choices?.[0]?.message?.content ?? '';
+      const service = getAgentService();
+      const response = await service.sendSystemMessage(systemPrompt, userMessage);
+      return response.content;
     } catch (error) {
-      console.error('Error calling API:', error);
-      // Provide more detailed error information for debugging
-      if (error.response) {
-        console.error('Response status:', error.response.status);
-        console.error('Response data:', error.response.data);
-      }
       throw new Error(`Failed to generate response: ${error.message}`);
     }
   },

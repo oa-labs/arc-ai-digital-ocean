@@ -5,9 +5,9 @@
 - **Build all**: `pnpm build` (builds all workspace packages via TypeScript)
 - **Type check**: `pnpm -r type-check` (or `tsc --noEmit` in individual packages)
 - **Lint**: `pnpm --filter <package> lint` (web and cli have linting configured)
-- **Test**: `pnpm test:deepeval` (runs Evalite test suite for AI response quality)
+- **Test**: `pnpm test:deepeval` (runs vitest-evals test suite for AI response quality using autoevals scorers)
 - **Run single test**: `vitest run <test-file>` (e.g., `vitest run tests/cli-tool.test.js`)
-- **Dev mode**: `pnpm dev` (watches lib package) or per-package: `pnpm --filter <package> dev`
+- **Dev mode**: `pnpm dev` (watches lib package) or per-package: `pnpm--filter <package> dev`
 
 ## Architecture
 
@@ -17,7 +17,7 @@
 - **bots/slack** (`@ichat-ocean/slack-bot`): Slack Bot with Assistant integration (Bolt v4.5.0+), supports threaded conversations with streaming responses and feedback buttons
 - **web** (`s3-file-manager`): React + Vite app for file management UI with Tailwind CSS
 - **Database**: Supabase PostgreSQL with pgvector for RAG (embeddings via OpenAI ada-002) and slack_thread_contexts table for Assistant thread storage
-- **Testing**: Vitest for unit tests, Evalite + autoevals for LLM quality evaluation
+- **Testing**: Vitest for unit tests, vitest-evals + autoevals for LLM quality evaluation
 
 ## Code Style
 
