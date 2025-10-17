@@ -61,38 +61,42 @@ class S3Service {
   }
 
   /**
-   * Upload a file to S3
-   */
-  async uploadFile(file: File, onProgress?: (progress: number) => void): Promise<S3File> {
-    try {
-      const key = `${Date.now()}-${file.name}`;
+    * Upload a file to S3
+    */
+   async uploadFile(file: File, onProgress?: (progress: number) => void): Promise<S3File> {
+     try {
+       const key = `${Date.now()}-${file.name}`;
 
-      const command = new PutObjectCommand({
-        Bucket: this.bucket,
-        Key: key,
-        Body: file,
-        ContentType: file.type,
-        ACL: 'private',
-      });
+       // Convert File to Uint8Array for AWS SDK v3 compatibility
+       const fileBuffer = await file.arrayBuffer();
+       const uint8Array = new Uint8Array(fileBuffer);
 
-      await this.client.send(command);
+       const command = new PutObjectCommand({
+         Bucket: this.bucket,
+         Key: key,
+         Body: uint8Array,
+         ContentType: file.type,
+         ACL: 'private',
+       });
 
-      // Simulate progress for better UX (AWS SDK v3 doesn't provide native progress)
-      if (onProgress) {
-        onProgress(100);
-      }
+       await this.client.send(command);
 
-      return {
-        key,
-        name: file.name,
-        size: file.size,
-        lastModified: new Date(),
-      };
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      throw new Error(`Failed to upload file: ${file.name}`);
-    }
-  }
+       // Simulate progress for better UX (AWS SDK v3 doesn't provide native progress)
+       if (onProgress) {
+         onProgress(100);
+       }
+
+       return {
+         key,
+         name: file.name,
+         size: file.size,
+         lastModified: new Date(),
+       };
+     } catch (error) {
+       console.error('Error uploading file:', error);
+       throw new Error(`Failed to upload file: ${file.name}`);
+     }
+   }
 
   /**
    * Delete a file from S3
