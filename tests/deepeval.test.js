@@ -9,9 +9,29 @@ import { config } from 'dotenv';
 import { describeEval } from 'vitest-evals';
 import { Factuality, AnswerCorrectness, AnswerRelevancy } from 'autoevals';
 import { createAgentService } from '../lib/dist/services/agent-service-factory.js';
+import { getConfig, reloadConfig } from '../lib/dist/config/index.js';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
-// Load environment variables from .env file
-config();
+// Load environment variables from .env file in project root
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+config({ path: join(__dirname, '..', '.env') });
+
+// Reload config after loading .env
+reloadConfig();
+
+// Print test configuration
+const testConfig = getConfig();
+console.log('\n=== Test Configuration ===');
+console.log(`Provider: ${testConfig.agentProvider}`);
+console.log(`Model: ${testConfig.agent.model}`);
+console.log(`Temperature: ${testConfig.agent.temperature}`);
+console.log(`Max Tokens: ${testConfig.agent.maxTokens}`);
+if (testConfig.agent.endpoint) {
+  console.log(`Endpoint: ${testConfig.agent.endpoint}`);
+}
+console.log('==========================\n');
 
 // Initialize agent service lazily (supports both OpenAI and DigitalOcean)
 let agentService = null;
