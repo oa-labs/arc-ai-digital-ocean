@@ -11,7 +11,7 @@
     "test:deepeval": "evalite tests/deepeval.eval.js"
   },
   "dependencies": {
-    "@slack/bolt": "^3.17.1",
+    "@slack/bolt": "^4.5.0",
     "openai": "^4.0.0"
   },
   "devDependencies": {

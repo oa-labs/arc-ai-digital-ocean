@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@ichat-ocean/shared": "workspace:*",
-    "@slack/bolt": "^3.17.1",
+    "@slack/bolt": "^4.5.0",
     "dotenv": "^17.2.3"
   },
   "devDependencies": {
@@ -25,4 +25,3 @@
     "typescript": "^5.9.3"
   }
 }
-

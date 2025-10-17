@@ -3,4 +3,5 @@ export * from '../types/index.js';
 export * from '../services/openai-agent-service.js';
 export * from '../services/digitalocean-agent-service.js';
 export * from '../services/agent-service-factory.js';
+export * from '../services/supabase-thread-context.js';
 export * from '../config/index.js';

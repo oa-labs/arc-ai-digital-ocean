@@ -12,11 +12,11 @@
 ## Architecture
 
 - **Monorepo**: pnpm workspace with 4 packages: `lib` (shared), `cli`, `bots/slack`, `web`
-- **lib** (`@ichat-ocean/shared`): Core agent services (OpenAI, DigitalOcean adapters), shared types, exported via `dist/src/index.js`
+- **lib** (`@ichat-ocean/shared`): Core agent services (OpenAI, DigitalOcean adapters), thread context storage, shared types
 - **cli** (`@ichat-ocean/cli`): Command-line tool for querying the agent service
-- **bots/slack** (`@ichat-ocean/slack-bot`): Slack Bot integration using Bolt framework
+- **bots/slack** (`@ichat-ocean/slack-bot`): Slack Bot with Assistant integration (Bolt v4.5.0+), supports threaded conversations with streaming responses and feedback buttons
 - **web** (`s3-file-manager`): React + Vite app for file management UI with Tailwind CSS
-- **Database**: Supabase PostgreSQL with pgvector for RAG (embeddings via OpenAI ada-002)
+- **Database**: Supabase PostgreSQL with pgvector for RAG (embeddings via OpenAI ada-002) and slack_thread_contexts table for Assistant thread storage
 - **Testing**: Vitest for unit tests, Evalite + autoevals for LLM quality evaluation
 
 ## Code Style

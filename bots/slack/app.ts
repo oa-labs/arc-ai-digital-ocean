@@ -1,7 +1,7 @@
-import pkg from '@slack/bolt';
-const { App } = pkg;
-import type { App as AppType, AppOptions, AllMiddlewareArgs, SlackEventMiddlewareArgs } from '@slack/bolt';
-import { createAgentService, AgentService, getConfig, validateConfig } from '@ichat-ocean/shared';
+import { App, Assistant } from '@slack/bolt';
+import type { App as AppType, AppOptions, AllMiddlewareArgs, SlackEventMiddlewareArgs, AssistantConfig } from '@slack/bolt';
+import { createAgentService, AgentService, getConfig, validateConfig, createThreadContextStore, ThreadContextStore } from '@ichat-ocean/shared';
+import { SlackThreadContextStoreAdapter } from './thread-context-adapter.js';
 
 const debug = (...args: any[]): void => {
   if (process.env.DEBUG === '1') {
@@ -180,8 +180,121 @@ export const handleAppMention = async ({ event, say }: SlackEventMiddlewareArgs<
   }
 };
 
+const createAssistantConfig = (): AssistantConfig => {
+  const threadContextStore = createThreadContextStore();
+  const assistantThreadContextStore = threadContextStore 
+    ? new SlackThreadContextStoreAdapter(threadContextStore)
+    : undefined;
+
+  return {
+    threadStarted: async ({ saveThreadContext, client, context }) => {
+      debug('Assistant thread started');
+      try {
+        await saveThreadContext();
+        debug('Thread context saved on start');
+      } catch (e) {
+        console.error('[ERROR] Failed to save thread context on start:', e);
+      }
+    },
+
+    threadContextChanged: async ({ saveThreadContext }) => {
+      debug('Assistant thread context changed');
+      try {
+        await saveThreadContext();
+        debug('Thread context saved on change');
+      } catch (e) {
+        console.error('[ERROR] Failed to save thread context on change:', e);
+      }
+    },
+
+    userMessage: async ({ client, context, logger, message, getThreadContext, say, setTitle, setStatus }) => {
+      if (!('text' in message) || !('thread_ts' in message) || !message.text || !message.thread_ts) {
+        return;
+      }
+
+      const { channel, thread_ts } = message;
+      const { userId, teamId } = context;
+
+      try {
+        await setTitle(message.text.substring(0, 100));
+        await setStatus({
+          status: 'thinking...',
+        });
+
+        // Retrieve thread history for context
+        const thread = await client.conversations.replies({
+          channel,
+          ts: thread_ts,
+          oldest: thread_ts,
+        });
+
+        const threadHistory = thread.messages?.map((m: any) => {
+          const role = m.bot_id ? 'Assistant' : 'User';
+          return `${role}: ${m.text || ''}`;
+        }) || [];
+        const parsedThreadHistory = threadHistory.join('\n');
+
+        const systemPrompt = 'You are a helpful AI assistant for workplace safety and internal communications. Provide clear, professional responses.';
+        const fullPrompt = parsedThreadHistory ? `${parsedThreadHistory}\nUser: ${message.text}` : message.text;
+
+        debug('Generating AI response for assistant thread');
+        const response = await agentService.sendSystemMessage(systemPrompt, fullPrompt);
+
+        // Stream the response
+        const streamer = client.chatStream({
+          channel: channel,
+          recipient_team_id: teamId,
+          recipient_user_id: userId,
+          thread_ts: thread_ts,
+        });
+
+        // Since we already have the full response, simulate streaming by chunking
+        const chunkSize = 50;
+        const content = response.content;
+        for (let i = 0; i < content.length; i += chunkSize) {
+          const chunk = content.substring(i, Math.min(i + chunkSize, content.length));
+          await streamer.append({
+            markdown_text: chunk,
+          });
+        }
+
+        // Add feedback buttons at the end
+        await streamer.stop({
+          blocks: [
+            {
+              type: 'context_actions',
+              elements: [
+                {
+                  type: 'feedback_buttons',
+                  action_id: 'feedback',
+                  positive_button: { text: { type: 'plain_text', text: 'Good' }, value: 'good-feedback' },
+                  negative_button: { text: { type: 'plain_text', text: 'Bad' }, value: 'bad-feedback' },
+                },
+              ],
+            },
+          ],
+        });
+
+        debug('AI response streamed successfully');
+      } catch (e) {
+        console.error('[ERROR] Failed to generate AI response for assistant:', e);
+        await say({ text: 'Sorry, something went wrong!' });
+      }
+    },
+
+    ...(assistantThreadContextStore && { threadContextStore: assistantThreadContextStore }),
+  };
+};
+
 export const registerHandlers = (app: AppType): AppType => {
-  debug('Registering message, app_mention, app_home_opened, and action handlers');
+  debug('Registering message, app_mention, app_home_opened, assistant, and action handlers');
+
+  // Register Assistant
+  const assistant = new Assistant(createAssistantConfig());
+  app.assistant(assistant);
+  debug('Assistant registered');
+
+  // Keep existing handlers for backwards compatibility
   app.message(handleMessage);
   app.event('app_mention', handleAppMention);
 
@@ -256,6 +369,34 @@ export const registerHandlers = (app: AppType): AppType => {
     debug('Modal submitted by user', body?.user?.id);
   });
 
+  // Handle feedback buttons from Assistant responses
+  app.action('feedback', async ({ ack, body, client, logger }: any) => {
+    await ack();
+    debug('Feedback received from user', body?.user?.id);
+
+    try {
+      const value = body?.actions?.[0]?.value;
+      const isPositive = value === 'good-feedback';
+      const feedbackText = isPositive ? 'Thanks for the positive feedback! 👍' : 'Thanks for the feedback. We\'ll work on improving! 👎';
+
+      await client.chat.postEphemeral({
+        channel: body.channel.id,
+        user: body.user.id,
+        text: feedbackText,
+      });
+
+      // Log feedback for analysis
+      console.log('[INFO] Assistant feedback:', {
+        userId: body.user.id,
+        feedback: isPositive ? 'positive' : 'negative',
+        messageTs: body.message?.ts,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error('[ERROR] Failed to handle feedback:', error);
+    }
+  });
+
   return app;
 };
 
@@ -263,7 +404,7 @@ export const createSlackApp = (options: AppOptions): AppType => {
   const app = new App(options);
 
   // Add error event listeners for better troubleshooting
-  app.error(async (error) => {
+  app.error(async (error: Error & { code?: string }) => {
     console.error('[ERROR] Slack app error:', {
       message: error.message,
       code: error.code,
