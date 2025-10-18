@@ -102,9 +102,26 @@ const testCases = [
 ];
 
 // AI task function
-async function answerSafetyQuestion({ input, context }) {
+async function answerSafetyQuestion(testCase) {
+  // Handle vitest-evals parameter passing patterns
+  let input, context;
+
+  if (typeof testCase === 'string') {
+    // If it's just a string, treat it as the input question
+    input = testCase;
+    context = [];
+  } else if (testCase && typeof testCase === 'object') {
+    // If it's an object, extract input and context
+    input = testCase.input;
+    context = testCase.context || [];
+  } else {
+    // Fallback
+    input = 'No question provided';
+    context = [];
+  }
+
   const contextStr = Array.isArray(context) ? context.join('\n') : String(context || '');
-  
+
   const systemPrompt = 'You are a workplace safety expert. Answer questions about workplace safety clearly and accurately based on the provided context information.';
   const userMessage = `Question: ${input}\n\nContext Information:\n${contextStr}\n\nPlease answer the question based on the context provided above.`;
 
@@ -113,7 +130,27 @@ async function answerSafetyQuestion({ input, context }) {
     const response = await service.sendSystemMessage(systemPrompt, userMessage);
     return response.content;
   } catch (error) {
-    throw new Error(`Failed to generate response: ${error.message}`);
+    // Enhanced error handling with detailed debugging information
+    if (error.timestamp && error.provider) {
+      // This is an AgentError with enhanced debugging info
+      const debugInfo = [
+        `Provider: ${error.provider}`,
+        `Status: ${error.status || 'Unknown'}`,
+        `Code: ${error.code || 'None'}`,
+        `Endpoint: ${error.endpoint || 'Unknown'}`,
+        `Model: ${error.model || 'Unknown'}`,
+        `Timestamp: ${error.timestamp.toISOString()}`,
+        ...(error.requestId ? [`Request ID: ${error.requestId}`] : []),
+        ...(error.responseHeaders ? [`Response Headers: ${JSON.stringify(error.responseHeaders, null, 2)}`] : []),
+        ...(error.requestBody ? [`Request Body: ${JSON.stringify(error.requestBody, null, 2)}`] : []),
+        ...(error.stack ? [`Stack Trace: ${error.stack}`] : []),
+      ].join('\n');
+
+      throw new Error(`Failed to generate response: ${error.message}\n\n=== Debug Information ===\n${debugInfo}`);
+    } else {
+      // Fallback for generic errors
+      throw new Error(`Failed to generate response: ${error.message}`);
+    }
   }
 }
 
@@ -125,7 +162,26 @@ describeEval('Workplace Safety Q&A Evaluation', {
     Factuality,
     AnswerCorrectness,
     // Custom wrapper for AnswerRelevancy to include context
-    async ({ input, output, expected, context }) => {
+    async (testCase) => {
+      let input, output, expected, context;
+
+      if (typeof testCase === 'string') {
+        input = testCase;
+        output = '';
+        expected = '';
+        context = [];
+      } else if (testCase && typeof testCase === 'object') {
+        input = testCase.input;
+        output = testCase.output || '';
+        expected = testCase.expected || '';
+        context = testCase.context || [];
+      } else {
+        input = '';
+        output = '';
+        expected = '';
+        context = [];
+      }
+
       const contextStr = Array.isArray(context) ? context.join('\n') : String(context || '');
       return await AnswerRelevancy({
         input,

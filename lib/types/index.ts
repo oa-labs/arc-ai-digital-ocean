@@ -31,6 +31,14 @@ export interface AgentError {
   code?: string;
   status?: number;
   timestamp: Date;
+  // Enhanced debugging fields
+  provider?: 'openai' | 'digitalocean';
+  endpoint?: string;
+  model?: string;
+  requestId?: string;
+  responseHeaders?: Record<string, string>;
+  requestBody?: Record<string, unknown>;
+  stack?: string;
 }
 
 export interface SlackThreadContext {

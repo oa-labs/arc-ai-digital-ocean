@@ -84,7 +84,14 @@ export class DigitalOceanAgentService {
         const agentError: AgentError = {
           message: errorMessage,
           status: response.status,
+          code: (data as any)?.error?.code,
           timestamp: new Date(),
+          provider: 'digitalocean',
+          endpoint: this.endpoint,
+          model: this.config.model,
+          requestId: response.headers.get('x-request-id') || response.headers.get('request-id') || undefined,
+          responseHeaders: Object.fromEntries(response.headers.entries()),
+          requestBody: body, // Include sanitized request body for debugging
         };
         throw agentError;
       }
@@ -122,6 +129,10 @@ export class DigitalOceanAgentService {
         status: error.status,
         code: error.code,
         timestamp: new Date(),
+        provider: 'digitalocean',
+        endpoint: this.endpoint,
+        model: this.config.model,
+        stack: error.stack,
       };
       throw agentError;
     }
@@ -163,6 +174,10 @@ export class DigitalOceanAgentService {
           message: errorMessage,
           status: response.status,
           timestamp: new Date(),
+          provider: 'digitalocean',
+          endpoint: 'https://api.digitalocean.com/v2/gen-ai/models',
+          requestId: response.headers.get('x-request-id') || response.headers.get('request-id') || undefined,
+          responseHeaders: Object.fromEntries(response.headers.entries()),
         };
         throw agentError;
       }
@@ -186,6 +201,9 @@ export class DigitalOceanAgentService {
         status: error.status,
         code: error.code,
         timestamp: new Date(),
+        provider: 'digitalocean',
+        endpoint: 'https://api.digitalocean.com/v2/gen-ai/models',
+        stack: error.stack,
       };
       throw agentError;
     }
