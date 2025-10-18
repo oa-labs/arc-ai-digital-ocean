@@ -7,6 +7,7 @@ import {
   loadEnvHierarchical,
   createAgentService,
   validateConfig,
+  reloadConfig,
   type AgentService
 } from '@ichat-ocean/shared';
 import packageJson from './package.json' with { type: 'json' };
@@ -18,6 +19,10 @@ const { version: cliVersion } = packageJson as { version: string };
 
 // Load environment variables hierarchically
 loadEnvHierarchical();
+
+// Reload configuration after environment variables are loaded
+// This ensures the config picks up the newly loaded env vars
+reloadConfig();
 
 export const DEFAULT_SYSTEM_PROMPT = 'You are a helpful AI assistant for workplace safety and internal communications. Provide clear, professional responses to direct messages.';
 
@@ -240,11 +245,13 @@ export async function runCli(options: RunCliOptions = {}): Promise<void> {
   await interactiveChat(service, parsed.systemPrompt, input, output);
 }
 
-const shouldAutoRun = typeof require !== 'undefined'
-  && typeof module !== 'undefined'
-  && require.main === module;
+// ES module detection: check if this file is being run directly
+// In ES modules, we use import.meta.url instead of require.main === module
+import { fileURLToPath } from 'url';
 
-if (shouldAutoRun) {
+const isMainModule = process.argv[1] === fileURLToPath(import.meta.url);
+
+if (isMainModule) {
   runCli().catch(error => {
     console.error('[ERROR]', error?.message || error);
     process.exit(1);
