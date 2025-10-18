@@ -3,8 +3,8 @@ import process from 'node:process';
 import { createInterface } from 'node:readline/promises';
 import { stdin as defaultInput, stdout as defaultOutput } from 'node:process';
 import { Readable, Writable } from 'node:stream';
-import { config as loadEnv } from 'dotenv';
 import {
+  loadEnvHierarchical,
   createAgentService,
   validateConfig,
   type AgentService
@@ -16,12 +16,8 @@ declare const module: any;
 
 const { version: cliVersion } = packageJson as { version: string };
 
-try {
-  if (typeof process !== 'undefined' && process.env) {
-    process.env.DOTENV_DISABLE_LOGGING ??= 'true';
-  }
-  loadEnv();
-} catch {}
+// Load environment variables hierarchically
+loadEnvHierarchical();
 
 export const DEFAULT_SYSTEM_PROMPT = 'You are a helpful AI assistant for workplace safety and internal communications. Provide clear, professional responses to direct messages.';
 

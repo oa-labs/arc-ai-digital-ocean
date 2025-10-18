@@ -1,10 +1,96 @@
 import { AgentConfig } from '../types/index.js';
+import { config as dotenvConfig } from 'dotenv';
+import { existsSync } from 'fs';
+import { resolve, dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+import process from 'process';
 
 export interface SharedConfig {
   agent: AgentConfig;
   agentProvider: 'openai' | 'digitalocean';
   environment: 'development' | 'production' | 'test';
   debug: boolean;
+}
+
+/**
+ * Find the project root by searching for .git directory
+ */
+function findProjectRoot(startDir: string): string | null {
+  let currentDir = startDir;
+  const root = resolve('/');
+
+  while (currentDir !== root) {
+    const gitPath = join(currentDir, '.git');
+    if (existsSync(gitPath)) {
+      return currentDir;
+    }
+    currentDir = dirname(currentDir);
+  }
+
+  return null;
+}
+
+/**
+ * Load environment variables hierarchically from .env files
+ * Searches from current working directory up to the project root (.git marker)
+ * Closer .env files take precedence over parent ones
+ *
+ * @returns Object with path to loaded .env file (or null if none found)
+ */
+export function loadEnvHierarchical(): { envPath: string | null; provider: string | null } {
+  const cwd = process.cwd();
+  const projectRoot = findProjectRoot(cwd);
+
+  if (!projectRoot) {
+    console.log('[loadEnvHierarchical] No .git directory found, loading from CWD only');
+  }
+
+  // Collect all .env files from CWD up to project root
+  const envFiles: string[] = [];
+  let currentDir = cwd;
+  const root = projectRoot || cwd;
+
+  while (true) {
+    const envPath = join(currentDir, '.env');
+    if (existsSync(envPath)) {
+      envFiles.push(envPath);
+    }
+
+    if (currentDir === root) {
+      break;
+    }
+
+    const parentDir = dirname(currentDir);
+    if (parentDir === currentDir) {
+      // Reached filesystem root
+      break;
+    }
+    currentDir = parentDir;
+  }
+
+  if (envFiles.length === 0) {
+    console.log('[loadEnvHierarchical] No .env files found in hierarchy');
+    return { envPath: null, provider: null };
+  }
+
+  // Load in reverse order (parent first, then children override)
+  // This ensures closer files take precedence
+  for (let i = envFiles.length - 1; i >= 0; i--) {
+    const envPath = envFiles[i];
+    dotenvConfig({ path: envPath, override: false });
+  }
+
+  // The first (closest) .env file is the primary one
+  const primaryEnvPath = envFiles[0];
+  const provider = process.env.AGENT_PROVIDER || 'openai';
+
+  console.log(`[loadEnvHierarchical] Loaded .env from: ${primaryEnvPath}`);
+  if (envFiles.length > 1) {
+    console.log(`[loadEnvHierarchical] Also loaded ${envFiles.length - 1} parent .env file(s)`);
+  }
+  console.log(`[loadEnvHierarchical] Agent provider: ${provider}`);
+
+  return { envPath: primaryEnvPath, provider };
 }
 
 /**

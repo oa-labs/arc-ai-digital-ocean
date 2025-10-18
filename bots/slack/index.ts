@@ -1,6 +1,9 @@
-import 'dotenv/config';
+import { loadEnvHierarchical } from '@ichat-ocean/shared';
 import { createSlackApp } from './app.js';
 import { AppOptions } from '@slack/bolt';
+
+// Load environment variables hierarchically
+loadEnvHierarchical();
 
 const debug = (...args: any[]): void => {
   if (process.env.DEBUG === '1') {

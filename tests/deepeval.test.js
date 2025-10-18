@@ -5,18 +5,12 @@
  * to workplace safety questions using autoevals metrics.
  */
 
-import { config } from 'dotenv';
 import { describeEval } from 'vitest-evals';
 import { Factuality, AnswerCorrectness, AnswerRelevancy } from 'autoevals';
-import { createAgentService } from '../lib/dist/services/agent-service-factory.js';
-import { getConfig, reloadConfig } from '../lib/dist/config/index.js';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { loadEnvHierarchical, createAgentService, getConfig, reloadConfig } from '../lib/dist/src/index.js';
 
-// Load environment variables from .env file in project root
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-config({ path: join(__dirname, '..', '.env') });
+// Load environment variables hierarchically
+loadEnvHierarchical();
 
 // Reload config after loading .env
 reloadConfig();

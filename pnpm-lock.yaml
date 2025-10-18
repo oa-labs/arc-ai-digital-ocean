@@ -71,6 +71,9 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.75.0
         version: 2.75.0
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
       openai:
         specifier: ^4.0.0
         version: 4.104.0(ws@8.18.3)(zod@3.25.76)
