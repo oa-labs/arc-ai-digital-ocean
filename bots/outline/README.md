@@ -158,7 +158,7 @@ sudo systemctl start outline-sync.service
 
 ## How It Works
 
-1. **Fetch Users**: Retrieves all users via Outline's `documents.users` API
+1. **Fetch Users**: Retrieves all users via Outline's `users.list` API
 2. **Fetch Documents**: Gets all documents via `documents.list` API
 3. **Export & Upload**: For each document:
    - Exports as Markdown using `documents.export`

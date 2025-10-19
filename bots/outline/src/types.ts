@@ -27,8 +27,12 @@ export interface DocumentListResponse {
   };
 }
 
-export interface DocumentUsersResponse {
+export interface UserListResponse {
   data: OutlineUser[];
+  pagination?: {
+    offset: number;
+    limit: number;
+  };
 }
 
 export interface DocumentExportResponse {

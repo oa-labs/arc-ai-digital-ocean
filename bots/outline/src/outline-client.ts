@@ -2,7 +2,7 @@ import {
   OutlineDocument,
   OutlineUser,
   DocumentListResponse,
-  DocumentUsersResponse,
+  UserListResponse,
   DocumentExportResponse,
 } from './types.js';
 
@@ -42,8 +42,26 @@ export class OutlineClient {
   }
 
   async getAllUsers(): Promise<OutlineUser[]> {
-    const response = await this.makeRequest<DocumentUsersResponse>('/documents.users');
-    return response.data;
+    const allUsers: OutlineUser[] = [];
+    let offset = 0;
+    const limit = 100;
+
+    while (true) {
+      const response = await this.makeRequest<UserListResponse>('/users.list', {
+        limit,
+        offset,
+      });
+
+      allUsers.push(...response.data);
+
+      if (!response.pagination || response.data.length < limit) {
+        break;
+      }
+
+      offset += limit;
+    }
+
+    return allUsers;
   }
 
   async getDocumentsForUser(userId: string): Promise<OutlineDocument[]> {
