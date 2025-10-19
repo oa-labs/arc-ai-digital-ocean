@@ -1,14 +1,21 @@
 import { OutlineClient } from './outline-client.js';
 import { S3Storage } from './s3-client.js';
-import { OutlineDocument, SyncResult } from './types.js';
+import { OutlineDocument, OutlineCollection, SyncResult } from './types.js';
 
 export class SyncService {
   private outlineClient: OutlineClient;
   private s3Storage: S3Storage;
+  private collectionBlacklist: string[];
 
-  constructor(outlineClient: OutlineClient, s3Storage: S3Storage) {
+  constructor(outlineClient: OutlineClient, s3Storage: S3Storage, collectionBlacklist: string[] = []) {
     this.outlineClient = outlineClient;
     this.s3Storage = s3Storage;
+    this.collectionBlacklist = collectionBlacklist;
+  }
+
+  private isCollectionBlacklisted(collectionName: string): boolean {
+    const normalizedName = collectionName.toLowerCase();
+    return this.collectionBlacklist.includes(normalizedName);
   }
 
   async syncAll(): Promise<SyncResult> {
@@ -23,32 +30,46 @@ export class SyncService {
     console.log('Starting sync...');
 
     try {
-      console.log('Fetching all users from Outline...');
-      const users = await this.outlineClient.getAllUsers();
-      console.log(`Found ${users.length} users`);
+      console.log('Fetching all collections from Outline...');
+      const collections = await this.outlineClient.getAllCollections();
+      console.log(`Found ${collections.length} collections`);
 
-      const userEmailMap = new Map<string, string>();
-      for (const user of users) {
-        userEmailMap.set(user.id, user.email);
+      const collectionMap = new Map<string, string>();
+      for (const collection of collections) {
+        collectionMap.set(collection.id, collection.name);
       }
-
-      console.log('Fetching all documents from Outline...');
-      const documents = await this.outlineClient.getAllDocuments();
-      console.log(`Found ${documents.length} documents`);
 
       const outlineDocumentKeys = new Set<string>();
 
-      for (const doc of documents) {
+      for (const collection of collections) {
+        if (this.isCollectionBlacklisted(collection.name)) {
+          console.log(`\nSkipping blacklisted collection: ${collection.name}`);
+          continue;
+        }
+
+        console.log(`\nProcessing collection: ${collection.name}`);
+        
         try {
-          await this.syncDocument(doc, userEmailMap, outlineDocumentKeys, result);
+          const documents = await this.outlineClient.getDocumentsForCollection(collection.id);
+          console.log(`  Found ${documents.length} documents`);
+
+          for (const doc of documents) {
+            try {
+              await this.syncDocument(doc, collection, outlineDocumentKeys, result);
+            } catch (error) {
+              const errorMsg = `Failed to sync document ${doc.id} (${doc.title}): ${error}`;
+              console.error(errorMsg);
+              result.errors.push(errorMsg);
+            }
+          }
         } catch (error) {
-          const errorMsg = `Failed to sync document ${doc.id} (${doc.title}): ${error}`;
+          const errorMsg = `Failed to fetch documents for collection ${collection.name}: ${error}`;
           console.error(errorMsg);
           result.errors.push(errorMsg);
         }
       }
 
-      console.log('Checking for deleted documents in S3...');
+      console.log('\nChecking for deleted documents in S3...');
       await this.cleanupDeletedDocuments(outlineDocumentKeys, result);
 
       console.log('Sync complete!');
@@ -64,25 +85,24 @@ export class SyncService {
 
   private async syncDocument(
     doc: OutlineDocument,
-    userEmailMap: Map<string, string>,
+    collection: OutlineCollection,
     outlineDocumentKeys: Set<string>,
     result: SyncResult
   ): Promise<void> {
-    const userEmail = userEmailMap.get(doc.createdBy.id) || doc.createdBy.email || 'unknown';
-    const sanitizedEmail = this.outlineClient.sanitizeFilename(userEmail);
+    const sanitizedCollection = this.outlineClient.sanitizeFilename(collection.name);
     const sanitizedTitle = this.outlineClient.sanitizeFilename(doc.title || 'untitled');
-    const s3Key = `${sanitizedEmail}/${sanitizedTitle}.md`;
+    const s3Key = `${sanitizedCollection}/${sanitizedTitle}.md`;
 
     outlineDocumentKeys.add(s3Key);
 
-    console.log(`Processing: ${s3Key}`);
+    console.log(`  Processing: ${s3Key}`);
 
     const markdown = await this.outlineClient.exportDocument(doc.id);
 
     const needsUpdate = await this.s3Storage.needsUpdate(s3Key, markdown);
 
     if (!needsUpdate) {
-      console.log(`  ↳ Skipped (no changes)`);
+      console.log(`    ↳ Skipped (no changes)`);
       result.skipped++;
       return;
     }
@@ -92,10 +112,10 @@ export class SyncService {
     await this.s3Storage.uploadFile(s3Key, markdown, doc.id);
 
     if (fileExists) {
-      console.log(`  ↳ Updated`);
+      console.log(`    ↳ Updated`);
       result.updated++;
     } else {
-      console.log(`  ↳ Uploaded`);
+      console.log(`    ↳ Uploaded`);
       result.uploaded++;
     }
   }

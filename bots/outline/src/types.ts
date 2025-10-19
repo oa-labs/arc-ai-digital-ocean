@@ -1,7 +1,9 @@
-export interface OutlineUser {
+export interface OutlineCollection {
   id: string;
   name: string;
-  email: string;
+  description: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface OutlineDocument {
@@ -19,16 +21,16 @@ export interface OutlineDocument {
   };
 }
 
-export interface DocumentListResponse {
-  data: OutlineDocument[];
+export interface CollectionListResponse {
+  data: OutlineCollection[];
   pagination?: {
     offset: number;
     limit: number;
   };
 }
 
-export interface UserListResponse {
-  data: OutlineUser[];
+export interface DocumentListResponse {
+  data: OutlineDocument[];
   pagination?: {
     offset: number;
     limit: number;

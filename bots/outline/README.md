@@ -4,12 +4,14 @@ Synchronizes Outline documents to S3-compatible storage (DigitalOcean Spaces, AW
 
 ## Features
 
-- ✅ Fetches all users and their documents from Outline
+- ✅ Fetches all collections and documents from Outline
 - ✅ Exports documents as Markdown using Outline's `documents.export` API
-- ✅ Organizes files by user email: `{user-email}/{doc-title}.md`
+- ✅ Organizes files by collection: `{collection-name}/{doc-title}.md`
+- ✅ Collection blacklist support (skip specific collections by name)
 - ✅ Smart deduplication using MD5 content hashing
 - ✅ Updates only changed documents
 - ✅ Deletes orphaned documents from S3 when removed from Outline
+- ✅ Rate limit handling with automatic retry
 - ✅ One-shot execution suitable for systemd timers
 - ✅ Production-ready Docker container
 
@@ -36,6 +38,10 @@ Edit `.env` with your credentials:
 # Outline API Configuration
 OUTLINE_API_URL=https://your-outline-instance.com
 OUTLINE_API_TOKEN=ol_api_xxxxxxxxxxxxxxxxxxxxx
+
+# Collection Filtering (optional)
+# Comma-separated list of collection names to skip (case-insensitive)
+COLLECTION_BLACKLIST=ops,private,temp
 
 # S3 Configuration (same as web project)
 S3_REGION=nyc3
@@ -158,14 +164,16 @@ sudo systemctl start outline-sync.service
 
 ## How It Works
 
-1. **Fetch Users**: Retrieves all users via Outline's `users.list` API
-2. **Fetch Documents**: Gets all documents via `documents.list` API
-3. **Export & Upload**: For each document:
+1. **Fetch Collections**: Retrieves all collections via Outline's `collections.list` API
+2. **Filter Collections**: Skips any blacklisted collections (case-insensitive matching)
+3. **Fetch Documents**: For each collection, gets all documents via `documents.list` API with `collectionId` filter
+4. **Export & Upload**: For each document:
    - Exports as Markdown using `documents.export`
    - Calculates MD5 hash of content
    - Checks if S3 file exists with same hash
    - Uploads only if new or changed
-4. **Cleanup**: Deletes S3 files for documents removed from Outline
+5. **Cleanup**: Deletes S3 files for documents removed from Outline
+6. **Rate Limiting**: Adds 100ms delay between API calls and handles 429 responses with automatic retry
 
 ## Sync Output
 
@@ -173,18 +181,29 @@ sudo systemctl start outline-sync.service
 Outline → S3 Sync Service
 ==========================
 
-Fetching all users from Outline...
-Found 5 users
-Fetching all documents from Outline...
-Found 42 documents
-Processing: john@example.com/project-roadmap.md
-  ↳ Uploaded
-Processing: jane@example.com/technical-spec.md
-  ↳ Skipped (no changes)
-Processing: bob@example.com/meeting-notes.md
-  ↳ Updated
+Blacklisted collections: ops, private
+
+Fetching all collections from Outline...
+Found 8 collections
+
+Skipping blacklisted collection: Ops
+
+Processing collection: Engineering
+  Found 25 documents
+  Processing: engineering/project-roadmap.md
+    ↳ Uploaded
+  Processing: engineering/technical-spec.md
+    ↳ Skipped (no changes)
+  Processing: engineering/meeting-notes.md
+    ↳ Updated
+
+Processing collection: Marketing
+  Found 12 documents
+  Processing: marketing/campaign-strategy.md
+    ↳ Uploaded
+
 Checking for deleted documents in S3...
-Deleting orphaned file: old-user@example.com/deleted-doc.md
+Deleting orphaned file: old-collection/deleted-doc.md
 
 === Sync Summary ===
 Uploaded: 15
@@ -198,19 +217,24 @@ Errors: 0
 
 ## File Organization
 
-Documents are stored in S3 with the following structure:
+Documents are stored in S3 organized by collection:
 
 ```
 s3://your-bucket/
-├── user1@example.com/
+├── engineering/
 │   ├── project-roadmap.md
 │   ├── technical-specifications.md
 │   └── meeting-notes-2025-01-15.md
-├── user2@example.com/
-│   ├── design-document.md
-│   └── api-reference.md
+├── marketing/
+│   ├── campaign-strategy.md
+│   └── brand-guidelines.md
+├── product/
+│   ├── feature-specs.md
+│   └── roadmap-q1-2025.md
 └── ...
 ```
+
+Collections in the blacklist are skipped entirely and their documents are not synced.
 
 ## Deduplication
 

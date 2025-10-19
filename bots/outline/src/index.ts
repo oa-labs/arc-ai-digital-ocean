@@ -27,6 +27,15 @@ async function main() {
     const s3AccessKeyId = getRequiredEnv('S3_ACCESS_KEY_ID');
     const s3SecretAccessKey = getRequiredEnv('S3_SECRET_ACCESS_KEY');
 
+    const collectionBlacklist = process.env.COLLECTION_BLACKLIST
+      ?.split(',')
+      .map(name => name.trim().toLowerCase())
+      .filter(name => name.length > 0) || [];
+
+    if (collectionBlacklist.length > 0) {
+      console.log(`Blacklisted collections: ${collectionBlacklist.join(', ')}\n`);
+    }
+
     const outlineClient = new OutlineClient(outlineApiUrl, outlineApiToken);
     const s3Storage = new S3Storage(
       s3Region,
@@ -36,7 +45,7 @@ async function main() {
       s3SecretAccessKey
     );
 
-    const syncService = new SyncService(outlineClient, s3Storage);
+    const syncService = new SyncService(outlineClient, s3Storage, collectionBlacklist);
 
     await syncService.syncAll();
 
