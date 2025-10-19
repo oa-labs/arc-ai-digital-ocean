@@ -2,4 +2,5 @@ packages:
   - lib
   - cli
   - bots/slack
+  - bots/outline
   - web

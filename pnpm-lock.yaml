@@ -28,6 +28,22 @@ importers:
         specifier: ^0.5.0
         version: 0.5.0(tinyrainbow@1.2.0)(vitest@2.1.9(@types/node@24.7.0))
 
+  bots/outline:
+    dependencies:
+      '@aws-sdk/client-s3':
+        specifier: ^3.490.0
+        version: 3.908.0
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
+    devDependencies:
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.19.21
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
   bots/slack:
     dependencies:
       '@ichat-ocean/shared':
