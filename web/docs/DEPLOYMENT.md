@@ -551,6 +551,42 @@ Typical monthly costs for moderate usage:
 - **SSL Certificate:** Free (Let's Encrypt)
 - **Total:** ~$10-25/month for small to medium usage
 
+## Quick Rebuild Reference
+
+If you need to rebuild your production deployment with updated configuration:
+
+### Step 1: Build the Docker Image
+```bash
+cd /workspaces/arc-ai
+docker build -f web/Dockerfile -t arc-ai-web:latest .
+```
+
+### Step 2: Update Your .env File
+Add `VITE_APP_URL` to your existing `.env` file:
+```env
+# Your existing variables
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_S3_REGION=nyc3
+VITE_S3_ENDPOINT=https://nyc3.digitaloceanspaces.com
+VITE_S3_BUCKET=your-bucket
+VITE_S3_ACCESS_KEY_ID=your-access-key
+VITE_S3_SECRET_ACCESS_KEY=your-secret-key
+
+# NEW: Add this line for OAuth redirects
+VITE_APP_URL=https://ai.openarc.net
+```
+
+### Step 3: Run with --env-file
+```bash
+docker run -d --name arc-ai-web -p 3000:3000 --env-file .env arc-ai-web:latest
+```
+
+### Step 4: Verify Supabase Settings
+1. Go to Supabase Dashboard → Authentication → URL Configuration
+2. Set **Site URL**: `https://ai.openarc.net`
+3. Add to **Redirect URLs**: `https://ai.openarc.net/*`
+
 ## Additional Resources
 
 - [Docker Documentation](https://docs.docker.com/)
@@ -567,8 +603,7 @@ For deployment issues:
 3. Check browser console for errors
 4. Verify environment variables are set correctly
 5. Test locally with Docker first
-6. See `OAUTH_PRODUCTION_FIX.md` for OAuth-specific issues
-7. Open an issue on GitHub if problem persists
+6. Open an issue on GitHub if problem persists
 
 ---
 

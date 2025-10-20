@@ -7,11 +7,27 @@ import { markdownToBlocks as mackMarkdownToBlocks } from '@tryfabric/mack';
 import type { KnownBlock } from '@slack/types';
 
 /**
+ * Decodes HTML entities in text
+ * Handles both named entities (&amp;) and numeric entities (&#123; or &#x7B;)
+ */
+const decodeHtmlEntities = (text: string): string => {
+  return text
+    .replace(/&#x([0-9A-Fa-f]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(parseInt(dec, 10)))
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
+};
+
+/**
  * Converts markdown text to Slack Block Kit blocks
  * Uses the mack library which handles code blocks, lists, headings, and regular text
  */
 export const markdownToBlocks = async (markdown: string): Promise<KnownBlock[]> => {
-  return await mackMarkdownToBlocks(markdown);
+  const decoded = decodeHtmlEntities(markdown);
+  return await mackMarkdownToBlocks(decoded);
 };
 
 /**
