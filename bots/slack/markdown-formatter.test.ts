@@ -58,3 +58,55 @@ describe('decodeHtmlEntities', () => {
     expect(decodeHtmlEntities(input)).toBe(expected);
   });
 });
+
+/**
+ * Removes citation references - DUPLICATED FOR TESTING
+ */
+const removeCitations = (text: string): string => {
+  const citationPattern = /\[\[C\d+\]\]/g;
+  return text.replace(citationPattern, '');
+};
+
+describe('removeCitations', () => {
+  it('should remove single citation reference', () => {
+    const input = 'This is a fact [[C1]].';
+    const expected = 'This is a fact .';
+    expect(removeCitations(input)).toBe(expected);
+  });
+
+  it('should remove multiple citation references', () => {
+    const input = 'First fact [[C1]] and second fact [[C2]].';
+    const expected = 'First fact  and second fact .';
+    expect(removeCitations(input)).toBe(expected);
+  });
+
+  it('should remove multi-digit citation references', () => {
+    const input = 'This is cited [[C123]].';
+    const expected = 'This is cited .';
+    expect(removeCitations(input)).toBe(expected);
+  });
+
+  it('should handle text without citations', () => {
+    const input = 'This is plain text.';
+    const expected = 'This is plain text.';
+    expect(removeCitations(input)).toBe(expected);
+  });
+
+  it('should handle multiple citations in a row', () => {
+    const input = 'Facts [[C1]][[C2]][[C3]].';
+    const expected = 'Facts .';
+    expect(removeCitations(input)).toBe(expected);
+  });
+
+  it('should handle citations at different positions', () => {
+    const input = '[[C1]] Start, middle [[C2]], and end [[C3]]';
+    const expected = ' Start, middle , and end ';
+    expect(removeCitations(input)).toBe(expected);
+  });
+
+  it('should not remove similar but invalid patterns', () => {
+    const input = 'Code [C1] and [[C]] and [[1]] should stay';
+    const expected = 'Code [C1] and [[C]] and [[1]] should stay';
+    expect(removeCitations(input)).toBe(expected);
+  });
+});

@@ -1,36 +1,38 @@
 # ArcAI Ocean - Workplace Safety AI Assistant
 
-An AI-powered internal chat agent system for workplace safety queries, built with modern full-stack architecture leveraging Supabase, RAG (Retrieval-Augmented Generation), and LLM integration.
+An AI-powered internal chat agent system for workplace safety queries, built with a modern monorepo architecture leveraging Supabase, document retrieval, and LLM integration.
 
 ## Overview
 
-ArcAI Ocean provides intelligent, context-aware responses to workplace safety questions by combining document retrieval with large language models. The system uses vector embeddings for semantic search and evaluation frameworks to ensure response quality.
+ArcAI Ocean provides intelligent, context-aware responses to workplace questions by combining document retrieval from S3-compatible storage with large language models. The system includes Slack integration, a web-based file manager, CLI tools, and automated document synchronization from Outline.
 
 ## Project Structure
 
 ```
-ichat-ocean/
+arc-ai/
 ├── docs/                    # Project documentation
 │   ├── BUSINESS_CASE.md     # Business case and ROI analysis
 │   ├── CLI.md              # CLI tool documentation
 │   ├── MILESTONES.md       # Project development milestones
 │   ├── ASSUMPTIONS.md       # Project assumptions
 │   └── ...
-├── bots/slack/             # Slack bot integration
-├── cli/                    # Command-line interface
-├── lib/                    # Shared library package
-├── web/                    # Web application
+├── bots/
+│   ├── slack/              # Slack bot integration
+│   └── outline/            # Outline to S3 sync bot
+├── cli/                    # Command-line interface tool
+├── lib/                    # Shared library package (@ichat-ocean/shared)
+├── web/                    # Web-based file manager (s3-file-manager)
 ├── tests/                  # Test suites
-│   └── deepeval.test.js    # DeepEval quality tests
-├── package.json            # Project dependencies
+│   └── deepeval.test.js    # AI response quality tests (vitest-evals)
+├── package.json            # Workspace dependencies
 └── README.md              # This file
 ```
 
 ## Testing
 
-### DeepEval Test Harness
+### AI Response Quality Tests
 
-DeepEval is used to evaluate the quality of AI-generated responses to workplace safety questions. The test suite includes 5 sample workplace safety scenarios covering:
+The project uses `vitest-evals` with `autoevals` metrics to evaluate the quality of AI-generated responses to workplace safety questions. The test suite includes 5 sample workplace safety scenarios covering:
 
 1. **Fire Extinguisher Usage** - Testing PASS method knowledge
 2. **Personal Protective Equipment (PPE)** - Warehouse safety requirements
@@ -47,69 +49,88 @@ DeepEval is used to evaluate the quality of AI-generated responses to workplace 
 
 2. **Set Up Environment Variables**
 
-   Create a `.env` file with your OpenAI API key (required for DeepEval metrics):
+   Create a `.env` file with required API keys and configuration. The tests support multiple LLM providers (OpenAI, DigitalOcean, etc.):
    ```bash
+   # See .env.example for full configuration options
    OPENAI_API_KEY=your_api_key_here
    ```
 
-3. **Run DeepEval Tests**
+3. **Run Quality Tests**
    ```bash
    pnpm run test:deepeval
    ```
 
 #### Test Metrics
 
-The test suite evaluates responses using three key metrics:
+The test suite evaluates responses using `autoevals` metrics:
 
-- **Answer Relevancy** (threshold: 0.7) - Measures how relevant the answer is to the question
-- **Faithfulness** (threshold: 0.8) - Ensures the answer is grounded in the provided context
-- **Contextual Relevancy** (threshold: 0.7) - Validates that the context is relevant to the question
+- **Answer Correctness** - Measures semantic similarity between expected and actual answers
+- **Answer Relevancy** - Ensures the answer is relevant to the question
+- **Factuality** - Validates that the answer is grounded in the provided context
 
 #### Interpreting Results
 
 Each test case outputs:
 - ✅ Pass/Fail status for each metric
-- Score values for relevancy, faithfulness, and context
-- Detailed reasoning for metric evaluations
+- Score values and thresholds
+- Detailed evaluation results
 
-A passing test indicates the AI response meets quality standards for accuracy, relevance, and adherence to source material.
+A passing test indicates the AI response meets quality standards for correctness, relevance, and factuality.
 
 ## Technology Stack
 
-- **Backend**: Node.js with Hono and tRPC
+- **Runtime**: Node.js 18+ with TypeScript
+- **Package Manager**: pnpm workspaces (monorepo)
 - **Database**: Supabase PostgreSQL with pgvector
-- **LLM**: OpenAI GPT-4 / GPT-3.5-turbo
-- **Embeddings**: OpenAI text-embedding-ada-002
-- **RAG Framework**: LangChain.js
-- **Testing**: DeepEval for LLM response quality
-- **Frontend**: React with Vite and Tailwind CSS
+- **Storage**: S3-compatible storage (AWS S3, DigitalOcean Spaces)
+- **LLM Providers**: OpenAI, DigitalOcean (configurable)
+- **Integrations**: Slack Bot API (`@slack/bolt`), Outline API
+- **Testing**: Vitest with `vitest-evals` and `autoevals` metrics
+- **Frontend**: React 18 with Vite, Tailwind CSS, TanStack Query
+- **Libraries**: `@aws-sdk/client-s3`, `@supabase/supabase-js`, OpenAI SDK
 
 ## Development
 
 ### Prerequisites
 
-- Node.js 22+
-- Supabase CLI
-- OpenAI API key
-- PostgreSQL with pgvector (via Supabase)
+- Node.js 18+
+- pnpm package manager
+- Supabase account with PostgreSQL and pgvector
+- S3-compatible storage (DigitalOcean Spaces or AWS S3)
+- LLM API key (OpenAI or DigitalOcean)
+- (Optional) Slack workspace for bot integration
+- (Optional) Outline instance for document sync
 
 ### Setup
 
 ```bash
-# Install Supabase CLI
-pnpm install -g supabase
-
-# Start local Supabase environment
-supabase start
-
 # Install project dependencies
 pnpm install
 
-# Copy environment variables
-cp .env.example .env.local
+# Copy and configure environment variables
+cp .env.example .env
 
-# Run development server (when packages are set up)
+# Build all packages
+pnpm run build
+
+# Run development mode (shared library)
 pnpm run dev
+```
+
+### Component-Specific Development
+
+```bash
+# Slack bot
+pnpm --filter @ichat-ocean/slack-bot start:dev
+
+# Web file manager
+pnpm --filter s3-file-manager dev
+
+# CLI tool
+pnpm --filter @ichat-ocean/cli start
+
+# Outline sync bot
+pnpm --filter @ichat-ocean/outline-bot start
 ```
 
 ## Documentation
@@ -122,8 +143,10 @@ pnpm run dev
 ### Component Documentation
 
 - [Slack Bot](bots/slack/README.md) - Slack integration setup and configuration
+- [Outline Sync Bot](bots/outline/README.md) - Automated document sync from Outline to S3
 - [Shared Library](lib/README.md) - Common functionality and agent services
-- [Web Application](web/README.md) - File management web interface
+- [Web File Manager](web/README.md) - S3 file management web interface
+- [CLI Tool](cli/) - Command-line interface for agent interaction
 
 ## License
 

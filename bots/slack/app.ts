@@ -281,13 +281,14 @@ const createAssistantConfig = (): AssistantConfig => {
           thread_ts: thread_ts,
         });
 
-        // Decode HTML entities before streaming
-        const decodedContent = decodeHtmlEntities(response.content);
+        // Process content: decode HTML entities and remove citations
+        let processedContent = decodeHtmlEntities(response.content);
+        processedContent = removeCitations(processedContent);
         
         // Stream the markdown content - Slack's chatStream handles markdown_text natively
         const chunkSize = 50;
-        for (let i = 0; i < decodedContent.length; i += chunkSize) {
-          const chunk = decodedContent.substring(i, Math.min(i + chunkSize, decodedContent.length));
+        for (let i = 0; i < processedContent.length; i += chunkSize) {
+          const chunk = processedContent.substring(i, Math.min(i + chunkSize, processedContent.length));
           await streamer.append({
             markdown_text: chunk,
           });
