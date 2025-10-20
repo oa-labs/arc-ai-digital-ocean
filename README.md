@@ -1,10 +1,10 @@
-# iChat Ocean - Workplace Safety AI Assistant
+# ArcAI Ocean - Workplace Safety AI Assistant
 
 An AI-powered internal chat agent system for workplace safety queries, built with modern full-stack architecture leveraging Supabase, RAG (Retrieval-Augmented Generation), and LLM integration.
 
 ## Overview
 
-iChat Ocean provides intelligent, context-aware responses to workplace safety questions by combining document retrieval with large language models. The system uses vector embeddings for semantic search and evaluation frameworks to ensure response quality.
+ArcAI Ocean provides intelligent, context-aware responses to workplace safety questions by combining document retrieval with large language models. The system uses vector embeddings for semantic search and evaluation frameworks to ensure response quality.
 
 ## Project Structure
 

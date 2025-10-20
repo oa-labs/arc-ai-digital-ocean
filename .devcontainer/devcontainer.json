@@ -1,5 +1,5 @@
 {
-  "name": "iChat Development with Supabase",
+  "name": "ArcAI Development with Supabase",
   "build": {
     "dockerfile": "Dockerfile",
     "context": ".."

@@ -1,6 +1,6 @@
-# iChat Ocean Shared Library
+# ArcAI Ocean Shared Library
 
-This shared library provides common functionality for both the Slack bot and web projects in the iChat Ocean ecosystem.
+This shared library provides common functionality for both the Slack bot and web projects in the ArcAI Ocean ecosystem.
 
 ## Features
 
@@ -126,7 +126,7 @@ When adding new shared functionality:
 
 ## Project Context
 
-This shared library is the core of the iChat Ocean ecosystem, providing common functionality used by:
+This shared library is the core of the ArcAI Ocean ecosystem, providing common functionality used by:
 
 - [Slack Bot](../bots/slack/README.md) - Slack integration for workplace safety queries
 - [CLI Tool](../docs/CLI.md) - Command-line interface for AI interactions
@@ -134,4 +134,4 @@ This shared library is the core of the iChat Ocean ecosystem, providing common f
 
 ## License
 
-Part of the iChat Ocean project.
+Part of the ArcAI Ocean project.

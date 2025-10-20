@@ -1,4 +1,4 @@
-# iChat KB Manager - Project Summary
+# ArcAI KB Manager - Project Summary
 
 ## Overview
 

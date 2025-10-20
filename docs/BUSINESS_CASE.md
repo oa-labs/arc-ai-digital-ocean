@@ -1,8 +1,8 @@
-# Business Case: iChat AI Assistant MVP
+# Business Case: ArcAI AI Assistant MVP
 
 ## Executive Summary
 
-The iChat AI Assistant MVP represents a strategic investment in knowledge management and operational efficiency. By implementing an AI-powered internal chat agent, we can reduce managerial overhead, improve employee productivity, and create a scalable foundation for institutional knowledge capture.
+The ArcAI AI Assistant MVP represents a strategic investment in knowledge management and operational efficiency. By implementing an AI-powered internal chat agent, we can reduce managerial overhead, improve employee productivity, and create a scalable foundation for institutional knowledge capture.
 
 - **Investment**: $39-49k (261 hours × $150/hour development cost + buffer)
 - **Timeline**: 6 weeks to MVP deployment

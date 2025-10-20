@@ -201,7 +201,7 @@ export const EscalatedQuery = z.object({
 - **Indexing**: HNSW index on DocumentSection.Embedding for efficient similarity search
 - **Retrieval**: Section-level similarity matching with document context
 
-## Frontend Architecture (iChat.Frontend)
+## Frontend Architecture (ArcAI.Frontend)
 
 ### Web Application
 
@@ -235,7 +235,7 @@ export const EscalatedQuery = z.object({
 }
 ```
 
-## LLM Integration (iChat.Service)
+## LLM Integration (ArcAI.Service)
 
 ### AI/ML Stack
 
@@ -700,7 +700,7 @@ volumes:
 ```json
 // .devcontainer/devcontainer.json
 {
-  "name": "iChat Development with Supabase",
+  "name": "ArcAI Development with Supabase",
   "image": "mcr.microsoft.com/devcontainers/typescript-node:22",
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {}

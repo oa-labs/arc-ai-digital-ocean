@@ -1,7 +1,7 @@
 {
   "name": "@ichat-ocean/slack-bot",
   "version": "1.0.3",
-  "description": "Slack bot for iChat Ocean",
+  "description": "Slack bot for ArcAI Ocean",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

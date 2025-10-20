@@ -318,4 +318,4 @@ pnpm --filter @ichat-ocean/outline-bot dev
 
 ## License
 
-Part of the iChat Ocean monorepo.
+Part of the ArcAI Ocean monorepo.

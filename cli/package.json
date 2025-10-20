@@ -1,7 +1,7 @@
 {
   "name": "@ichat-ocean/cli",
   "version": "1.0.0",
-  "description": "Command line tool for interacting with the iChat Ocean agent service",
+  "description": "Command line tool for interacting with the ArcAI Ocean agent service",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

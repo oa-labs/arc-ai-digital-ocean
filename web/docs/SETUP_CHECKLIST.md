@@ -1,6 +1,6 @@
 # Setup Checklist
 
-Use this checklist to ensure your iChat KB Manager is properly configured.
+Use this checklist to ensure your ArcAI KB Manager is properly configured.
 
 ## ☐ Prerequisites
 
@@ -215,7 +215,7 @@ VITE_S3_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 ## 🎉 Completion
 
-If all items are checked, your iChat KB Manager is ready to use!
+If all items are checked, your ArcAI KB Manager is ready to use!
 
 ## 🆘 Troubleshooting
 

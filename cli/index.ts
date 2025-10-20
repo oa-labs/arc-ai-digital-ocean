@@ -125,7 +125,7 @@ export async function sendAgentMessage(
 }
 
 export function printHelp(output: Writable = defaultOutput): void {
-  output.write(`iChat CLI\n\n`);
+  output.write(`ArcAI CLI\n\n`);
   output.write(`Usage:\n`);
   output.write(`  ichat-cli "Your message here"\n\n`);
   output.write(`Options:\n`);

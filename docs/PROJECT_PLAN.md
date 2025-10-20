@@ -1,8 +1,8 @@
-# iChat AI Assistant - Project Plan (Supabase + Modern Stack Version)
+# ArcAI AI Assistant - Project Plan (Supabase + Modern Stack Version)
 
 ## Project Overview
 
-**Project Name**: iChat AI-Powered Internal Chat Agent (MVP)
+**Project Name**: ArcAI AI-Powered Internal Chat Agent (MVP)
 **Duration**: 6 weeks (5 sprints × 1-1.2 weeks each)
 **Team Size**: 1-2 developers
 **Technology Stack**: Node.js 22+, TypeScript, React, Vite, Hono, tRPC, Supabase (PostgreSQL with pgvector, Auth, Storage, Realtime), OpenAI

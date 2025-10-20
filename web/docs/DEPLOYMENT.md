@@ -1,6 +1,6 @@
 # Docker Deployment Guide
 
-This guide covers deploying the iChat KB Manager application using Docker.
+This guide covers deploying the ArcAI KB Manager application using Docker.
 
 ## Prerequisites
 

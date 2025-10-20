@@ -1,6 +1,6 @@
 # Quick Start Guide
 
-Get the iChat KB Manager up and running in 5 minutes!
+Get the ArcAI KB Manager up and running in 5 minutes!
 
 ## 1. Install Dependencies
 

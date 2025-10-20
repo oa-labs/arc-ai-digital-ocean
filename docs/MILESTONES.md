@@ -1,4 +1,4 @@
-# iChat AI Assistant - Project Milestones
+# ArcAI AI Assistant - Project Milestones
 
 ## Milestone 1: Evaluation Framework Development
 **Goal:** Collection and organize evals for comprehensive testing coverage
