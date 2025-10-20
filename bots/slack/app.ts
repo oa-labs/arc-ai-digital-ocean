@@ -4,6 +4,21 @@ import { createAgentService, AgentService, getConfig, validateConfig, createThre
 import { SlackThreadContextStoreAdapter } from './thread-context-adapter.js';
 import { markdownToSlackMessage } from './markdown-formatter.js';
 
+/**
+ * Decodes HTML entities in text
+ * Handles both named entities (&amp;) and numeric entities (&#123; or &#x7B;)
+ */
+const decodeHtmlEntities = (text: string): string => {
+  return text
+    .replace(/&#x([0-9A-Fa-f]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(parseInt(dec, 10)))
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
+};
+
 const debug = (...args: any[]): void => {
   if (process.env.DEBUG === '1') {
     console.log('[DEBUG]', ...args);
@@ -250,11 +265,13 @@ const createAssistantConfig = (): AssistantConfig => {
           thread_ts: thread_ts,
         });
 
+        // Decode HTML entities before streaming
+        const decodedContent = decodeHtmlEntities(response.content);
+        
         // Stream the markdown content - Slack's chatStream handles markdown_text natively
         const chunkSize = 50;
-        const content = response.content;
-        for (let i = 0; i < content.length; i += chunkSize) {
-          const chunk = content.substring(i, Math.min(i + chunkSize, content.length));
+        for (let i = 0; i < decodedContent.length; i += chunkSize) {
+          const chunk = decodedContent.substring(i, Math.min(i + chunkSize, decodedContent.length));
           await streamer.append({
             markdown_text: chunk,
           });

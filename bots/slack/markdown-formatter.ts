@@ -27,6 +27,14 @@ const decodeHtmlEntities = (text: string): string => {
  */
 export const markdownToBlocks = async (markdown: string): Promise<KnownBlock[]> => {
   const decoded = decodeHtmlEntities(markdown);
+  
+  // Debug logging to verify decoding
+  if (markdown.includes('&#') && process.env.DEBUG === '1') {
+    console.log('[DEBUG] HTML entities detected in markdown');
+    console.log('[DEBUG] Before decoding:', markdown.substring(0, 200));
+    console.log('[DEBUG] After decoding:', decoded.substring(0, 200));
+  }
+  
   return await mackMarkdownToBlocks(decoded);
 };
 
