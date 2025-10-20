@@ -2,6 +2,7 @@ import { App, Assistant } from '@slack/bolt';
 import type { App as AppType, AppOptions, AllMiddlewareArgs, SlackEventMiddlewareArgs, AssistantConfig } from '@slack/bolt';
 import { createAgentService, AgentService, getConfig, validateConfig, createThreadContextStore, ThreadContextStore } from '@ichat-ocean/shared';
 import { SlackThreadContextStoreAdapter } from './thread-context-adapter.js';
+import { markdownToSlackMessage } from './markdown-formatter.js';
 
 const debug = (...args: any[]): void => {
   if (process.env.DEBUG === '1') {
@@ -118,10 +119,9 @@ export const handleMessage = async ({ message, event, say }: SlackEventMiddlewar
         tokens: response.usage?.totalTokens
       });
 
-      // Send only the AI response
-      await say({
-        text: response.content
-      });
+      // Send only the AI response with formatted blocks
+      const formattedMessage = await markdownToSlackMessage(response.content);
+      await say(formattedMessage);
     } catch (error) {
       console.error('[ERROR] Failed to generate AI response for DM:', error);
       // Fallback to just interactive blocks if AI fails
@@ -144,7 +144,8 @@ export const handleMessage = async ({ message, event, say }: SlackEventMiddlewar
       tokens: response.usage?.totalTokens
     });
 
-    await say(response.content);
+    const formattedMessage = await markdownToSlackMessage(response.content);
+    await say(formattedMessage);
   } catch (error) {
     console.error('[ERROR] Failed to generate AI response:', error);
     await say('Sorry, I encountered an error while processing your message. Please try again.');
@@ -173,7 +174,8 @@ export const handleAppMention = async ({ event, say }: SlackEventMiddlewareArgs<
       tokens: response.usage?.totalTokens
     });
 
-    await say(response.content);
+    const formattedMessage = await markdownToSlackMessage(response.content);
+    await say(formattedMessage);
   } catch (error) {
     console.error('[ERROR] Failed to generate AI response:', error);
     await say('Sorry, I encountered an error while processing your message. Please try again.');
@@ -248,7 +250,7 @@ const createAssistantConfig = (): AssistantConfig => {
           thread_ts: thread_ts,
         });
 
-        // Since we already have the full response, simulate streaming by chunking
+        // Stream the markdown content - Slack's chatStream handles markdown_text natively
         const chunkSize = 50;
         const content = response.content;
         for (let i = 0; i < content.length; i += chunkSize) {
