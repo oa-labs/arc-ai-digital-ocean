@@ -71,14 +71,16 @@ export function FileList({ files, onFileChange, loading }: FileListProps) {
   return (
     <>
       <div className="space-y-3">
-        {files.map((file) => (
-          <FileItem
-            key={file.key}
-            file={file}
-            onDelete={setFileToDelete}
-            onRename={setFileToRename}
-          />
-        ))}
+        {files
+          .sort((a, b) => a.key.localeCompare(b.key))
+          .map((file) => (
+            <FileItem
+              key={file.key}
+              file={file}
+              onDelete={setFileToDelete}
+              onRename={setFileToRename}
+            />
+          ))}
       </div>
 
       {fileToDelete && (
