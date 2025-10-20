@@ -202,7 +202,7 @@ export function Login() {
         </div>
 
         <p className="mt-6 text-center text-sm text-gray-600">
-          Powered by Supabase Auth & DigitalOcean Spaces
+          &copy; OpenArc, LLC 2025. All rights reserved.
         </p>
       </div>
     </div>

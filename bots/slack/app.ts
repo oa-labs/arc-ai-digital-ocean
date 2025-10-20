@@ -299,7 +299,8 @@ export const registerHandlers = (app: AppType): AppType => {
   app.event('app_mention', handleAppMention);
 
   // App Home: publish Home tab when opened
-  app.event('app_home_opened', async ({ event, client }: any) => {
+  app.event('app_home_opened', async ({ event, client, ack }: any) => {
+    await ack();
     debug('app_home_opened for user', event?.user);
     try {
       await client.views.publish({
