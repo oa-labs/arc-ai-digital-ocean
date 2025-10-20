@@ -22,20 +22,40 @@ const decodeHtmlEntities = (text: string): string => {
 };
 
 /**
+ * Removes citation references like [[C1]], [[C2]], etc. from text
+ * Logs a warning when citations are found so we remember to add hyperlinks later
+ */
+const removeCitations = (text: string): string => {
+  const citationPattern = /\[\[C\d+\]\]/g;
+  const citations = text.match(citationPattern);
+  
+  if (citations && citations.length > 0) {
+    console.warn('[WARN] Citation references found and removed:', citations.join(', '));
+    console.warn('[WARN] TODO: Replace citation references with actual hyperlinks');
+  }
+  
+  return text.replace(citationPattern, '');
+};
+
+/**
  * Converts markdown text to Slack Block Kit blocks
  * Uses the mack library which handles code blocks, lists, headings, and regular text
  */
 export const markdownToBlocks = async (markdown: string): Promise<KnownBlock[]> => {
-  const decoded = decodeHtmlEntities(markdown);
+  // First decode HTML entities
+  let processed = decodeHtmlEntities(markdown);
+  
+  // Then remove citation references
+  processed = removeCitations(processed);
   
   // Debug logging to verify decoding
   if (markdown.includes('&#') && process.env.DEBUG === '1') {
     console.log('[DEBUG] HTML entities detected in markdown');
     console.log('[DEBUG] Before decoding:', markdown.substring(0, 200));
-    console.log('[DEBUG] After decoding:', decoded.substring(0, 200));
+    console.log('[DEBUG] After processing:', processed.substring(0, 200));
   }
   
-  return await mackMarkdownToBlocks(decoded);
+  return await mackMarkdownToBlocks(processed);
 };
 
 /**

@@ -1,4 +1,0 @@
-- What document types required? Are there any images?
-- Any legally questionable areas we need to plan to handle?
-- Can we get your top 10 frequently asked questions and use those to create an evaluation framework?
-- 5 cents per query, $50 for 1000 documents?

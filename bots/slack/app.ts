@@ -19,6 +19,22 @@ const decodeHtmlEntities = (text: string): string => {
     .replace(/&amp;/g, '&');
 };
 
+/**
+ * Removes citation references like [[C1]], [[C2]], etc. from text
+ * Logs a warning when citations are found so we remember to add hyperlinks later
+ */
+const removeCitations = (text: string): string => {
+  const citationPattern = /\[\[C\d+\]\]/g;
+  const citations = text.match(citationPattern);
+  
+  if (citations && citations.length > 0) {
+    console.warn('[WARN] Citation references found and removed:', citations.join(', '));
+    console.warn('[WARN] TODO: Replace citation references with actual hyperlinks');
+  }
+  
+  return text.replace(citationPattern, '');
+};
+
 const debug = (...args: any[]): void => {
   if (process.env.DEBUG === '1') {
     console.log('[DEBUG]', ...args);
