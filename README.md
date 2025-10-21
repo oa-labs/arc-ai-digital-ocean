@@ -30,16 +30,6 @@ arc-ai/
 
 ## Testing
 
-### AI Response Quality Tests
-
-The project uses `vitest-evals` with `autoevals` metrics to evaluate the quality of AI-generated responses to workplace safety questions. The test suite includes 5 sample workplace safety scenarios covering:
-
-1. **Fire Extinguisher Usage** - Testing PASS method knowledge
-2. **Personal Protective Equipment (PPE)** - Warehouse safety requirements
-3. **Emergency Evacuation** - Fire alarm response procedures
-4. **Chemical Spill Response** - Hazmat incident handling
-5. **Workplace Injury Reporting** - Incident documentation process
-
 #### Running Tests
 
 1. **Install Dependencies**
@@ -147,6 +137,14 @@ pnpm --filter @ichat-ocean/outline-bot start
 - [Shared Library](lib/README.md) - Common functionality and agent services
 - [Web File Manager](web/README.md) - S3 file management web interface
 - [CLI Tool](cli/) - Command-line interface for agent interaction
+
+## Future
+
+- This was built on DigitalOcean, which is a pretty basic platform, and it would be nice to try it on a more feature-rich platform from one of the major cloud vendors.
+- It would be nice to have some connectors to get custom information from Ruddr, JIRA, HubSpot, etc.
+- It would be nice to have per-channel rag databases.
+- It would be nice to have the ability to have scheduled agent posts, for example, to the CS sales channel news on startups that have received funding.
+- It would be nice to have a more robust logging and monitoring system.
 
 ## License
 
