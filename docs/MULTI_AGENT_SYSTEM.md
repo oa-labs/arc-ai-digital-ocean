@@ -12,6 +12,21 @@ The multi-agent system enables:
 - **Usage tracking**: Comprehensive logging of agent usage and changes
 - **Backward compatibility**: Existing deployments continue to work with default agent
 
+### RAG Architecture
+
+The system handles RAG (Retrieval-Augmented Generation) differently based on the AI provider:
+
+**OpenAI Agents:**
+- RAG documents are loaded from S3 and searched **client-side** by the Slack bot
+- The bot builds context from relevant documents and includes it in the prompt
+- S3 bucket/prefix is used to load and search documents in real-time
+
+**DigitalOcean Agents:**
+- RAG is configured and handled **automatically on the DigitalOcean backend**
+- The Slack bot sends messages directly without loading/searching documents
+- S3 bucket/prefix is configured in DigitalOcean's agent settings
+- The web UI is used to manage files in S3 that DigitalOcean's RAG will use
+
 ## Architecture
 
 ### Database Schema
@@ -54,12 +69,13 @@ The system uses 5 Supabase tables:
 - **`lib/services/agent-manager.ts`** - Core agent management service
   - Queries Supabase for agents and channel mappings
   - Creates and caches agent service instances
-  - Loads RAG documents from S3
+  - Loads RAG documents from S3 (for OpenAI agents only)
   - Logs usage and changes
-- **`lib/services/rag-service.ts`** - RAG document loading and search
+- **`lib/services/rag-service.ts`** - RAG document loading and search (OpenAI agents only)
   - Loads documents from S3
   - Performs keyword-based search (can be enhanced with embeddings)
   - Builds context strings for prompts
+  - Not used for DigitalOcean agents (RAG handled on their backend)
 
 #### Slack Bot (`@/bots/slack`)
 
@@ -73,7 +89,8 @@ The system uses 5 Supabase tables:
   - `/agent help` - Show help message (all users)
 - **`bots/slack/slack-agent-manager.ts`** - Slack-specific agent manager wrapper
   - Retrieves agent service for a channel
-  - Builds RAG context for messages
+  - Builds RAG context for messages (OpenAI agents only)
+  - Skips RAG for DigitalOcean agents (handled automatically)
   - Logs usage to Supabase
 - **`bots/slack/app.ts`** - Main Slack app (updated)
   - Integrates multi-agent system into message handlers
@@ -217,17 +234,32 @@ Only workspace owners, workspace admins, and channel creators can change agents.
 
 ## Data Flow
 
+### For OpenAI Agents (Client-Side RAG)
+
 1. **User sends message** in Slack channel
 2. **Slack bot receives message** via Bolt framework
 3. **SlackAgentManager** checks if multi-agent is enabled
 4. **AgentManager** queries Supabase for channel's agent
 5. **AgentManager** creates/retrieves cached agent service instance
-6. **RAGService** loads relevant documents from S3 (if configured)
-7. **RAGService** searches documents for relevant context
+6. **RAGService** loads relevant documents from S3
+7. **RAGService** searches documents for relevant context using keyword matching
 8. **Enhanced prompt** is built with RAG context + user message
-9. **Agent service** sends prompt to AI provider (OpenAI or DigitalOcean)
+9. **OpenAI agent service** sends prompt to OpenAI API
 10. **Response** is formatted and sent back to Slack
 11. **Usage is logged** to Supabase
+
+### For DigitalOcean Agents (Backend RAG)
+
+1. **User sends message** in Slack channel
+2. **Slack bot receives message** via Bolt framework
+3. **SlackAgentManager** checks if multi-agent is enabled
+4. **AgentManager** queries Supabase for channel's agent
+5. **AgentManager** creates/retrieves cached agent service instance
+6. **SlackAgentManager** skips RAG context building (handled by DigitalOcean)
+7. **DigitalOcean agent service** sends message directly to DigitalOcean API
+8. **DigitalOcean backend** automatically searches configured RAG database
+9. **Response** is formatted and sent back to Slack
+10. **Usage is logged** to Supabase
 
 ## Backward Compatibility
 
@@ -249,7 +281,7 @@ The multi-agent system is **fully backward compatible**:
 ### View Agent Usage
 
 ```sql
-SELECT 
+SELECT
   a.name as agent_name,
   COUNT(*) as message_count,
   SUM(total_tokens) as total_tokens,
@@ -264,7 +296,7 @@ ORDER BY message_count DESC;
 ### View Agent Changes
 
 ```sql
-SELECT 
+SELECT
   c.channel_name,
   pa.name as previous_agent,
   na.name as new_agent,
@@ -306,8 +338,8 @@ LIMIT 20;
 
 3. Verify database tables exist:
    ```sql
-   SELECT table_name FROM information_schema.tables 
-   WHERE table_schema = 'public' 
+   SELECT table_name FROM information_schema.tables
+   WHERE table_schema = 'public'
    AND table_name LIKE 'agent%';
    ```
 
@@ -318,6 +350,8 @@ LIMIT 20;
 3. Reinstall Slack app if scopes were added after installation
 
 ### RAG not working
+
+**For OpenAI Agents (Client-Side RAG):**
 
 1. Check S3 credentials:
    ```bash
@@ -330,6 +364,18 @@ LIMIT 20;
    ```bash
    aws s3 ls s3://my-rag-bucket/safety-docs/
    ```
+
+4. Enable debug logging to see RAG document loading:
+   ```bash
+   DEBUG=1 npm start
+   ```
+
+**For DigitalOcean Agents (Backend RAG):**
+
+1. Verify RAG database is configured in DigitalOcean agent settings
+2. Check that S3 bucket is accessible from DigitalOcean
+3. Ensure files are uploaded to the correct S3 bucket/prefix
+4. The Slack bot does NOT load documents for DigitalOcean agents - RAG is handled automatically
 
 ### Agent not found
 

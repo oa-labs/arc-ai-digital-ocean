@@ -23,7 +23,7 @@ RUN pnpm --filter @ichat-ocean/shared build
 RUN pnpm --filter @ichat-ocean/slack-bot build
 
 # Production stage
-FROM node:18-alpine
+FROM node:22-alpine
 
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate

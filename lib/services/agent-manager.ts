@@ -265,7 +265,9 @@ export class AgentManager {
   }
 
   /**
-   * Load RAG documents for an agent
+   * Load RAG documents for an agent from S3
+   * NOTE: This is only used for OpenAI agents to build context client-side.
+   * For DigitalOcean agents, the S3 bucket is configured on their backend and RAG is handled automatically.
    */
   async loadRAGDocuments(agent: AgentRecord): Promise<RAGDocument[]> {
     if (!this.ragService) {
@@ -282,10 +284,10 @@ export class AgentManager {
 
     try {
       const documents = await this.ragService.loadDocuments(agent.s3_bucket, agent.s3_prefix);
-      
+
       // Cache the documents
       this.ragDocumentCache.set(cacheKey, documents);
-      
+
       return documents;
     } catch (error) {
       console.error('[AgentManager] Failed to load RAG documents:', error);
