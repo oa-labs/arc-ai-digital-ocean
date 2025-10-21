@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { agentManagementService, Agent } from '@/services/agentManagementService';
 import { AgentForm } from '@/components/AgentForm';
@@ -8,8 +8,6 @@ import { AgentAnalytics } from '@/components/AgentAnalytics';
 import {
   Bot,
   Plus,
-  Edit,
-  Trash2,
   Activity,
   Settings,
   BarChart3,
@@ -22,6 +20,7 @@ type TabType = 'agents' | 'mappings' | 'analytics';
 
 export function Agents() {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -55,25 +54,6 @@ export function Agents() {
   const handleCreateAgent = () => {
     setEditingAgent(null);
     setShowForm(true);
-  };
-
-  const handleEditAgent = (agent: Agent) => {
-    setEditingAgent(agent);
-    setShowForm(true);
-  };
-
-  const handleDeleteAgent = async (agent: Agent) => {
-    if (!confirm(`Are you sure you want to delete agent "${agent.name}"?`)) {
-      return;
-    }
-
-    try {
-      await agentManagementService.deleteAgent(agent.id);
-      await loadAgents();
-    } catch (error) {
-      console.error('Error deleting agent:', error);
-      alert('Failed to delete agent. Please try again.');
-    }
   };
 
   const handleFormClose = () => {
@@ -235,7 +215,8 @@ export function Agents() {
                 {agents.map((agent) => (
                   <div
                     key={agent.id}
-                    className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow"
+                    onClick={() => navigate(`/agents/${agent.id}`)}
+                    className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow cursor-pointer"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -285,23 +266,6 @@ export function Agents() {
                           {agent.s3_bucket}
                         </span>
                       </div>
-                    </div>
-
-                    <div className="mt-6 flex items-center space-x-2">
-                      <button
-                        onClick={() => handleEditAgent(agent)}
-                        className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 text-sm text-primary-600 bg-primary-50 rounded-lg hover:bg-primary-100 transition-colors"
-                      >
-                        <Edit className="h-4 w-4" />
-                        <span>Edit</span>
-                      </button>
-                      <button
-                        onClick={() => handleDeleteAgent(agent)}
-                        className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 text-sm text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        <span>Delete</span>
-                      </button>
                     </div>
                   </div>
                 ))}

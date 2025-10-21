@@ -5,6 +5,7 @@ import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Login } from '@/pages/Login';
 import { Dashboard } from '@/pages/Dashboard';
 import { Agents } from '@/pages/Agents';
+import { AgentEdit } from '@/pages/AgentEdit';
 import { BucketDetail } from '@/pages/BucketDetail';
 
 const queryClient = new QueryClient({
@@ -36,6 +37,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Agents />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/agents/:agentId"
+              element={
+                <ProtectedRoute>
+                  <AgentEdit />
                 </ProtectedRoute>
               }
             />
