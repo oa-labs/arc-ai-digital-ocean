@@ -5,6 +5,7 @@ import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Login } from '@/pages/Login';
 import { Dashboard } from '@/pages/Dashboard';
 import { Agents } from '@/pages/Agents';
+import { BucketDetail } from '@/pages/BucketDetail';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,6 +36,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Agents />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/buckets/:bucketName"
+              element={
+                <ProtectedRoute>
+                  <BucketDetail />
                 </ProtectedRoute>
               }
             />

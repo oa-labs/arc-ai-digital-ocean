@@ -16,6 +16,7 @@ export interface AgentRecord {
   organization?: string;
   s3_bucket: string;
   s3_prefix?: string;
+  s3_access_key_env_var?: string; // Environment variable name for S3 access key
   system_prompt?: string;
   created_at: string;
   updated_at: string;

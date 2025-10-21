@@ -10,7 +10,7 @@ interface AgentFormProps {
 export function AgentForm({ agent, onClose }: AgentFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState<CreateAgentInput>({
+  const [formData, setFormData] = useState<CreateAgentInput & { is_active?: boolean }>({
     name: '',
     description: '',
     provider: 'openai',
@@ -22,7 +22,9 @@ export function AgentForm({ agent, onClose }: AgentFormProps) {
     organization: '',
     s3_bucket: '',
     s3_prefix: '',
+    s3_access_key_env_var: '',
     system_prompt: '',
+    is_active: true,
   });
 
   useEffect(() => {
@@ -39,7 +41,9 @@ export function AgentForm({ agent, onClose }: AgentFormProps) {
         organization: agent.organization || '',
         s3_bucket: agent.s3_bucket,
         s3_prefix: agent.s3_prefix || '',
+        s3_access_key_env_var: agent.s3_access_key_env_var || '',
         system_prompt: agent.system_prompt || '',
+        is_active: agent.is_active,
       });
     }
   }, [agent]);
@@ -67,9 +71,10 @@ export function AgentForm({ agent, onClose }: AgentFormProps) {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'number' ? parseFloat(value) : value,
+      [name]: type === 'checkbox' ? checked : type === 'number' ? parseFloat(value) : value,
     }));
   };
 
@@ -134,6 +139,20 @@ export function AgentForm({ agent, onClose }: AgentFormProps) {
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
                 placeholder="Brief description of this agent's purpose"
               />
+            </div>
+
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="is_active"
+                name="is_active"
+                checked={formData.is_active}
+                onChange={handleChange}
+                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+              />
+              <label htmlFor="is_active" className="ml-2 block text-sm text-gray-700">
+                Active (visible in <code className="text-xs bg-gray-100 px-1 py-0.5 rounded">/agent list</code>)
+              </label>
             </div>
           </div>
 
@@ -280,6 +299,24 @@ export function AgentForm({ agent, onClose }: AgentFormProps) {
               />
               <p className="mt-1 text-xs text-gray-500">
                 Optional folder path within the bucket
+              </p>
+            </div>
+
+            <div>
+              <label htmlFor="s3_access_key_env_var" className="block text-sm font-medium text-gray-700">
+                S3 Access Key Environment Variable (Optional)
+              </label>
+              <input
+                type="text"
+                id="s3_access_key_env_var"
+                name="s3_access_key_env_var"
+                value={formData.s3_access_key_env_var}
+                onChange={handleChange}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm font-mono"
+                placeholder="S3_ACCESS_KEY_AGENT_NAME"
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                Environment variable name containing S3 credentials for this bucket. If not specified, default credentials will be used.
               </p>
             </div>
           </div>

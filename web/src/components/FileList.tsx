@@ -3,16 +3,17 @@ import { FileItem } from './FileItem';
 import { DeleteConfirmation } from './DeleteConfirmation';
 import { RenameModal } from './RenameModal';
 import { S3File } from '@/types/file';
-import { s3Service } from '@/services/s3Service';
+import { s3Service as defaultS3Service } from '@/services/s3Service';
 import { FolderOpen } from 'lucide-react';
 
 interface FileListProps {
   files: S3File[];
   onFileChange: () => void;
   loading: boolean;
+  s3Service?: typeof defaultS3Service;
 }
 
-export function FileList({ files, onFileChange, loading }: FileListProps) {
+export function FileList({ files, onFileChange, loading, s3Service = defaultS3Service }: FileListProps) {
   const [fileToDelete, setFileToDelete] = useState<S3File | null>(null);
   const [fileToRename, setFileToRename] = useState<S3File | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);

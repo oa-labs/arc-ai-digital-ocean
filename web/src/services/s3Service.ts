@@ -10,18 +10,29 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { config } from '@/config/env';
 import { S3File } from '@/types/file';
 
+export interface S3Config {
+  region: string;
+  endpoint: string;
+  bucket: string;
+  credentials: {
+    accessKeyId: string;
+    secretAccessKey: string;
+  };
+}
+
 class S3Service {
   private client: S3Client;
   private bucket: string;
 
-  constructor() {
+  constructor(s3Config?: S3Config) {
+    const cfg = s3Config || config.s3;
     this.client = new S3Client({
-      region: config.s3.region,
-      endpoint: config.s3.endpoint,
-      credentials: config.s3.credentials,
+      region: cfg.region,
+      endpoint: cfg.endpoint,
+      credentials: cfg.credentials,
       forcePathStyle: false, // DigitalOcean Spaces uses virtual-hosted-style URLs
     });
-    this.bucket = config.s3.bucket;
+    this.bucket = cfg.bucket;
   }
 
   /**
@@ -171,5 +182,11 @@ class S3Service {
   }
 }
 
+// Default instance using config from environment
 export const s3Service = new S3Service();
+
+// Factory function to create S3Service instances with custom config
+export function createS3Service(s3Config: S3Config): S3Service {
+  return new S3Service(s3Config);
+}
 

@@ -1,26 +1,24 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { FileUpload } from '@/components/FileUpload';
-import { FileList } from '@/components/FileList';
-import { s3Service } from '@/services/s3Service';
-import { S3File } from '@/types/file';
+import { BucketList } from '@/components/BucketList';
+import { agentManagementService, Agent } from '@/services/agentManagementService';
 import { Cloud, LogOut, RefreshCw, Bot } from 'lucide-react';
 
 export function Dashboard() {
   const { user, signOut } = useAuth();
-  const [files, setFiles] = useState<S3File[]>([]);
+  const [buckets, setBuckets] = useState<Map<string, Agent[]>>(new Map());
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const loadFiles = async () => {
+  const loadBuckets = async () => {
     try {
       setLoading(true);
-      const fileList = await s3Service.listFiles();
-      setFiles(fileList);
+      const bucketMap = await agentManagementService.getS3Buckets();
+      setBuckets(bucketMap);
     } catch (error) {
-      console.error('Error loading files:', error);
-      alert('Failed to load files. Please check your S3 configuration.');
+      console.error('Error loading buckets:', error);
+      alert('Failed to load S3 buckets. Please check your configuration.');
     } finally {
       setLoading(false);
     }
@@ -28,12 +26,12 @@ export function Dashboard() {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await loadFiles();
+    await loadBuckets();
     setRefreshing(false);
   };
 
   useEffect(() => {
-    loadFiles();
+    loadBuckets();
   }, []);
 
   const handleSignOut = async () => {
@@ -92,27 +90,19 @@ export function Dashboard() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
-          {/* Upload Section */}
+          {/* Header Section */}
           <section>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Upload Files
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              S3 Buckets
             </h2>
-            <FileUpload onUploadComplete={loadFiles} />
+            <p className="text-gray-600">
+              Manage files in your S3 buckets. Each bucket is associated with one or more AI agents.
+            </p>
           </section>
 
-          {/* Files Section */}
+          {/* Buckets Section */}
           <section>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">
-                Your Files
-                {!loading && (
-                  <span className="ml-2 text-sm font-normal text-gray-500">
-                    ({files.length} {files.length === 1 ? 'file' : 'files'})
-                  </span>
-                )}
-              </h2>
-            </div>
-            <FileList files={files} onFileChange={loadFiles} loading={loading} />
+            <BucketList buckets={buckets} loading={loading} />
           </section>
         </div>
       </main>

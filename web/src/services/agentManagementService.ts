@@ -13,6 +13,7 @@ export interface Agent {
   organization?: string;
   s3_bucket: string;
   s3_prefix?: string;
+  s3_access_key_env_var?: string;
   system_prompt?: string;
   is_active: boolean;
   created_at: string;
@@ -31,12 +32,12 @@ export interface CreateAgentInput {
   organization?: string;
   s3_bucket: string;
   s3_prefix?: string;
+  s3_access_key_env_var?: string;
   system_prompt?: string;
-}
-
-export interface UpdateAgentInput extends Partial<CreateAgentInput> {
   is_active?: boolean;
 }
+
+export interface UpdateAgentInput extends Partial<CreateAgentInput> {}
 
 export interface ChannelAgent {
   channel_id: string;
@@ -133,7 +134,7 @@ class AgentManagementService {
       .from('agents')
       .insert({
         ...input,
-        is_active: true,
+        is_active: input.is_active ?? true,
       })
       .select()
       .single();
@@ -295,6 +296,25 @@ class AgentManagementService {
     }
 
     return data || [];
+  }
+
+  /**
+   * Get unique S3 buckets with their associated agents
+   */
+  async getS3Buckets(): Promise<Map<string, Agent[]>> {
+    const agents = await this.listAgents(true); // Only active agents
+
+    const bucketMap = new Map<string, Agent[]>();
+
+    for (const agent of agents) {
+      const bucket = agent.s3_bucket;
+      if (!bucketMap.has(bucket)) {
+        bucketMap.set(bucket, []);
+      }
+      bucketMap.get(bucket)!.push(agent);
+    }
+
+    return bucketMap;
   }
 }
 
