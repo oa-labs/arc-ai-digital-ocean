@@ -4,6 +4,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Login } from '@/pages/Login';
 import { Dashboard } from '@/pages/Dashboard';
+import { Agents } from '@/pages/Agents';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,6 +27,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/agents"
+              element={
+                <ProtectedRoute>
+                  <Agents />
                 </ProtectedRoute>
               }
             />

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { agentManagementService, Agent, AgentStats, AgentUsageLog } from '@/services/agentManagementService';
-import { BarChart3, TrendingUp, Clock, AlertCircle, RefreshCw, MessageSquare } from 'lucide-react';
+import { BarChart3, Clock, AlertCircle, RefreshCw, MessageSquare } from 'lucide-react';
 
 interface AgentAnalyticsProps {
   agents: Agent[];

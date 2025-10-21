@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { FileUpload } from '@/components/FileUpload';
 import { FileList } from '@/components/FileList';
 import { s3Service } from '@/services/s3Service';
 import { S3File } from '@/types/file';
-import { Cloud, LogOut, RefreshCw } from 'lucide-react';
+import { Cloud, LogOut, RefreshCw, Bot } from 'lucide-react';
 
 export function Dashboard() {
   const { user, signOut } = useAuth();
@@ -59,6 +60,13 @@ export function Dashboard() {
               </div>
             </div>
             <div className="flex items-center space-x-2">
+              <Link
+                to="/agents"
+                className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+              >
+                <Bot className="h-5 w-5" />
+                <span className="hidden sm:inline">Agents</span>
+              </Link>
               <button
                 onClick={handleRefresh}
                 disabled={refreshing}
