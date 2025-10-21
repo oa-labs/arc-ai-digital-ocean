@@ -3,6 +3,8 @@ import type { App as AppType, AppOptions, AllMiddlewareArgs, SlackEventMiddlewar
 import { createAgentService, AgentService, getConfig, validateConfig, createThreadContextStore, ThreadContextStore } from '@ichat-ocean/shared';
 import { SlackThreadContextStoreAdapter } from './thread-context-adapter.js';
 import { markdownToSlackMessage } from './markdown-formatter.js';
+import { slackAgentManager } from './slack-agent-manager.js';
+import { handleAgentCommand } from './slash-commands.js';
 
 /**
  * Decodes HTML entities in text
@@ -135,20 +137,57 @@ export const handleMessage = async ({ message, event, say }: SlackEventMiddlewar
     return;
   }
 
+  const channelId = 'channel' in msg ? msg.channel : '';
+  const messageText = 'text' in msg ? msg.text || '' : '';
+  const startTime = Date.now();
+
   if (isDirectMessage(msg)) {
     debug('DM detected, generating AI response');
 
     try {
-      // Use the shared agent service to generate AI response for DM
-      const systemPrompt = 'You are a helpful AI assistant for workplace safety and internal communications. Provide clear, professional responses to direct messages.';
-      const messageText = 'text' in msg ? msg.text || '' : '';
-      const response = await agentService.sendSystemMessage(systemPrompt, messageText);
+      // Try to use channel-specific agent if multi-agent is enabled
+      let response;
+      let usedMultiAgent = false;
+
+      if (slackAgentManager.isEnabled()) {
+        const channelAgentService = await slackAgentManager.getAgentServiceForChannel(channelId);
+        if (channelAgentService) {
+          const systemPrompt = await slackAgentManager.getSystemPrompt(channelId);
+          const enhancedPrompt = await slackAgentManager.buildEnhancedPrompt(channelId, messageText);
+          response = await channelAgentService.sendSystemMessage(systemPrompt, enhancedPrompt);
+          usedMultiAgent = true;
+          debug('Used multi-agent system for DM');
+        }
+      }
+
+      // Fallback to default agent service
+      if (!response) {
+        const systemPrompt = 'You are a helpful AI assistant for workplace safety and internal communications. Provide clear, professional responses to direct messages.';
+        response = await agentService.sendSystemMessage(systemPrompt, messageText);
+        debug('Used default agent service for DM');
+      }
 
       debug('AI response generated for DM:', {
         contentLength: response.content.length,
         model: response.model,
-        tokens: response.usage?.totalTokens
+        tokens: response.usage?.totalTokens,
+        multiAgent: usedMultiAgent
       });
+
+      // Log usage if multi-agent
+      if (usedMultiAgent && response.usage) {
+        const responseTime = Date.now() - startTime;
+        await slackAgentManager.logUsage(
+          channelId,
+          'user' in msg ? (msg as any).user : '',
+          'ts' in msg ? (msg as any).ts : undefined,
+          response.usage.promptTokens,
+          response.usage.completionTokens,
+          response.usage.totalTokens,
+          response.model,
+          responseTime
+        );
+      }
 
       // Send only the AI response with formatted blocks
       const formattedMessage = await markdownToSlackMessage(response.content);
@@ -164,16 +203,49 @@ export const handleMessage = async ({ message, event, say }: SlackEventMiddlewar
   debug('Channel/context message: processing with AI agent');
 
   try {
-    // Use the shared agent service to generate AI response
-    const systemPrompt = 'You are a helpful AI assistant for workplace safety and internal communications. Provide clear, professional responses.';
-    const messageText = 'text' in msg ? msg.text || '' : '';
-    const response = await agentService.sendSystemMessage(systemPrompt, messageText);
+    // Try to use channel-specific agent if multi-agent is enabled
+    let response;
+    let usedMultiAgent = false;
+
+    if (slackAgentManager.isEnabled()) {
+      const channelAgentService = await slackAgentManager.getAgentServiceForChannel(channelId);
+      if (channelAgentService) {
+        const systemPrompt = await slackAgentManager.getSystemPrompt(channelId);
+        const enhancedPrompt = await slackAgentManager.buildEnhancedPrompt(channelId, messageText);
+        response = await channelAgentService.sendSystemMessage(systemPrompt, enhancedPrompt);
+        usedMultiAgent = true;
+        debug('Used multi-agent system for channel message');
+      }
+    }
+
+    // Fallback to default agent service
+    if (!response) {
+      const systemPrompt = 'You are a helpful AI assistant for workplace safety and internal communications. Provide clear, professional responses.';
+      response = await agentService.sendSystemMessage(systemPrompt, messageText);
+      debug('Used default agent service for channel message');
+    }
 
     debug('AI response generated:', {
       contentLength: response.content.length,
       model: response.model,
-      tokens: response.usage?.totalTokens
+      tokens: response.usage?.totalTokens,
+      multiAgent: usedMultiAgent
     });
+
+    // Log usage if multi-agent
+    if (usedMultiAgent && response.usage) {
+      const responseTime = Date.now() - startTime;
+      await slackAgentManager.logUsage(
+        channelId,
+        'user' in msg ? (msg as any).user : '',
+        'ts' in msg ? (msg as any).ts : undefined,
+        response.usage.promptTokens,
+        response.usage.completionTokens,
+        response.usage.totalTokens,
+        response.model,
+        responseTime
+      );
+    }
 
     const formattedMessage = await markdownToSlackMessage(response.content);
     await say(formattedMessage);
@@ -193,17 +265,54 @@ export const handleAppMention = async ({ event, say }: SlackEventMiddlewareArgs<
 
   debug('App mention: processing with AI agent');
 
+  const channelId = event.channel || '';
+  const messageText = event.text || '';
+  const startTime = Date.now();
+
   try {
-    // Use the shared agent service to generate AI response
-    const systemPrompt = 'You are a helpful AI assistant for workplace safety and internal communications. Provide clear, professional responses.';
-    const messageText = event.text || '';
-    const response = await agentService.sendSystemMessage(systemPrompt, messageText);
+    // Try to use channel-specific agent if multi-agent is enabled
+    let response;
+    let usedMultiAgent = false;
+
+    if (slackAgentManager.isEnabled()) {
+      const channelAgentService = await slackAgentManager.getAgentServiceForChannel(channelId);
+      if (channelAgentService) {
+        const systemPrompt = await slackAgentManager.getSystemPrompt(channelId);
+        const enhancedPrompt = await slackAgentManager.buildEnhancedPrompt(channelId, messageText);
+        response = await channelAgentService.sendSystemMessage(systemPrompt, enhancedPrompt);
+        usedMultiAgent = true;
+        debug('Used multi-agent system for app mention');
+      }
+    }
+
+    // Fallback to default agent service
+    if (!response) {
+      const systemPrompt = 'You are a helpful AI assistant for workplace safety and internal communications. Provide clear, professional responses.';
+      response = await agentService.sendSystemMessage(systemPrompt, messageText);
+      debug('Used default agent service for app mention');
+    }
 
     debug('AI response generated:', {
       contentLength: response.content.length,
       model: response.model,
-      tokens: response.usage?.totalTokens
+      tokens: response.usage?.totalTokens,
+      multiAgent: usedMultiAgent
     });
+
+    // Log usage if multi-agent
+    if (usedMultiAgent && response.usage) {
+      const responseTime = Date.now() - startTime;
+      await slackAgentManager.logUsage(
+        channelId,
+        event.user || '',
+        event.ts,
+        response.usage.promptTokens,
+        response.usage.completionTokens,
+        response.usage.totalTokens,
+        response.model,
+        responseTime
+      );
+    }
 
     const formattedMessage = await markdownToSlackMessage(response.content);
     await say(formattedMessage);
@@ -333,6 +442,9 @@ export const registerHandlers = (app: AppType): AppType => {
   // Keep existing handlers for backwards compatibility
   app.message(handleMessage);
   app.event('app_mention', handleAppMention);
+
+  // Register slash command for agent management
+  app.command('/agent', handleAgentCommand);
 
   // App Home: publish Home tab when opened
   app.event('app_home_opened', async ({ event, client, ack }: any) => {

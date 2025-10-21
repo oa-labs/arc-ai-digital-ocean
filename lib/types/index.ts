@@ -56,3 +56,6 @@ export interface SlackThreadContextRecord {
   created_at?: string;
   updated_at?: string;
 }
+
+// Export multi-agent system types
+export * from './agent-types.js';

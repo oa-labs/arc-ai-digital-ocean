@@ -19,6 +19,8 @@
     "@ichat-ocean/shared": "workspace:*",
     "@slack/bolt": "^4.5.0",
     "@slack/types": "^2.17.0",
+    "@slack/web-api": "^7.0.0",
+    "@supabase/supabase-js": "^2.75.0",
     "@tryfabric/mack": "^1.1.1",
     "dotenv": "^17.2.3"
   },
