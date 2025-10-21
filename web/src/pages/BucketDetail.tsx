@@ -85,7 +85,8 @@ export function BucketDetail() {
       setFiles(fileList);
     } catch (err) {
       console.error('Error loading files:', err);
-      setError('Failed to load files. Please check your S3 configuration.');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load files. Please check your S3 configuration.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

@@ -67,6 +67,12 @@ class S3Service {
       return files.sort((a, b) => b.lastModified.getTime() - a.lastModified.getTime());
     } catch (error) {
       console.error('Error listing files:', error);
+      
+      // Check if it's likely a CORS error
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error('Failed to connect to S3. This may be a CORS configuration issue. Check the browser console for details.');
+      }
+      
       throw new Error('Failed to list files from S3');
     }
   }
