@@ -19,6 +19,7 @@ export function AgentEdit() {
     description: string;
     provider: 'openai' | 'digitalocean';
     model: string;
+    api_key_env_var: string;
     s3_bucket: string;
     s3_prefix: string;
     endpoint: string;
@@ -31,6 +32,7 @@ export function AgentEdit() {
     description: '',
     provider: 'openai',
     model: '',
+    api_key_env_var: '',
     s3_bucket: '',
     s3_prefix: '',
     endpoint: '',
@@ -64,6 +66,7 @@ export function AgentEdit() {
           description: foundAgent.description || '',
           provider: foundAgent.provider,
           model: foundAgent.model || '',
+          api_key_env_var: foundAgent.api_key_env_var,
           s3_bucket: foundAgent.s3_bucket,
           s3_prefix: foundAgent.s3_prefix || '',
           endpoint: foundAgent.endpoint || '',
@@ -287,6 +290,22 @@ export function AgentEdit() {
                     onChange={handleChange}
                     placeholder="e.g., gpt-4"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="api_key_env_var" className="block text-sm font-medium text-gray-700 mb-2">
+                    API Key Environment Variable *
+                  </label>
+                  <input
+                    type="text"
+                    id="api_key_env_var"
+                    name="api_key_env_var"
+                    required
+                    value={formData.api_key_env_var}
+                    onChange={handleChange}
+                    placeholder="e.g., AGENT_SAFETY_OPENAI_KEY"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono"
                   />
                 </div>
               </div>

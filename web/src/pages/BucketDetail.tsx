@@ -191,9 +191,10 @@ export function BucketDetail() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Agents Using This Bucket</h2>
             <div className="flex flex-wrap gap-2">
               {agents.map((agent) => (
-                <div
+                <Link
                   key={agent.id}
-                  className="inline-flex items-center px-3 py-2 rounded-lg bg-gray-100 text-sm"
+                  to={`/agents/${agent.id}`}
+                  className="inline-flex items-center px-3 py-2 rounded-lg bg-gray-100 text-sm hover:bg-gray-200 transition-colors"
                 >
                   <span className="font-medium text-gray-900">{agent.name}</span>
                   <span className="ml-2 text-gray-500">({agent.provider})</span>
@@ -202,7 +203,7 @@ export function BucketDetail() {
                       /{agent.s3_prefix}
                     </span>
                   )}
-                </div>
+                </Link>
               ))}
             </div>
           </section>
