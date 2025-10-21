@@ -308,6 +308,21 @@ export function AgentEdit() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono"
                   />
                 </div>
+
+                <div className="sm:col-span-2">
+                  <label htmlFor="endpoint" className="block text-sm font-medium text-gray-700 mb-2">
+                    Agent Endpoint URL
+                  </label>
+                  <input
+                    type="text"
+                    id="endpoint"
+                    name="endpoint"
+                    value={formData.endpoint}
+                    onChange={handleChange}
+                    placeholder="e.g., https://api.example.com"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  />
+                </div>
               </div>
             </div>
 
@@ -341,21 +356,6 @@ export function AgentEdit() {
                     value={formData.s3_prefix}
                     onChange={handleChange}
                     placeholder="e.g., documents/"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                  />
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label htmlFor="endpoint" className="block text-sm font-medium text-gray-700 mb-2">
-                    Endpoint
-                  </label>
-                  <input
-                    type="text"
-                    id="endpoint"
-                    name="endpoint"
-                    value={formData.endpoint}
-                    onChange={handleChange}
-                    placeholder="e.g., https://nyc3.digitaloceanspaces.com"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   />
                 </div>
