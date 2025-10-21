@@ -69,8 +69,16 @@ class S3Service {
       console.error('Error listing files:', error);
       
       // Check if it's likely a CORS error
-      if (error instanceof TypeError && error.message.includes('fetch')) {
-        throw new Error('Failed to connect to S3. This may be a CORS configuration issue. Check the browser console for details.');
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorString = JSON.stringify(error);
+      
+      if (
+        (error instanceof TypeError && errorMessage.includes('fetch')) ||
+        errorMessage.toLowerCase().includes('cors') ||
+        errorString.toLowerCase().includes('cors') ||
+        (error instanceof Error && error.name === 'NetworkingError')
+      ) {
+        throw new Error('CORS Error: S3 bucket is not configured to allow requests from this origin. Please add CORS rules to your DigitalOcean Space or S3 bucket.');
       }
       
       throw new Error('Failed to list files from S3');

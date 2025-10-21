@@ -22,8 +22,6 @@ export function AgentForm({ agent, onClose }: AgentFormProps) {
     organization: '',
     s3_bucket: '',
     s3_prefix: '',
-    s3_access_key_id_env_var: '',
-    s3_secret_key_env_var: '',
     system_prompt: '',
     is_active: true,
     is_default: false,
@@ -43,8 +41,6 @@ export function AgentForm({ agent, onClose }: AgentFormProps) {
         organization: agent.organization || '',
         s3_bucket: agent.s3_bucket,
         s3_prefix: agent.s3_prefix || '',
-        s3_access_key_id_env_var: agent.s3_access_key_id_env_var || '',
-        s3_secret_key_env_var: agent.s3_secret_key_env_var || '',
         system_prompt: agent.system_prompt || '',
         is_active: agent.is_active,
         is_default: agent.is_default || false,
@@ -320,42 +316,10 @@ export function AgentForm({ agent, onClose }: AgentFormProps) {
               </p>
             </div>
 
-            <div>
-              <label htmlFor="s3_access_key_id_env_var" className="block text-sm font-medium text-gray-700">
-                S3 Access Key ID Environment Variable (Optional)
-              </label>
-              <input
-                type="text"
-                id="s3_access_key_id_env_var"
-                name="s3_access_key_id_env_var"
-                value={formData.s3_access_key_id_env_var}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm font-mono"
-                placeholder="S3_ACCESS_KEY_ID_AGENT_NAME"
-              />
-              <p className="mt-1 text-xs text-gray-500">
-                Environment variable name containing S3 access key ID for this bucket.
-              </p>
-            </div>
-
-            <div>
-              <label htmlFor="s3_secret_key_env_var" className="block text-sm font-medium text-gray-700">
-                S3 Secret Key Environment Variable (Optional)
-              </label>
-              <input
-                type="text"
-                id="s3_secret_key_env_var"
-                name="s3_secret_key_env_var"
-                value={formData.s3_secret_key_env_var}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm font-mono"
-                placeholder="S3_SECRET_KEY_AGENT_NAME"
-              />
-              <p className="mt-1 text-xs text-gray-500">
-                Environment variable name containing S3 secret access key for this bucket. Both access key ID and secret key must be specified to use custom credentials.
-              </p>
-            </div>
           </div>
+          <p className="mt-2 text-xs text-gray-500">
+            S3 credentials are configured globally via VITE_S3_ACCESS_KEY_ID and VITE_S3_SECRET_ACCESS_KEY environment variables.
+          </p>
 
           {/* System Prompt */}
           <div className="space-y-4">

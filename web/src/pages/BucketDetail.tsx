@@ -19,21 +19,10 @@ export function BucketDetail() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  // Get the first agent's S3 credentials (or use default from env)
+  // Create S3 service using global credentials
   const s3Service = useMemo(() => {
     if (!bucketName) return null;
 
-    // Find an agent with this bucket that has S3 credentials configured
-    const agentWithCreds = agents.find(a => a.s3_access_key_id_env_var && a.s3_secret_key_env_var);
-
-    if (agentWithCreds?.s3_access_key_id_env_var && agentWithCreds?.s3_secret_key_env_var) {
-      // In a real implementation, you would need to fetch the actual credentials
-      // from the backend using the environment variable names
-      // For now, we'll use the default credentials from config
-      console.warn(`Agent ${agentWithCreds.name} has S3 credentials configured (${agentWithCreds.s3_access_key_id_env_var}, ${agentWithCreds.s3_secret_key_env_var}), but credential fetching is not yet implemented. Using default credentials.`);
-    }
-
-    // Use default credentials from environment
     const s3Config: S3Config = {
       region: config.s3.region,
       endpoint: config.s3.endpoint,
@@ -42,7 +31,7 @@ export function BucketDetail() {
     };
 
     return createS3Service(s3Config);
-  }, [bucketName, agents]);
+  }, [bucketName]);
 
   useEffect(() => {
     const loadBucketInfo = async () => {
