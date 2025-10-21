@@ -80,6 +80,38 @@ export class SlackAgentManager {
   }
 
   /**
+   * Get the default agent service (fallback when no channel agent is configured)
+   */
+  async getDefaultAgentService(): Promise<AgentServiceInstance | null> {
+    if (!this.agentManager) {
+      return null;
+    }
+
+    try {
+      return await this.agentManager.getDefaultAgentService();
+    } catch (error) {
+      console.error('[SlackAgentManager] Failed to get default agent service:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get the default agent configuration
+   */
+  async getDefaultAgent(): Promise<AgentRecord | null> {
+    if (!this.agentManager) {
+      return null;
+    }
+
+    try {
+      return await this.agentManager.getDefaultAgent();
+    } catch (error) {
+      console.error('[SlackAgentManager] Failed to get default agent:', error);
+      return null;
+    }
+  }
+
+  /**
    * Build RAG context for a message
    * NOTE: Only builds RAG context for OpenAI agents.
    * DigitalOcean agents handle RAG automatically on their backend.

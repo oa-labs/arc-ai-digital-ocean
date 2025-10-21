@@ -13,9 +13,11 @@ export interface Agent {
   organization?: string;
   s3_bucket: string;
   s3_prefix?: string;
-  s3_access_key_env_var?: string;
+  s3_access_key_id_env_var?: string;
+  s3_secret_key_env_var?: string;
   system_prompt?: string;
   is_active: boolean;
+  is_default?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -32,7 +34,8 @@ export interface CreateAgentInput {
   organization?: string;
   s3_bucket: string;
   s3_prefix?: string;
-  s3_access_key_env_var?: string;
+  s3_access_key_id_env_var?: string;
+  s3_secret_key_env_var?: string;
   system_prompt?: string;
   is_active?: boolean;
 }
@@ -182,6 +185,50 @@ class AgentManagementService {
       console.error('Failed to delete agent:', error);
       throw new Error(`Failed to delete agent: ${error.message}`);
     }
+  }
+
+  /**
+   * Set an agent as the default
+   */
+  async setDefaultAgent(id: string): Promise<Agent> {
+    const { data, error } = await supabase
+      .from('agents')
+      .update({
+        is_default: true,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Failed to set default agent:', error);
+      throw new Error(`Failed to set default agent: ${error.message}`);
+    }
+
+    return data;
+  }
+
+  /**
+   * Get the default agent
+   */
+  async getDefaultAgent(): Promise<Agent | null> {
+    const { data, error } = await supabase
+      .from('agents')
+      .select('*')
+      .eq('is_default', true)
+      .eq('is_active', true)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return null;
+      }
+      console.error('Failed to get default agent:', error);
+      throw new Error(`Failed to get default agent: ${error.message}`);
+    }
+
+    return data;
   }
 
   /**

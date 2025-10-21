@@ -63,10 +63,14 @@ export const markdownToBlocks = async (markdown: string): Promise<KnownBlock[]> 
  * Includes a fallback text for notifications
  */
 export const markdownToSlackMessage = async (markdown: string): Promise<{ text: string; blocks: KnownBlock[] }> => {
+  // First decode HTML entities and remove citations
+  let processed = decodeHtmlEntities(markdown);
+  processed = removeCitations(processed);
+  
   const blocks = await markdownToBlocks(markdown);
   
-  // Create a plain text fallback (for notifications)
-  const fallbackText = markdown
+  // Create a plain text fallback (for notifications) from processed text
+  const fallbackText = processed
     .replace(/\*\*(.+?)\*\*/g, '$1')
     .replace(/\*(.+?)\*/g, '$1')
     .replace(/~~(.+?)~~/g, '$1')

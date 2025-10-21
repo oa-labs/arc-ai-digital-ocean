@@ -16,12 +16,14 @@ export interface AgentRecord {
   organization?: string;
   s3_bucket: string;
   s3_prefix?: string;
-  s3_access_key_env_var?: string; // Environment variable name for S3 access key
+  s3_access_key_id_env_var?: string; // Environment variable name for S3 access key ID
+  s3_secret_key_env_var?: string; // Environment variable name for S3 secret access key
   system_prompt?: string;
   created_at: string;
   updated_at: string;
   created_by?: string;
   is_active: boolean;
+  is_default?: boolean; // Whether this is the default fallback agent
 }
 
 /**

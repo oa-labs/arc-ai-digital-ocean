@@ -8,19 +8,26 @@ This document describes the refactoring of the web UI's S3 bucket management sys
 
 ### 1. Database Schema
 
-**New Column: `s3_access_key_env_var`**
-- Added to the `agents` table
-- Type: `TEXT` (nullable)
-- Purpose: Stores the environment variable name containing S3 credentials for the agent's bucket
-- If null, default credentials from the environment are used
+**New Columns:**
+- `s3_access_key_id_env_var` - Added to the `agents` table
+  - Type: `TEXT` (nullable)
+  - Purpose: Stores the environment variable name containing S3 access key ID for the agent's bucket
+  - If null, default credentials from the environment are used
+
+- `s3_secret_key_env_var` - Added to the `agents` table
+  - Type: `TEXT` (nullable)
+  - Purpose: Stores the environment variable name containing S3 secret access key for the agent's bucket
+  - If null, default credentials from the environment are used
+
+**Note:** Both fields must be set together to use custom S3 credentials. If only one is set, default credentials will be used.
 
 **Migration File:** `docs/supabase-migration-add-s3-access-key-env-var.sql`
 
 ### 2. Type Definitions
 
 **Updated Interfaces:**
-- `lib/types/agent-types.ts` - Added `s3_access_key_env_var?: string` to `AgentRecord`
-- `web/src/services/agentManagementService.ts` - Added field to `Agent` and `CreateAgentInput` interfaces
+- `lib/types/agent-types.ts` - Added `s3_access_key_id_env_var?: string` and `s3_secret_key_env_var?: string` to `AgentRecord`
+- `web/src/services/agentManagementService.ts` - Added both fields to `Agent` and `CreateAgentInput` interfaces
 
 ### 3. S3 Service Refactoring
 
@@ -129,10 +136,12 @@ async getS3Buckets(): Promise<Map<string, Agent[]>>
 **File:** `web/src/components/AgentForm.tsx`
 
 **Changes:**
-- Added "S3 Access Key Environment Variable" field in RAG Configuration section
-- Field is optional
-- Includes helpful placeholder and description
+- Added "S3 Access Key ID Environment Variable" field in RAG Configuration section
+- Added "S3 Secret Key Environment Variable" field in RAG Configuration section
+- Both fields are optional
+- Includes helpful placeholders and descriptions
 - Properly initialized in form state and useEffect
+- Note: Both fields must be set together to use custom credentials
 
 ### 7. Routing
 
@@ -200,8 +209,10 @@ All code changes are already in place. No additional steps needed.
 If you want to use different S3 credentials for specific agents:
 1. Go to Agents page
 2. Edit an agent
-3. Set "S3 Access Key Environment Variable" to the name of an environment variable
-4. Ensure that environment variable is set in your deployment
+3. Set "S3 Access Key ID Environment Variable" to the name of an environment variable (e.g., `S3_AGENT_ACCESS_KEY_ID`)
+4. Set "S3 Secret Key Environment Variable" to the name of an environment variable (e.g., `S3_AGENT_SECRET_KEY`)
+5. Ensure both environment variables are set in your deployment
+6. **Important:** Both fields must be set together. If only one is set, default credentials will be used.
 
 ### 4. Test
 1. Verify Dashboard shows all buckets from active agents

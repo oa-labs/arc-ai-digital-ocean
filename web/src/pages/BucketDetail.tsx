@@ -24,13 +24,13 @@ export function BucketDetail() {
     if (!bucketName) return null;
 
     // Find an agent with this bucket that has S3 credentials configured
-    const agentWithCreds = agents.find(a => a.s3_access_key_env_var);
+    const agentWithCreds = agents.find(a => a.s3_access_key_id_env_var && a.s3_secret_key_env_var);
 
-    if (agentWithCreds?.s3_access_key_env_var) {
+    if (agentWithCreds?.s3_access_key_id_env_var && agentWithCreds?.s3_secret_key_env_var) {
       // In a real implementation, you would need to fetch the actual credentials
-      // from the backend using the environment variable name
+      // from the backend using the environment variable names
       // For now, we'll use the default credentials from config
-      console.warn(`Agent ${agentWithCreds.name} has S3 credentials configured (${agentWithCreds.s3_access_key_env_var}), but credential fetching is not yet implemented. Using default credentials.`);
+      console.warn(`Agent ${agentWithCreds.name} has S3 credentials configured (${agentWithCreds.s3_access_key_id_env_var}, ${agentWithCreds.s3_secret_key_env_var}), but credential fetching is not yet implemented. Using default credentials.`);
     }
 
     // Use default credentials from environment

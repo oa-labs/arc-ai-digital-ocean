@@ -90,6 +90,28 @@ export class AgentManager {
   }
 
   /**
+   * Get the default agent
+   */
+  async getDefaultAgent(): Promise<AgentRecord | null> {
+    const { data, error } = await this.supabase
+      .from('agents')
+      .select('*')
+      .eq('is_default', true)
+      .eq('is_active', true)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return null; // No default agent configured
+      }
+      console.error('[AgentManager] Failed to get default agent:', error);
+      throw new Error(`Failed to get default agent: ${error.message}`);
+    }
+
+    return data;
+  }
+
+  /**
    * Get the active agent for a Slack channel
    */
   async getChannelAgent(channelId: string): Promise<AgentRecord | null> {
@@ -212,6 +234,34 @@ export class AgentManager {
     // Cache it
     if (agentService) {
       this.agentCache.set(channelId, agentService);
+    }
+
+    return agentService;
+  }
+
+  /**
+   * Get the default agent service (fallback when no channel agent is configured)
+   */
+  async getDefaultAgentService(): Promise<AgentServiceInstance | null> {
+    // Check cache first
+    const cached = this.agentCache.get('__default__');
+    if (cached) {
+      return cached;
+    }
+
+    // Get default agent configuration
+    const agent = await this.getDefaultAgent();
+    if (!agent) {
+      console.warn('[AgentManager] No default agent configured');
+      return null;
+    }
+
+    // Create agent service
+    const agentService = await this.createAgentService(agent);
+
+    // Cache it
+    if (agentService) {
+      this.agentCache.set('__default__', agentService);
     }
 
     return agentService;

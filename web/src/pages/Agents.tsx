@@ -243,6 +243,11 @@ export function Agents() {
                           <h3 className="text-lg font-semibold text-gray-900">
                             {agent.name}
                           </h3>
+                          {agent.is_default && (
+                            <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded">
+                              Default
+                            </span>
+                          )}
                           {!agent.is_active && (
                             <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded">
                               Inactive

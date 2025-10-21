@@ -28,12 +28,12 @@ const decodeHtmlEntities = (text: string): string => {
 const removeCitations = (text: string): string => {
   const citationPattern = /\[\[C\d+\]\]/g;
   const citations = text.match(citationPattern);
-  
+
   if (citations && citations.length > 0) {
     console.warn('[WARN] Citation references found and removed:', citations.join(', '));
     console.warn('[WARN] TODO: Replace citation references with actual hyperlinks');
   }
-  
+
   return text.replace(citationPattern, '');
 };
 
@@ -157,14 +157,24 @@ export const handleMessage = async ({ message, event, say }: SlackEventMiddlewar
           response = await channelAgentService.sendSystemMessage(systemPrompt, enhancedPrompt);
           usedMultiAgent = true;
           debug('Used multi-agent system for DM');
+        } else {
+          // Try to use default agent from database
+          const defaultAgentService = await slackAgentManager.getDefaultAgentService();
+          if (defaultAgentService) {
+            const defaultAgent = await slackAgentManager.getDefaultAgent();
+            const systemPrompt = defaultAgent?.system_prompt || 'You are a helpful AI assistant for workplace safety and internal communications. Provide clear, professional responses to direct messages.';
+            response = await defaultAgentService.sendSystemMessage(systemPrompt, messageText);
+            usedMultiAgent = true;
+            debug('Used default agent from database for DM');
+          }
         }
       }
 
-      // Fallback to default agent service
+      // Fallback to environment-based agent service
       if (!response) {
         const systemPrompt = 'You are a helpful AI assistant for workplace safety and internal communications. Provide clear, professional responses to direct messages.';
         response = await agentService.sendSystemMessage(systemPrompt, messageText);
-        debug('Used default agent service for DM');
+        debug('Used environment-based agent service for DM');
       }
 
       debug('AI response generated for DM:', {
@@ -215,14 +225,25 @@ export const handleMessage = async ({ message, event, say }: SlackEventMiddlewar
         response = await channelAgentService.sendSystemMessage(systemPrompt, enhancedPrompt);
         usedMultiAgent = true;
         debug('Used multi-agent system for channel message');
+      } else {
+        // Try to use default agent from database
+        const defaultAgentService = await slackAgentManager.getDefaultAgentService();
+        if (defaultAgentService) {
+          const defaultAgent = await slackAgentManager.getDefaultAgent();
+          const systemPrompt = defaultAgent?.system_prompt || 'You are a helpful AI assistant for workplace safety and internal communications. Provide clear, professional responses.';
+          const enhancedPrompt = await slackAgentManager.buildEnhancedPrompt(channelId, messageText);
+          response = await defaultAgentService.sendSystemMessage(systemPrompt, enhancedPrompt);
+          usedMultiAgent = true;
+          debug('Used default agent from database for channel message');
+        }
       }
     }
 
-    // Fallback to default agent service
+    // Fallback to environment-based agent service
     if (!response) {
       const systemPrompt = 'You are a helpful AI assistant for workplace safety and internal communications. Provide clear, professional responses.';
       response = await agentService.sendSystemMessage(systemPrompt, messageText);
-      debug('Used default agent service for channel message');
+      debug('Used environment-based agent service for channel message');
     }
 
     debug('AI response generated:', {
@@ -282,14 +303,25 @@ export const handleAppMention = async ({ event, say }: SlackEventMiddlewareArgs<
         response = await channelAgentService.sendSystemMessage(systemPrompt, enhancedPrompt);
         usedMultiAgent = true;
         debug('Used multi-agent system for app mention');
+      } else {
+        // Try to use default agent from database
+        const defaultAgentService = await slackAgentManager.getDefaultAgentService();
+        if (defaultAgentService) {
+          const defaultAgent = await slackAgentManager.getDefaultAgent();
+          const systemPrompt = defaultAgent?.system_prompt || 'You are a helpful AI assistant for workplace safety and internal communications. Provide clear, professional responses.';
+          const enhancedPrompt = await slackAgentManager.buildEnhancedPrompt(channelId, messageText);
+          response = await defaultAgentService.sendSystemMessage(systemPrompt, enhancedPrompt);
+          usedMultiAgent = true;
+          debug('Used default agent from database for app mention');
+        }
       }
     }
 
-    // Fallback to default agent service
+    // Fallback to environment-based agent service
     if (!response) {
       const systemPrompt = 'You are a helpful AI assistant for workplace safety and internal communications. Provide clear, professional responses.';
       response = await agentService.sendSystemMessage(systemPrompt, messageText);
-      debug('Used default agent service for app mention');
+      debug('Used environment-based agent service for app mention');
     }
 
     debug('AI response generated:', {
@@ -324,7 +356,7 @@ export const handleAppMention = async ({ event, say }: SlackEventMiddlewareArgs<
 
 const createAssistantConfig = (): AssistantConfig => {
   const threadContextStore = createThreadContextStore();
-  const assistantThreadContextStore = threadContextStore 
+  const assistantThreadContextStore = threadContextStore
     ? new SlackThreadContextStoreAdapter(threadContextStore)
     : undefined;
 
@@ -393,7 +425,7 @@ const createAssistantConfig = (): AssistantConfig => {
         // Process content: decode HTML entities and remove citations
         let processedContent = decodeHtmlEntities(response.content);
         processedContent = removeCitations(processedContent);
-        
+
         // Stream the markdown content - Slack's chatStream handles markdown_text natively
         const chunkSize = 50;
         for (let i = 0; i < processedContent.length; i += chunkSize) {
