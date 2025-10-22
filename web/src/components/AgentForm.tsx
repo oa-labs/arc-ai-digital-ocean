@@ -318,7 +318,7 @@ export function AgentForm({ agent, onClose }: AgentFormProps) {
 
           </div>
           <p className="mt-2 text-xs text-gray-500">
-            S3 credentials are configured globally via VITE_S3_ACCESS_KEY_ID and VITE_S3_SECRET_ACCESS_KEY environment variables.
+            S3 credentials are managed on the backend. Provide the environment variable names when configuring the server if this bucket requires custom access keys.
           </p>
 
           {/* System Prompt */}

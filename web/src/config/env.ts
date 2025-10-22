@@ -6,12 +6,8 @@ declare global {
     ENV?: {
       VITE_SUPABASE_URL?: string;
       VITE_SUPABASE_ANON_KEY?: string;
-      VITE_S3_REGION?: string;
-      VITE_S3_ENDPOINT?: string;
-      VITE_S3_BUCKET?: string;
-      VITE_S3_ACCESS_KEY_ID?: string;
-      VITE_S3_SECRET_ACCESS_KEY?: string;
       VITE_APP_URL?: string;
+      VITE_API_BASE_URL?: string;
     };
   }
 }
@@ -19,12 +15,8 @@ declare global {
 const envSchema = z.object({
   VITE_SUPABASE_URL: z.string().url(),
   VITE_SUPABASE_ANON_KEY: z.string().min(1),
-  VITE_S3_REGION: z.string().min(1),
-  VITE_S3_ENDPOINT: z.string().url(),
-  VITE_S3_BUCKET: z.string().min(1),
-  VITE_S3_ACCESS_KEY_ID: z.string().min(1),
-  VITE_S3_SECRET_ACCESS_KEY: z.string().min(1),
   VITE_APP_URL: z.string().url().optional(),
+  VITE_API_BASE_URL: z.string().min(1).optional(),
 });
 
 function getEnvValue(key: keyof typeof envSchema.shape): string | undefined {
@@ -40,12 +32,8 @@ function validateEnv() {
     const envValues = {
       VITE_SUPABASE_URL: getEnvValue('VITE_SUPABASE_URL'),
       VITE_SUPABASE_ANON_KEY: getEnvValue('VITE_SUPABASE_ANON_KEY'),
-      VITE_S3_REGION: getEnvValue('VITE_S3_REGION'),
-      VITE_S3_ENDPOINT: getEnvValue('VITE_S3_ENDPOINT'),
-      VITE_S3_BUCKET: getEnvValue('VITE_S3_BUCKET'),
-      VITE_S3_ACCESS_KEY_ID: getEnvValue('VITE_S3_ACCESS_KEY_ID'),
-      VITE_S3_SECRET_ACCESS_KEY: getEnvValue('VITE_S3_SECRET_ACCESS_KEY'),
       VITE_APP_URL: getEnvValue('VITE_APP_URL'),
+      VITE_API_BASE_URL: getEnvValue('VITE_API_BASE_URL'),
     };
     return envSchema.parse(envValues);
   } catch (error) {
@@ -61,17 +49,11 @@ export const config = {
     url: env.VITE_SUPABASE_URL,
     anonKey: env.VITE_SUPABASE_ANON_KEY,
   },
-  s3: {
-    region: env.VITE_S3_REGION,
-    endpoint: env.VITE_S3_ENDPOINT,
-    bucket: env.VITE_S3_BUCKET,
-    credentials: {
-      accessKeyId: env.VITE_S3_ACCESS_KEY_ID,
-      secretAccessKey: env.VITE_S3_SECRET_ACCESS_KEY,
-    },
-  },
   app: {
     url: env.VITE_APP_URL || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'),
+  },
+  api: {
+    baseUrl: env.VITE_API_BASE_URL || '',
   },
 } as const;
 

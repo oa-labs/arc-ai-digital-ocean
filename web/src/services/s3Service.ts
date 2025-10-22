@@ -1,205 +1,184 @@
-import {
-  S3Client,
-  ListObjectsV2Command,
-  PutObjectCommand,
-  DeleteObjectCommand,
-  CopyObjectCommand,
-  GetObjectCommand,
-} from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import type { StoredObject } from '@ichat-ocean/shared';
 import { config } from '@/config/env';
+import { supabase } from '@/lib/supabase';
 import { S3File } from '@/types/file';
 
 export interface S3Config {
-  region: string;
-  endpoint: string;
   bucket: string;
-  credentials: {
-    accessKeyId: string;
-    secretAccessKey: string;
+  baseUrl?: string;
+}
+
+export class S3Service {
+  private bucket?: string;
+  private readonly apiBaseUrl: string;
+
+  constructor(config?: S3Config) {
+    this.bucket = config?.bucket;
+    const base = config?.baseUrl ?? configEnvApiBase();
+    this.apiBaseUrl = normalizeBaseUrl(base);
+  }
+
+  setBucket(bucket: string) {
+    this.bucket = bucket;
+  }
+
+  async listFiles(): Promise<S3File[]> {
+    const bucket = this.ensureBucket();
+    const response = await this.request<{ files: StoredObject[] }>(
+      `/storage/buckets/${encodeURIComponent(bucket)}/objects`,
+      { method: 'GET' }
+    );
+
+    return (response.files || []).map(mapStoredObjectToS3File).sort((a, b) => {
+      return b.lastModified.getTime() - a.lastModified.getTime();
+    });
+  }
+
+  async uploadFile(file: File, onProgress?: (progress: number) => void): Promise<S3File> {
+    const bucket = this.ensureBucket();
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await this.request<{ file: StoredObject }>(
+      `/storage/buckets/${encodeURIComponent(bucket)}/objects`,
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
+
+    if (onProgress) {
+      onProgress(100);
+    }
+
+    return mapStoredObjectToS3File(response.file);
+  }
+
+  async deleteFile(key: string): Promise<void> {
+    const bucket = this.ensureBucket();
+    await this.request(
+      `/storage/buckets/${encodeURIComponent(bucket)}/objects`,
+      {
+        method: 'DELETE',
+        body: JSON.stringify({ key }),
+      }
+    );
+  }
+
+  async renameFile(oldKey: string, newName: string): Promise<S3File> {
+    const bucket = this.ensureBucket();
+    const response = await this.request<{ file: StoredObject }>(
+      `/storage/buckets/${encodeURIComponent(bucket)}/rename`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ key: oldKey, newName }),
+      }
+    );
+
+    return mapStoredObjectToS3File(response.file);
+  }
+
+  async getFileUrl(key: string, expiresIn: number = 3600): Promise<string> {
+    const bucket = this.ensureBucket();
+    const params = new URLSearchParams({ key, expiresIn: String(expiresIn) });
+    const response = await this.request<{ url: string }>(
+      `/storage/buckets/${encodeURIComponent(bucket)}/presign?${params.toString()}`,
+      { method: 'GET' }
+    );
+
+    if (!response.url) {
+      throw new Error('Failed to generate download URL');
+    }
+
+    return response.url;
+  }
+
+  private async request<T = unknown>(path: string, init: RequestInit): Promise<T> {
+    const accessToken = await this.getAccessToken();
+    const headers = new Headers(init.headers);
+    headers.set('Authorization', `Bearer ${accessToken}`);
+
+    const isFormData = typeof FormData !== 'undefined' && init.body instanceof FormData;
+    if (!isFormData && init.body && !headers.has('Content-Type')) {
+      headers.set('Content-Type', 'application/json');
+    }
+
+    const response = await fetch(this.buildUrl(path), {
+      ...init,
+      headers,
+    });
+
+    if (!response.ok) {
+      let message = `Request failed with status ${response.status}`;
+      try {
+        const errorBody = await response.json();
+        if (errorBody?.error) {
+          message = errorBody.error;
+        }
+      } catch (err) {
+        console.error('Failed to parse error response', err);
+      }
+      throw new Error(message);
+    }
+
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
+    const text = await response.text();
+    if (!text) {
+      return {} as T;
+    }
+
+    return JSON.parse(text) as T;
+  }
+
+  private async getAccessToken(): Promise<string> {
+    const { data } = await supabase.auth.getSession();
+    const token = data.session?.access_token;
+
+    if (!token) {
+      throw new Error('User session not found');
+    }
+
+    return token;
+  }
+
+  private ensureBucket(): string {
+    if (!this.bucket) {
+      throw new Error('Bucket is not configured for storage operations');
+    }
+    return this.bucket;
+  }
+
+  private buildUrl(path: string): string {
+    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+    return `${this.apiBaseUrl}${normalizedPath}`;
+  }
+}
+
+function mapStoredObjectToS3File(object: StoredObject): S3File {
+  return {
+    key: object.key,
+    name: object.name,
+    size: object.size,
+    lastModified: new Date(object.lastModified),
   };
 }
 
-class S3Service {
-  private client: S3Client;
-  private bucket: string;
-
-  constructor(s3Config?: S3Config) {
-    const cfg = s3Config || config.s3;
-    this.client = new S3Client({
-      region: cfg.region,
-      endpoint: cfg.endpoint,
-      credentials: cfg.credentials,
-      forcePathStyle: false, // DigitalOcean Spaces uses virtual-hosted-style URLs
-    });
-    this.bucket = cfg.bucket;
+function normalizeBaseUrl(base: string): string {
+  if (!base) {
+    return '';
   }
-
-  /**
-   * List all files in the S3 bucket
-   */
-  async listFiles(): Promise<S3File[]> {
-    try {
-      const command = new ListObjectsV2Command({
-        Bucket: this.bucket,
-      });
-
-      const response = await this.client.send(command);
-
-      if (!response.Contents) {
-        return [];
-      }
-
-      const files: S3File[] = await Promise.all(
-        response.Contents.map(async (item) => {
-          const key = item.Key || '';
-          const name = key.split('/').pop() || key;
-
-          return {
-            key,
-            name,
-            size: item.Size || 0,
-            lastModified: item.LastModified || new Date(),
-          };
-        })
-      );
-
-      return files.sort((a, b) => b.lastModified.getTime() - a.lastModified.getTime());
-    } catch (error) {
-      console.error('Error listing files:', error);
-      
-      // Check if it's likely a CORS error
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      const errorString = JSON.stringify(error);
-      
-      if (
-        (error instanceof TypeError && errorMessage.includes('fetch')) ||
-        errorMessage.toLowerCase().includes('cors') ||
-        errorString.toLowerCase().includes('cors') ||
-        (error instanceof Error && error.name === 'NetworkingError')
-      ) {
-        throw new Error('CORS Error: S3 bucket is not configured to allow requests from this origin. Please add CORS rules to your DigitalOcean Space or S3 bucket.');
-      }
-      
-      throw new Error('Failed to list files from S3');
-    }
-  }
-
-  /**
-    * Upload a file to S3
-    */
-   async uploadFile(file: File, onProgress?: (progress: number) => void): Promise<S3File> {
-     try {
-       const key = `${Date.now()}-${file.name}`;
-
-       // Convert File to Uint8Array for AWS SDK v3 compatibility
-       const fileBuffer = await file.arrayBuffer();
-       const uint8Array = new Uint8Array(fileBuffer);
-
-       const command = new PutObjectCommand({
-         Bucket: this.bucket,
-         Key: key,
-         Body: uint8Array,
-         ContentType: file.type,
-         ACL: 'private',
-       });
-
-       await this.client.send(command);
-
-       // Simulate progress for better UX (AWS SDK v3 doesn't provide native progress)
-       if (onProgress) {
-         onProgress(100);
-       }
-
-       return {
-         key,
-         name: file.name,
-         size: file.size,
-         lastModified: new Date(),
-       };
-     } catch (error) {
-       console.error('Error uploading file:', error);
-       throw new Error(`Failed to upload file: ${file.name}`);
-     }
-   }
-
-  /**
-   * Delete a file from S3
-   */
-  async deleteFile(key: string): Promise<void> {
-    try {
-      const command = new DeleteObjectCommand({
-        Bucket: this.bucket,
-        Key: key,
-      });
-
-      await this.client.send(command);
-    } catch (error) {
-      console.error('Error deleting file:', error);
-      throw new Error('Failed to delete file from S3');
-    }
-  }
-
-  /**
-   * Rename a file in S3 (copy to new key and delete old)
-   */
-  async renameFile(oldKey: string, newName: string): Promise<S3File> {
-    try {
-      // Preserve the timestamp prefix if it exists
-      const parts = oldKey.split('-');
-      const hasTimestamp = parts.length > 1 && /^\d+$/.test(parts[0]);
-      const newKey = hasTimestamp ? `${parts[0]}-${newName}` : newName;
-
-      // Copy to new key
-      const copyCommand = new CopyObjectCommand({
-        Bucket: this.bucket,
-        CopySource: `${this.bucket}/${oldKey}`,
-        Key: newKey,
-      });
-
-      await this.client.send(copyCommand);
-
-      // Delete old key
-      await this.deleteFile(oldKey);
-
-      // Get file info
-      const files = await this.listFiles();
-      const renamedFile = files.find((f) => f.key === newKey);
-
-      if (!renamedFile) {
-        throw new Error('File renamed but not found in list');
-      }
-
-      return renamedFile;
-    } catch (error) {
-      console.error('Error renaming file:', error);
-      throw new Error('Failed to rename file in S3');
-    }
-  }
-
-  /**
-   * Get a presigned URL for downloading a file
-   */
-  async getFileUrl(key: string, expiresIn: number = 3600): Promise<string> {
-    try {
-      const command = new GetObjectCommand({
-        Bucket: this.bucket,
-        Key: key,
-      });
-
-      const url = await getSignedUrl(this.client, command, { expiresIn });
-      return url;
-    } catch (error) {
-      console.error('Error generating file URL:', error);
-      throw new Error('Failed to generate file URL');
-    }
-  }
+  return base.endsWith('/') ? base.slice(0, -1) : base;
 }
 
-// Default instance using config from environment
+function configEnvApiBase(): string {
+  return config.api.baseUrl || '';
+}
+
 export const s3Service = new S3Service();
 
-// Factory function to create S3Service instances with custom config
 export function createS3Service(s3Config: S3Config): S3Service {
   return new S3Service(s3Config);
 }

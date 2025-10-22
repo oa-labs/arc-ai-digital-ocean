@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { FileText, Download, Trash2, Edit2 } from 'lucide-react';
 import { S3File } from '@/types/file';
-import { s3Service } from '@/services/s3Service';
+import type { S3Service } from '@/services/s3Service';
 
 interface FileItemProps {
   file: S3File;
   onDelete: (file: S3File) => void;
   onRename: (file: S3File) => void;
+  s3Service: S3Service;
 }
 
-export function FileItem({ file, onDelete, onRename }: FileItemProps) {
+export function FileItem({ file, onDelete, onRename, s3Service }: FileItemProps) {
   const [downloading, setDownloading] = useState(false);
 
   const formatFileSize = (bytes: number): string => {

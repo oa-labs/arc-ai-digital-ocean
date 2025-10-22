@@ -4,3 +4,4 @@ packages:
   - bots/slack
   - bots/outline
   - web
+  - server

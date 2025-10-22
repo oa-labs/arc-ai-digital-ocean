@@ -18,11 +18,6 @@ fi
 required_vars=(
     "VITE_SUPABASE_URL"
     "VITE_SUPABASE_ANON_KEY"
-    "VITE_S3_REGION"
-    "VITE_S3_ENDPOINT"
-    "VITE_S3_BUCKET"
-    "VITE_S3_ACCESS_KEY_ID"
-    "VITE_S3_SECRET_ACCESS_KEY"
     "VITE_APP_URL"
 )
 
@@ -46,12 +41,8 @@ echo "Building Docker image with production configuration..."
 docker build \
     --build-arg VITE_SUPABASE_URL="$VITE_SUPABASE_URL" \
     --build-arg VITE_SUPABASE_ANON_KEY="$VITE_SUPABASE_ANON_KEY" \
-    --build-arg VITE_S3_REGION="$VITE_S3_REGION" \
-    --build-arg VITE_S3_ENDPOINT="$VITE_S3_ENDPOINT" \
-    --build-arg VITE_S3_BUCKET="$VITE_S3_BUCKET" \
-    --build-arg VITE_S3_ACCESS_KEY_ID="$VITE_S3_ACCESS_KEY_ID" \
-    --build-arg VITE_S3_SECRET_ACCESS_KEY="$VITE_S3_SECRET_ACCESS_KEY" \
     --build-arg VITE_APP_URL="$VITE_APP_URL" \
+    --build-arg VITE_API_BASE_URL="$VITE_API_BASE_URL" \
     -f Dockerfile \
     -t arc-ai-web:latest \
     ..

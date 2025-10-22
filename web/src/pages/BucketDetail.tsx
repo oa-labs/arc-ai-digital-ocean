@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { FileUpload } from '@/components/FileUpload';
 import { FileList } from '@/components/FileList';
-import { createS3Service, S3Config } from '@/services/s3Service';
+import { createS3Service, type S3Config } from '@/services/s3Service';
 import { agentManagementService, Agent } from '@/services/agentManagementService';
 import { S3File } from '@/types/file';
 import { Cloud, LogOut, RefreshCw, Bot, ArrowLeft, AlertCircle } from 'lucide-react';
@@ -19,23 +19,22 @@ export function BucketDetail() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  // Create S3 service using global credentials
+  const decodedBucketName = bucketName ? decodeURIComponent(bucketName) : '';
+
   const s3Service = useMemo(() => {
-    if (!bucketName) return null;
+    if (!decodedBucketName) return null;
 
     const s3Config: S3Config = {
-      region: config.s3.region,
-      endpoint: config.s3.endpoint,
-      bucket: bucketName,
-      credentials: config.s3.credentials,
+      bucket: decodedBucketName,
+      baseUrl: config.api.baseUrl,
     };
 
     return createS3Service(s3Config);
-  }, [bucketName]);
+  }, [decodedBucketName]);
 
   useEffect(() => {
     const loadBucketInfo = async () => {
-      if (!bucketName) {
+      if (!decodedBucketName) {
         setError('Bucket name is required');
         setLoading(false);
         return;
@@ -44,7 +43,7 @@ export function BucketDetail() {
       try {
         // Load agents that use this bucket
         const buckets = await agentManagementService.getS3Buckets();
-        const bucketAgents = buckets.get(decodeURIComponent(bucketName));
+        const bucketAgents = buckets.get(decodedBucketName);
 
         if (!bucketAgents || bucketAgents.length === 0) {
           setError('No agents found for this bucket');
@@ -62,7 +61,7 @@ export function BucketDetail() {
     };
 
     loadBucketInfo();
-  }, [bucketName]);
+  }, [decodedBucketName]);
 
   const loadFiles = async () => {
     if (!s3Service) return;
@@ -136,7 +135,7 @@ export function BucketDetail() {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">
-                  {decodeURIComponent(bucketName || '')}
+                  {decodedBucketName}
                 </h1>
                 <p className="text-sm text-gray-500">
                   {agents.length} {agents.length === 1 ? 'agent' : 'agents'} using this bucket

@@ -2,14 +2,14 @@ import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Upload, X, CheckCircle, AlertCircle } from 'lucide-react';
 import { validateFile, FileUploadProgress } from '@/types/file';
-import { s3Service as defaultS3Service } from '@/services/s3Service';
+import type { S3Service } from '@/services/s3Service';
 
 interface FileUploadProps {
   onUploadComplete: () => void;
-  s3Service?: typeof defaultS3Service;
+  s3Service: S3Service;
 }
 
-export function FileUpload({ onUploadComplete, s3Service = defaultS3Service }: FileUploadProps) {
+export function FileUpload({ onUploadComplete, s3Service }: FileUploadProps) {
   const [uploads, setUploads] = useState<FileUploadProgress[]>([]);
   const [isUploading, setIsUploading] = useState(false);
 

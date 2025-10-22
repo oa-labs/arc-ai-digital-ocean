@@ -355,7 +355,7 @@ export function AgentEdit() {
                 </div>
               </div>
               <p className="mt-2 text-sm text-gray-500">
-                S3 credentials are configured globally via VITE_S3_ACCESS_KEY_ID and VITE_S3_SECRET_ACCESS_KEY environment variables.
+                S3 credentials are managed on the backend. Provide server-side environment variable names if this agent needs custom access keys.
               </p>
             </div>
 
