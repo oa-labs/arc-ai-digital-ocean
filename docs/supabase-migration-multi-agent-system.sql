@@ -130,21 +130,25 @@ COMMENT ON COLUMN agent_change_log.changed_by IS 'Slack user ID who made the cha
 
 CREATE TABLE IF NOT EXISTS agent_managers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   slack_user_id TEXT NOT NULL,
   team_id TEXT NOT NULL,
   granted_by TEXT, -- Slack user ID who granted this permission
   granted_at TIMESTAMPTZ DEFAULT NOW(),
   is_active BOOLEAN DEFAULT true,
-  UNIQUE(slack_user_id, team_id)
+  UNIQUE(slack_user_id, team_id),
+  UNIQUE(user_id, team_id)
 );
 
 -- Indexes for agent_managers table
 CREATE INDEX IF NOT EXISTS idx_agent_managers_user ON agent_managers(slack_user_id);
+CREATE INDEX IF NOT EXISTS idx_agent_managers_user_id ON agent_managers(user_id);
 CREATE INDEX IF NOT EXISTS idx_agent_managers_team ON agent_managers(team_id);
 CREATE INDEX IF NOT EXISTS idx_agent_managers_active ON agent_managers(is_active);
 
 -- Comments for agent_managers table
 COMMENT ON TABLE agent_managers IS 'Users with custom permissions to manage agents (beyond Slack admins)';
+COMMENT ON COLUMN agent_managers.user_id IS 'Supabase auth user ID for the manager';
 
 -- ============================================================================
 -- Functions and Triggers
@@ -173,6 +177,23 @@ CREATE TRIGGER update_slack_channel_agents_updated_at
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 
+-- Helper function to check whether the current auth user is an active agent manager
+CREATE OR REPLACE FUNCTION is_active_agent_manager()
+RETURNS BOOLEAN
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1
+    FROM agent_managers am
+    WHERE am.user_id = auth.uid()
+      AND am.is_active = true
+  );
+$$;
+
+COMMENT ON FUNCTION is_active_agent_manager() IS 'Returns true when the current auth user is an active agent manager';
+
 -- ============================================================================
 -- Row Level Security (RLS) Policies
 -- ============================================================================
@@ -185,78 +206,82 @@ ALTER TABLE agent_change_log ENABLE ROW LEVEL SECURITY;
 ALTER TABLE agent_managers ENABLE ROW LEVEL SECURITY;
 
 -- Policies for agents table
--- Allow authenticated users to read active agents
-CREATE POLICY "Allow authenticated users to read active agents"
+CREATE POLICY "Agent managers can read agents"
   ON agents FOR SELECT
   TO authenticated
-  USING (is_active = true);
+  USING (is_active_agent_manager());
 
--- Allow authenticated users to read all agents (including inactive)
-CREATE POLICY "Allow authenticated users to read all agents"
-  ON agents FOR SELECT
-  TO authenticated
-  USING (true);
-
--- Allow authenticated users to insert agents
-CREATE POLICY "Allow authenticated users to create agents"
+CREATE POLICY "Agent managers can insert agents"
   ON agents FOR INSERT
   TO authenticated
-  WITH CHECK (true);
+  WITH CHECK (is_active_agent_manager());
 
--- Allow authenticated users to update agents
-CREATE POLICY "Allow authenticated users to update agents"
+CREATE POLICY "Agent managers can update agents"
   ON agents FOR UPDATE
   TO authenticated
-  USING (true);
+  USING (is_active_agent_manager())
+  WITH CHECK (is_active_agent_manager());
+
+CREATE POLICY "Agent managers can delete agents"
+  ON agents FOR DELETE
+  TO authenticated
+  USING (is_active_agent_manager());
 
 -- Policies for slack_channel_agents table
-CREATE POLICY "Allow all to read channel agents"
+CREATE POLICY "Agent managers can read channel agents"
   ON slack_channel_agents FOR SELECT
-  TO anon, authenticated
-  USING (true);
+  TO authenticated
+  USING (is_active_agent_manager());
 
-CREATE POLICY "Allow all to insert channel agents"
+CREATE POLICY "Agent managers can insert channel agents"
   ON slack_channel_agents FOR INSERT
-  TO anon, authenticated
-  WITH CHECK (true);
+  TO authenticated
+  WITH CHECK (is_active_agent_manager());
 
-CREATE POLICY "Allow all to update channel agents"
+CREATE POLICY "Agent managers can update channel agents"
   ON slack_channel_agents FOR UPDATE
-  TO anon, authenticated
-  USING (true);
+  TO authenticated
+  USING (is_active_agent_manager())
+  WITH CHECK (is_active_agent_manager());
+
+CREATE POLICY "Agent managers can delete channel agents"
+  ON slack_channel_agents FOR DELETE
+  TO authenticated
+  USING (is_active_agent_manager());
 
 -- Policies for agent_usage_logs table
-CREATE POLICY "Allow all to insert usage logs"
-  ON agent_usage_logs FOR INSERT
-  TO anon, authenticated
-  WITH CHECK (true);
-
-CREATE POLICY "Allow authenticated to read usage logs"
+CREATE POLICY "Agent managers can read usage logs"
   ON agent_usage_logs FOR SELECT
   TO authenticated
-  USING (true);
+  USING (is_active_agent_manager());
+
+CREATE POLICY "Service role can insert usage logs"
+  ON agent_usage_logs FOR INSERT
+  TO authenticated
+  WITH CHECK (auth.role() = 'service_role');
 
 -- Policies for agent_change_log table
-CREATE POLICY "Allow all to insert change logs"
-  ON agent_change_log FOR INSERT
-  TO anon, authenticated
-  WITH CHECK (true);
-
-CREATE POLICY "Allow authenticated to read change logs"
+CREATE POLICY "Agent managers can read change logs"
   ON agent_change_log FOR SELECT
   TO authenticated
-  USING (true);
+  USING (is_active_agent_manager());
+
+CREATE POLICY "Service role can insert change logs"
+  ON agent_change_log FOR INSERT
+  TO authenticated
+  WITH CHECK (auth.role() = 'service_role');
 
 -- Policies for agent_managers table
-CREATE POLICY "Allow all to read agent managers"
+CREATE POLICY "Agent managers can read manager assignments"
   ON agent_managers FOR SELECT
-  TO anon, authenticated
-  USING (true);
+  TO authenticated
+  USING (is_active_agent_manager());
 
-CREATE POLICY "Allow authenticated to manage agent managers"
+CREATE POLICY "Service role manages manager assignments"
   ON agent_managers FOR ALL
   TO authenticated
-  USING (true);
+  USING (auth.role() = 'service_role')
+  WITH CHECK (auth.role() = 'service_role');
 
 -- ============================================================================
 -- Sample Data (Optional - for testing)
