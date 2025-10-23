@@ -81,7 +81,7 @@ export interface AgentChangeLog {
 /**
  * Agent manager permission record (custom permission)
  */
-export interface AgentManager {
+export interface AgentManagerPermission {
   id: string;
   user_id: string;
   slack_user_id: string;
