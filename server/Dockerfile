@@ -4,7 +4,7 @@ WORKDIR /app
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY server/package.json server/tsconfig.json ./server/
 COPY lib/package.json ./lib/
-RUN corepack enable && pnpm install --prod --filter @arc-ai/server
+RUN corepack enable && pnpm install --filter @arc-ai/shared --filter @arc-ai/server
 
 COPY lib ./lib
 COPY server ./server
