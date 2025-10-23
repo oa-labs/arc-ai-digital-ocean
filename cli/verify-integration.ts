@@ -4,7 +4,7 @@
  * This script shows the integration between the CLI and the shared library
  */
 
-import { createAgentService, getAgentProvider, validateConfig } from '@ichat-ocean/shared';
+import { createAgentService, getAgentProvider, validateConfig } from '@arc-ai/shared';
 
 console.log('=== CLI Integration Verification ===\n');
 

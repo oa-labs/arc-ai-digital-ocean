@@ -62,7 +62,7 @@ pnpm install
 ### 3. Build
 
 ```bash
-pnpm --filter @ichat-ocean/outline-bot build
+pnpm --filter @arc-ai/outline-bot build
 ```
 
 ## Usage
@@ -77,7 +77,7 @@ pnpm start
 Or from monorepo root:
 
 ```bash
-pnpm --filter @ichat-ocean/outline-bot start
+pnpm --filter @arc-ai/outline-bot start
 ```
 
 ### Docker
@@ -299,13 +299,13 @@ Error: Failed to upload file
 ### Type Check
 
 ```bash
-pnpm --filter @ichat-ocean/outline-bot type-check
+pnpm --filter @arc-ai/outline-bot type-check
 ```
 
 ### Watch Mode
 
 ```bash
-pnpm --filter @ichat-ocean/outline-bot dev
+pnpm --filter @arc-ai/outline-bot dev
 ```
 
 ## Architecture

@@ -61,7 +61,7 @@ docker build -f web/Dockerfile -t arc-ai-web:latest .
 
 The build process:
 1. Installs dependencies for both `lib` and `web` packages
-2. Builds the shared library (`@ichat-ocean/shared`)
+2. Builds the shared library (`@arc-ai/shared`)
 3. Builds the web application
 4. Creates a production image with Nginx
 5. Copies the startup script that handles runtime configuration

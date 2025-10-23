@@ -1,5 +1,5 @@
 {
-  "name": "@ichat-ocean/server",
+  "name": "@arc-ai/server",
   "version": "1.0.0",
   "type": "module",
   "private": true,
@@ -15,7 +15,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.913.0",
     "@aws-sdk/s3-request-presigner": "^3.913.0",
-    "@ichat-ocean/shared": "workspace:*",
+    "@arc-ai/shared": "workspace:*",
     "@supabase/supabase-js": "^2.75.0",
     "cors": "^2.8.5",
     "express": "^4.19.2",

@@ -6,7 +6,7 @@ import {
   AgentRecord,
   AgentServiceInstance,
   RAGDocument,
-} from '@ichat-ocean/shared';
+} from '@arc-ai/shared';
 
 const debug = (...args: any[]): void => {
   if (process.env.DEBUG === '1') {

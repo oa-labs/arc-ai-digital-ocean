@@ -17,10 +17,10 @@ COPY bots/slack ./bots/slack
 RUN pnpm install --frozen-lockfile
 
 # Build the shared lib
-RUN pnpm --filter @ichat-ocean/shared build
+RUN pnpm --filter @arc-ai/shared build
 
 # Build the slack bot
-RUN pnpm --filter @ichat-ocean/slack-bot build
+RUN pnpm --filter @arc-ai/slack-bot build
 
 # Production stage
 FROM node:22-alpine

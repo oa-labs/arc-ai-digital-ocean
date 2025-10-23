@@ -16,8 +16,6 @@ export interface AgentRecord {
   organization?: string;
   s3_bucket: string;
   s3_prefix?: string;
-  s3_access_key_id_env_var?: string; // Environment variable name for S3 access key ID
-  s3_secret_key_env_var?: string; // Environment variable name for S3 secret access key
   system_prompt?: string;
   created_at: string;
   updated_at: string;
@@ -83,8 +81,9 @@ export interface AgentChangeLog {
 /**
  * Agent manager permission record (custom permission)
  */
-export interface AgentManagerPermission {
+export interface AgentManager {
   id: string;
+  user_id: string;
   slack_user_id: string;
   team_id: string;
   granted_by?: string;

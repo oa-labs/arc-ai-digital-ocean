@@ -4,10 +4,10 @@ WORKDIR /app
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY server/package.json server/tsconfig.json ./server/
 COPY lib/package.json ./lib/
-RUN corepack enable && pnpm install --prod --filter @ichat-ocean/server
+RUN corepack enable && pnpm install --prod --filter @arc-ai/server
 
 COPY lib ./lib
 COPY server ./server
-RUN pnpm --filter @ichat-ocean/shared build && pnpm --filter @ichat-ocean/server build
+RUN pnpm --filter @arc-ai/shared build && pnpm --filter @arc-ai/server build
 
 CMD ["node", "server/dist/index.js"]

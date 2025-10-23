@@ -89,4 +89,4 @@ docker-compose.override.yml
 # Misc
 .turbo/
 .vercel
-cli/ichat-ocean-cli-1.0.0.tgz
+cli/arc-ai-cli-1.0.0.tgz

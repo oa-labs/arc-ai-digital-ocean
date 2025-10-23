@@ -1,12 +1,12 @@
 {
-  "name": "ichat-ocean",
+  "name": "arc-ai",
   "version": "1.0.0",
-  "description": "AI-powered internal chat agent for workplace safety",
+  "description": "AI-powered internal chat agent",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "pnpm -r build",
-    "dev": "pnpm --filter @ichat-ocean/shared dev",
+    "dev": "pnpm --filter @arc-ai/shared dev",
     "clean": "pnpm -r clean",
     "test:deepeval": "vitest run tests/deepeval.test.js"
   },

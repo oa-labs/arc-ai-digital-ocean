@@ -2,13 +2,13 @@
 
 ## Overview
 
-This monorepo now uses **pnpm workspaces** to properly share code between projects without copying files. All projects import from the `@ichat-ocean/shared` package using standard Node.js module resolution.
+This monorepo now uses **pnpm workspaces** to properly share code between projects without copying files. All projects import from the `@arc-ai/shared` package using standard Node.js module resolution.
 
 ## Architecture
 
 ```
-ichat-ocean/
-├── lib/                    # @ichat-ocean/shared package
+arc-ai/
+├── lib/                    # @arc-ai/shared package
 ├── cli/                    # CLI tool (depends on shared)
 ├── bots/slack/            # Slack bot (depends on shared)
 ├── web/                   # Web app (depends on shared)
@@ -20,9 +20,9 @@ ichat-ocean/
 ### ✅ What We Fixed
 
 1. **Removed code copying** - CLI no longer copies lib files via `sync-lib.js`
-2. **Proper package dependencies** - All projects depend on `@ichat-ocean/shared` via `workspace:*`
+2. **Proper package dependencies** - All projects depend on `@arc-ai/shared` via `workspace:*`
 3. **Removed path aliases** - No more fragile `@lib/*` TypeScript paths
-4. **Standard imports** - All code uses `import { ... } from '@ichat-ocean/shared'`
+4. **Standard imports** - All code uses `import { ... } from '@arc-ai/shared'`
 5. **Topological builds** - `pnpm -r build` builds in correct dependency order
 
 ### ❌ What We Removed
@@ -37,17 +37,17 @@ ichat-ocean/
 
 ### Package Management
 
-Each project declares `@ichat-ocean/shared` as a dependency:
+Each project declares `@arc-ai/shared` as a dependency:
 
 ```json
 {
   "dependencies": {
-    "@ichat-ocean/shared": "workspace:*"
+    "@arc-ai/shared": "workspace:*"
   }
 }
 ```
 
-pnpm creates symlinks in `node_modules/@ichat-ocean/shared` pointing to the lib package.
+pnpm creates symlinks in `node_modules/@arc-ai/shared` pointing to the lib package.
 
 ### Import Pattern
 
@@ -58,7 +58,7 @@ All projects now import the same way:
 import { createAgentService } from '@lib/index.js';
 
 // After (standard package imports)
-import { createAgentService } from '@ichat-ocean/shared';
+import { createAgentService } from '@arc-ai/shared';
 ```
 
 ### Build Process
@@ -89,10 +89,10 @@ pnpm install
 pnpm build
 
 # Build only the shared library
-pnpm --filter @ichat-ocean/shared build
+pnpm --filter @arc-ai/shared build
 
 # Build a specific project
-pnpm --filter @ichat-ocean/cli build
+pnpm --filter @arc-ai/cli build
 ```
 
 ### Development Mode
@@ -148,7 +148,7 @@ Add to `vite.config.ts`:
 
 ```typescript
 optimizeDeps: {
-  include: ['@ichat-ocean/shared']
+  include: ['@arc-ai/shared']
 }
 ```
 

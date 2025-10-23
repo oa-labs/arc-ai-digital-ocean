@@ -17,7 +17,7 @@ COPY web ./web
 RUN pnpm install --frozen-lockfile
 
 # Build the shared lib
-RUN pnpm --filter @ichat-ocean/shared build
+RUN pnpm --filter @arc-ai/shared build
 
 # Build the web app
 WORKDIR /workspace/web

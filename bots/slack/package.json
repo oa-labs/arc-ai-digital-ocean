@@ -1,5 +1,5 @@
 {
-  "name": "@ichat-ocean/slack-bot",
+  "name": "@arc-ai/slack-bot",
   "version": "1.0.4",
   "description": "Slack bot for ArcAI Ocean",
   "type": "module",
@@ -16,7 +16,7 @@
     "push:container": "SEMVER=$(node -p \"require('./package.json').version\") && SHORT_HASH=$(git rev-parse --short HEAD) && podman push -q ghcr.io/oa-labs/ichat-slack-bot:${SEMVER}-${SHORT_HASH}"
   },
   "dependencies": {
-    "@ichat-ocean/shared": "workspace:*",
+    "@arc-ai/shared": "workspace:*",
     "@slack/bolt": "^4.5.0",
     "@slack/types": "^2.17.0",
     "@slack/web-api": "^7.0.0",

@@ -20,7 +20,7 @@ arc-ai/
 │   ├── slack/              # Slack bot integration
 │   └── outline/            # Outline to S3 sync bot
 ├── cli/                    # Command-line interface tool
-├── lib/                    # Shared library package (@ichat-ocean/shared)
+├── lib/                    # Shared library package (@arc-ai/shared)
 ├── web/                    # Web-based file manager (s3-file-manager)
 ├── tests/                  # Test suites
 │   └── deepeval.test.js    # AI response quality tests (vitest-evals)
@@ -111,16 +111,16 @@ pnpm run dev
 
 ```bash
 # Slack bot
-pnpm --filter @ichat-ocean/slack-bot start:dev
+pnpm --filter @arc-ai/slack-bot start:dev
 
 # Web file manager
 pnpm --filter s3-file-manager dev
 
 # CLI tool
-pnpm --filter @ichat-ocean/cli start
+pnpm --filter @arc-ai/cli start
 
 # Outline sync bot
-pnpm --filter @ichat-ocean/outline-bot start
+pnpm --filter @arc-ai/outline-bot start
 ```
 
 ## Documentation

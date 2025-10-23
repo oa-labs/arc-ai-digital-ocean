@@ -9,7 +9,7 @@ import {
   validateConfig,
   reloadConfig,
   type AgentService
-} from '@ichat-ocean/shared';
+} from '@arc-ai/shared';
 import packageJson from './package.json' with { type: 'json' };
 
 declare const require: any;
@@ -136,7 +136,7 @@ export function printHelp(output: Writable = defaultOutput): void {
 }
 
 export function printVersion(output: Writable = defaultOutput): void {
-  output.write(`@ichat-ocean/cli v${cliVersion}\n`);
+  output.write(`@arc-ai/cli v${cliVersion}\n`);
 }
 
 export async function interactiveChat(

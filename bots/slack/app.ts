@@ -1,6 +1,6 @@
 import { App, Assistant } from '@slack/bolt';
 import type { App as AppType, AppOptions, AllMiddlewareArgs, SlackEventMiddlewareArgs, AssistantConfig } from '@slack/bolt';
-import { createAgentService, AgentService, getConfig, validateConfig, createThreadContextStore, ThreadContextStore } from '@ichat-ocean/shared';
+import { createAgentService, AgentService, getConfig, validateConfig, createThreadContextStore, ThreadContextStore } from '@arc-ai/shared';
 import { SlackThreadContextStoreAdapter } from './thread-context-adapter.js';
 import { markdownToSlackMessage } from './markdown-formatter.js';
 import { slackAgentManager } from './slack-agent-manager.js';

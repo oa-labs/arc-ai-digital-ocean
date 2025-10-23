@@ -15,13 +15,13 @@ Command line tool for interacting with the ArcAI Ocean agent service.
 ### Global Installation (Recommended)
 
 ```bash
-npm install -g @ichat-ocean/cli
+npm install -g @arc-ai/cli
 ```
 
 ### Local Installation
 
 ```bash
-npm install @ichat-ocean/cli
+npm install @arc-ai/cli
 ```
 
 ### Development Setup
@@ -242,7 +242,7 @@ Goodbye!
 The CLI exports all functions for testing purposes. You can import and test individual functions:
 
 ```typescript
-import { parseCliArguments, sendAgentMessage } from '@ichat-ocean/cli';
+import { parseCliArguments, sendAgentMessage } from '@arc-ai/cli';
 ```
 
 ## License

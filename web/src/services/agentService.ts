@@ -1,4 +1,4 @@
-import { OpenAiAgentService, getConfig, validateConfig, AgentMessage, AgentResponse } from '@ichat-ocean/shared';
+import { OpenAiAgentService, getConfig, validateConfig, AgentMessage, AgentResponse } from '@arc-ai/shared';
 
 class WebAgentService {
   private agentService: OpenAiAgentService;

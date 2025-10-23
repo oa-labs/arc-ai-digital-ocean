@@ -1,5 +1,5 @@
 {
-  "name": "@ichat-ocean/shared",
+  "name": "@arc-ai/shared",
   "version": "1.0.0",
   "description": "Shared modules for ArcAI Ocean projects",
   "type": "module",

@@ -22,7 +22,7 @@ npm run build:shared
 ### Agent Service
 
 ```typescript
-import { OpenAiAgentService, getConfig } from '@ichat-ocean/shared';
+import { OpenAiAgentService, getConfig } from '@arc-ai/shared';
 
 // Initialize with configuration
 const config = getConfig();
@@ -36,7 +36,7 @@ console.log(response.content);
 ### Configuration
 
 ```typescript
-import { getConfig, updateConfig } from '@ichat-ocean/shared';
+import { getConfig, updateConfig } from '@arc-ai/shared';
 
 // Get current configuration
 const config = getConfig();

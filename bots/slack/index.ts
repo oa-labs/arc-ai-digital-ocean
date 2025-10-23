@@ -1,4 +1,4 @@
-import { loadEnvHierarchical } from '@ichat-ocean/shared';
+import { loadEnvHierarchical } from '@arc-ai/shared';
 import { createSlackApp } from './app.js';
 import { AppOptions } from '@slack/bolt';
 

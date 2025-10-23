@@ -91,7 +91,7 @@ Expected output should show `responses.create` instead of `chat.completions.crea
 **Solution:**
 1. Restart the bot process
 2. Verify the bot is using the rebuilt code
-3. Check that the shared library (`@ichat-ocean/shared`) is properly linked
+3. Check that the shared library (`@arc-ai/shared`) is properly linked
 
 ```bash
 cd bots/slack

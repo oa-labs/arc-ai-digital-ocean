@@ -16,7 +16,7 @@ COPY bots/outline ./bots/outline
 RUN pnpm install --frozen-lockfile
 
 # Build the outline bot
-RUN pnpm --filter @ichat-ocean/outline-bot build
+RUN pnpm --filter @arc-ai/outline-bot build
 
 # Production stage
 FROM node:22-alpine

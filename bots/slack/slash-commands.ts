@@ -1,6 +1,6 @@
 import { SlackCommandMiddlewareArgs, AllMiddlewareArgs } from '@slack/bolt';
 import { canManageAgents, getPermissionDeniedMessage } from './permissions.js';
-import { AgentManager, createAgentManager, createRAGService } from '@ichat-ocean/shared';
+import { AgentManager, createAgentManager, createRAGService } from '@arc-ai/shared';
 
 // Create singleton instances
 const ragService = createRAGService();

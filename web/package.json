@@ -11,7 +11,7 @@
     "push:container": "SEMVER=$(node -p \"require('./package.json').version\") && SHORT_HASH=$(git rev-parse --short HEAD) && podman push -q ghcr.io/oa-labs/arcai-web-frontend:${SEMVER}-${SHORT_HASH}"
   },
   "dependencies": {
-    "@ichat-ocean/shared": "workspace:*",
+    "@arc-ai/shared": "workspace:*",
     "@supabase/supabase-js": "^2.39.0",
     "@tanstack/react-query": "^5.0.0",
     "react": "^18.2.0",

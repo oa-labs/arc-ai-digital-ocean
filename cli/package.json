@@ -1,5 +1,5 @@
 {
-  "name": "@ichat-ocean/cli",
+  "name": "@arc-ai/cli",
   "version": "1.0.0",
   "description": "Command line tool for interacting with the ArcAI Ocean agent service",
   "type": "module",
@@ -24,7 +24,7 @@
     "lint": "echo 'No linter configured'"
   },
   "dependencies": {
-    "@ichat-ocean/shared": "workspace:*",
+    "@arc-ai/shared": "workspace:*",
     "dotenv": "^17.2.3",
     "openai": "^4.0.0"
   },

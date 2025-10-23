@@ -1,4 +1,4 @@
-import type { StoredObject } from '@ichat-ocean/shared';
+import type { StoredObject } from '@arc-ai/shared';
 import { config } from '@/config/env';
 import { supabase } from '@/lib/supabase';
 import { S3File } from '@/types/file';

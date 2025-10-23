@@ -1,5 +1,5 @@
 {
-  "name": "@ichat-ocean/outline-bot",
+  "name": "@arc-ai/outline-bot",
   "version": "1.0.0",
   "description": "Outline to S3 document sync service",
   "type": "module",

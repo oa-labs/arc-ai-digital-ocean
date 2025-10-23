@@ -1,6 +1,6 @@
 import type { AllAssistantMiddlewareArgs } from '@slack/bolt/dist/Assistant';
 import type { AssistantThreadContextStore, AssistantThreadContext } from '@slack/bolt/dist/AssistantThreadContextStore';
-import { ThreadContextStore } from '@ichat-ocean/shared';
+import { ThreadContextStore } from '@arc-ai/shared';
 
 /**
  * Adapter that wraps our custom ThreadContextStore to work with Slack's AssistantThreadContextStore interface

@@ -1,4 +1,4 @@
-import { createStorageService, type StorageConfig, type StorageService } from '@ichat-ocean/shared';
+import { createStorageService, type StorageConfig, type StorageService } from '@arc-ai/shared';
 import { config } from '../env.js';
 import { supabaseAdmin } from '../supabase.js';
 
