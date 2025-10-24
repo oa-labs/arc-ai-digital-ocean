@@ -28,7 +28,7 @@ COPY server ./server
 RUN pnpm --filter @arc-ai/shared build && pnpm --filter @arc-ai/server build
 
 # Prune to production dependencies only
-RUN CI=true pnpm prune --prod
+RUN pnpm --filter @arc-ai/server --prod deploy /pruned
 
 # Production stage
 FROM node:22-alpine AS runner
@@ -37,14 +37,7 @@ ENV NODE_ENV=production
 
 WORKDIR /app
 
-# Copy built artifacts and production dependencies
-COPY --from=builder /workspace/package.json ./package.json
-COPY --from=builder /workspace/lib/package.json ./lib/package.json
-COPY --from=builder /workspace/lib/dist ./lib/dist
-COPY --from=builder /workspace/server/package.json ./server/package.json
-COPY --from=builder /workspace/server/dist ./server/dist
-COPY --from=builder /workspace/node_modules ./node_modules
-
-WORKDIR /app/server
+# Copy deployed package (includes production dependencies and workspace packages in node_modules)
+COPY --from=builder /pruned ./
 
 CMD ["node", "dist/index.js"]

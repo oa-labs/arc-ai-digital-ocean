@@ -27,8 +27,9 @@ COPY bots/slack ./bots/slack
 # Build both packages
 RUN pnpm --filter @arc-ai/shared build && pnpm --filter @arc-ai/slack-bot build
 
-# Prune to production dependencies only
-RUN CI=true pnpm prune --prod
+# Prune to production dependencies only and copy built files
+RUN pnpm --filter @arc-ai/slack-bot --prod deploy /pruned && \
+    cp -r bots/slack/dist /pruned/
 
 # Production stage
 FROM node:22-alpine
@@ -41,17 +42,10 @@ RUN addgroup -g 1001 -S nodejs && \
 
 WORKDIR /app
 
-# Copy built artifacts and production dependencies with proper ownership
-COPY --from=builder --chown=nodejs:nodejs /app/package.json ./package.json
-COPY --from=builder --chown=nodejs:nodejs /app/lib/package.json ./lib/package.json
-COPY --from=builder --chown=nodejs:nodejs /app/lib/dist ./lib/dist
-COPY --from=builder --chown=nodejs:nodejs /app/bots/slack/package.json ./bots/slack/package.json
-COPY --from=builder --chown=nodejs:nodejs /app/bots/slack/dist ./bots/slack/dist
-COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
+# Copy deployed package (includes production dependencies and workspace packages in node_modules)
+COPY --from=builder --chown=nodejs:nodejs /pruned ./
 
 USER nodejs
-
-WORKDIR /app/bots/slack
 
 # Expose port (only needed for HTTP mode, not socket mode)
 #EXPOSE 3000

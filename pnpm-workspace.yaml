@@ -5,3 +5,7 @@ packages:
   - bots/outline
   - web
   - server
+
+injectWorkspacePackages: true
+syncInjectedDepsAfterScripts:
+  - build
