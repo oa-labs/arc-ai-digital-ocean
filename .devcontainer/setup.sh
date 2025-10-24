@@ -5,42 +5,6 @@ set -e
 sudo apt-get update
 sudo apt-get install -y make uidmap
 
-# Install podman for container builds
-sudo apt-get install -y podman
-
-# Configure podman for rootless operation with proper user namespace mapping
-echo "Configuring podman for rootless operation..."
-
-# Create podman configuration directory
-mkdir -p ~/.config/containers
-
-# Configure storage for rootless podman
-cat > ~/.config/containers/storage.conf << 'EOF'
-[storage]
-driver = "overlay"
-runroot = "/tmp/containers-user-$UID/storage"
-graphroot = "$HOME/.local/share/containers/storage"
-
-[storage.options]
-additionalimagestores = [
-]
-
-[storage.options.overlay]
-mountopt = "nodev,metacopy=on"
-EOF
-
-# Configure registries
-cat > ~/.config/containers/registries.conf << 'EOF'
-[registries.search]
-registries = ['docker.io', 'registry.fedoraproject.org', 'quay.io', 'registry.redhat.io', 'registry.centos.org']
-
-[registries.insecure]
-registries = []
-
-[registries.block]
-registries = []
-EOF
-
 # Set up subuid and subgid for user namespace mapping
 # First, remove any existing entries for vscode user to avoid conflicts
 sudo sed -i '/^vscode:/d' /etc/subuid /etc/subgid 2>/dev/null || true
@@ -51,23 +15,6 @@ echo "vscode:100000:65536" | sudo tee -a /etc/subgid
 
 # Ensure proper permissions on subuid/subgid files
 sudo chmod 644 /etc/subuid /etc/subgid
-
-# Initialize podman (skip if it fails due to namespace issues)
-podman system migrate 2>/dev/null || echo "Warning: podman system migrate failed, but this may not affect basic functionality"
-
-# Setup GitHub Container Registry authentication if credentials are provided
-if [ -n "$GITHUB_USERNAME" ] && [ -n "$GITHUB_TOKEN" ]; then
-    echo "Setting up GitHub Container Registry authentication..."
-    echo "$GITHUB_TOKEN" | podman login ghcr.io -u "$GITHUB_USERNAME" --password-stdin
-    if [ $? -eq 0 ]; then
-        echo "Successfully authenticated with ghcr.io"
-    else
-        echo "Warning: Failed to authenticate with ghcr.io. Container push operations may fail."
-    fi
-else
-    echo "GitHub credentials not provided. Skipping ghcr.io authentication."
-    echo "To enable container push operations, set GITHUB_USERNAME and GITHUB_TOKEN environment variables."
-fi
 
 # Configure Git user settings
 echo "Configuring Git..."
@@ -134,4 +81,5 @@ if [ -n "$GITHUB_TOKEN" ] && [ -n "$GITHUB_USERNAME" ]; then
     echo "Git configured to use HTTPS authentication with GitHub token"
 fi
 
+sudo chown $(whoami) /var/run/docker.sock
 echo "Development environment setup complete!"

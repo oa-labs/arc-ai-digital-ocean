@@ -65,8 +65,6 @@
   "postCreateCommand": "bash .devcontainer/setup.sh",
   "remoteUser": "node",
   "remoteEnv": {
-    "PODMAN_USERNS": "keep-id",
-    "BUILDAH_ISOLATION": "chroot",
     "GITHUB_USERNAME": "${localEnv:GITHUB_USERNAME}",
     "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}",
     "GIT_USER_NAME": "${localEnv:GIT_USER_NAME}",
@@ -81,5 +79,6 @@
   "mounts": [
     "source=ichat-bun-cache,target=/root/.bun,type=volume",
     "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
   ]
 }

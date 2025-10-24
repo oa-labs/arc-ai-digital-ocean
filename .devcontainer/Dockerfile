@@ -17,6 +17,7 @@ RUN apt update && apt install --no-install-recommends -y \
         nano \
         htop \
         tree \
+        docker-buildx docker-cli \
         ca-certificates
 
 USER 1000

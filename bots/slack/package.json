@@ -12,8 +12,8 @@
     "type-check": "tsc --noEmit",
     "start": "node dist/index.js",
     "start:dev": "tsc && node dist/index.js",
-    "build:container": "SEMVER=$(node -p \"require('./package.json').version\") && SHORT_HASH=$(git rev-parse --short HEAD) && podman build --platform linux/amd64 -f Dockerfile -t ghcr.io/oa-labs/ichat-slack-bot:${SEMVER}-${SHORT_HASH} ../..",
-    "push:container": "SEMVER=$(node -p \"require('./package.json').version\") && SHORT_HASH=$(git rev-parse --short HEAD) && podman push -q ghcr.io/oa-labs/ichat-slack-bot:${SEMVER}-${SHORT_HASH}"
+    "build:container": "SEMVER=$(node -p \"require('./package.json').version\") && SHORT_HASH=$(git rev-parse --short HEAD) && docker build --platform linux/amd64 -f Dockerfile -t ghcr.io/oa-labs/ichat-slack-bot:${SEMVER}-${SHORT_HASH} ../..",
+    "push:container": "SEMVER=$(node -p \"require('./package.json').version\") && SHORT_HASH=$(git rev-parse --short HEAD) && docker push -q ghcr.io/oa-labs/ichat-slack-bot:${SEMVER}-${SHORT_HASH}"
   },
   "dependencies": {
     "@arc-ai/shared": "workspace:*",
