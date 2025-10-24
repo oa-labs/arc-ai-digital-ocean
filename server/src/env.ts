@@ -16,7 +16,17 @@ const envSchema = z.object({
 const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {
-  console.error('Invalid environment configuration', parsed.error.format());
+  const missingKeys = parsed.error.errors
+    .filter(err => err.message === 'Required')
+    .map(err => err.path.join('.'))
+    .filter(key => key); // Ensure non-empty keys
+
+  console.error('Invalid environment configuration');
+  if (missingKeys.length > 0) {
+    console.error(`Missing required environment variables: ${missingKeys.join(', ')}`);
+  }
+  console.error('Please check your .env file in the server directory and ensure all required variables are set.');
+  console.error('You can use .env.example in the root directory as a reference to set up your environment variables.');
   throw new Error('Invalid environment configuration');
 }
 

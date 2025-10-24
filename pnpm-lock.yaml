@@ -121,21 +121,24 @@ importers:
 
   server:
     dependencies:
+      '@arc-ai/shared':
+        specifier: workspace:*
+        version: link:../lib
       '@aws-sdk/client-s3':
         specifier: ^3.913.0
         version: 3.913.0
       '@aws-sdk/s3-request-presigner':
         specifier: ^3.913.0
         version: 3.914.0
-      '@arc-ai/shared':
-        specifier: workspace:*
-        version: link:../lib
       '@supabase/supabase-js':
         specifier: ^2.75.0
         version: 2.75.0
       cors:
         specifier: ^2.8.5
         version: 2.8.5
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
       express:
         specifier: ^4.19.2
         version: 4.21.2
