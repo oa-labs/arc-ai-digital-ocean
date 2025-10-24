@@ -2,11 +2,14 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { AdminRoute } from '@/components/AdminRoute';
 import { Login } from '@/pages/Login';
 import { Dashboard } from '@/pages/Dashboard';
 import { Agents } from '@/pages/Agents';
 import { AgentEdit } from '@/pages/AgentEdit';
 import { BucketDetail } from '@/pages/BucketDetail';
+import { Users } from '@/pages/Users';
+import { DebugAuth } from '@/pages/DebugAuth';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,17 +38,17 @@ function App() {
             <Route
               path="/agents"
               element={
-                <ProtectedRoute>
+                <AdminRoute>
                   <Agents />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
             <Route
               path="/agents/:agentId"
               element={
-                <ProtectedRoute>
+                <AdminRoute>
                   <AgentEdit />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
             <Route
@@ -53,6 +56,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <BucketDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/users"
+              element={
+                <AdminRoute>
+                  <Users />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/debug-auth"
+              element={
+                <ProtectedRoute>
+                  <DebugAuth />
                 </ProtectedRoute>
               }
             />

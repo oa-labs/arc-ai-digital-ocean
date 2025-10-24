@@ -3,10 +3,15 @@ import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { config } from '@/config/env';
 
+export type UserRole = 'regular' | 'admin' | 'owner';
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  userRole: UserRole;
+  isAdmin: boolean;
+  isOwner: boolean;
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
   signUp: (email: string, password: string) => Promise<{ error: AuthError | null }>;
   signInWithGoogle: () => Promise<{ error: AuthError | null }>;
@@ -15,16 +20,28 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+/**
+ * Get the user's role from their metadata
+ */
+function getUserRole(user: User | null): UserRole {
+  if (!user) return 'regular';
+  const role = user.user_metadata?.role as UserRole | undefined;
+  return role && ['regular', 'admin', 'owner'].includes(role) ? role : 'regular';
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState<UserRole>('regular');
 
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      setUser(session?.user ?? null);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      setUserRole(getUserRole(currentUser));
       setLoading(false);
     });
 
@@ -33,7 +50,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      setUser(session?.user ?? null);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      setUserRole(getUserRole(currentUser));
       setLoading(false);
     });
 
@@ -70,10 +89,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await supabase.auth.signOut();
   };
 
+  // Compute role-based flags
+  const isAdmin = userRole === 'admin' || userRole === 'owner';
+  const isOwner = userRole === 'owner';
+
   const value = {
     user,
     session,
     loading,
+    userRole,
+    isAdmin,
+    isOwner,
     signIn,
     signUp,
     signInWithGoogle,

@@ -15,7 +15,7 @@ declare global {
 const envSchema = z.object({
   VITE_SUPABASE_URL: z.string().url(),
   VITE_SUPABASE_ANON_KEY: z.string().min(1),
-  VITE_APP_URL: z.string().url().optional(),
+  VITE_APP_URL: z.string().url().optional().or(z.literal('')).optional(),
   VITE_API_BASE_URL: z.string().min(1).optional(),
 });
 

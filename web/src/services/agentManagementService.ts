@@ -184,6 +184,34 @@ class AgentManagementService {
   }
 
   /**
+   * Permanently delete an agent (hard delete - removes the record)
+   * Also removes related channel mappings and usage logs
+   */
+  async permanentlyDeleteAgent(id: string): Promise<void> {
+    // First, delete related channel mappings (due to RESTRICT constraint)
+    const { error: channelError } = await supabase
+      .from('slack_channel_agents')
+      .delete()
+      .eq('agent_id', id);
+
+    if (channelError) {
+      console.error('Failed to delete channel mappings:', channelError);
+      throw new Error(`Failed to delete channel mappings: ${channelError.message}`);
+    }
+
+    // Then delete the agent (usage logs will be deleted via CASCADE)
+    const { error } = await supabase
+      .from('agents')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Failed to delete agent:', error);
+      throw new Error(`Failed to delete agent: ${error.message}`);
+    }
+  }
+
+  /**
    * Set an agent as the default
    */
   async setDefaultAgent(id: string): Promise<Agent> {

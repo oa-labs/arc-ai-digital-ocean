@@ -6,13 +6,13 @@ import { FileList } from '@/components/FileList';
 import { createS3Service, type S3Config } from '@/services/s3Service';
 import { agentManagementService, Agent } from '@/services/agentManagementService';
 import { S3File } from '@/types/file';
-import { Cloud, LogOut, RefreshCw, Bot, ArrowLeft, AlertCircle } from 'lucide-react';
+import { Cloud, LogOut, RefreshCw, Bot, ArrowLeft, AlertCircle, Users } from 'lucide-react';
 import { config } from '@/config/env';
 
 export function BucketDetail() {
   const { bucketName } = useParams<{ bucketName: string }>();
   const navigate = useNavigate();
-  const { signOut } = useAuth();
+  const { signOut, isAdmin } = useAuth();
   const [files, setFiles] = useState<S3File[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -143,13 +143,24 @@ export function BucketDetail() {
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <Link
-                to="/agents"
-                className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
-              >
-                <Bot className="h-5 w-5" />
-                <span className="hidden sm:inline">Agents</span>
-              </Link>
+              {isAdmin && (
+                <Link
+                  to="/agents"
+                  className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                >
+                  <Bot className="h-5 w-5" />
+                  <span className="hidden sm:inline">Agents</span>
+                </Link>
+              )}
+              {isAdmin && (
+                <Link
+                  to="/users"
+                  className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                >
+                  <Users className="h-5 w-5" />
+                  <span className="hidden sm:inline">Users</span>
+                </Link>
+              )}
               <button
                 onClick={handleRefresh}
                 disabled={refreshing}

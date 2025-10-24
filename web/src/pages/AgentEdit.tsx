@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { agentManagementService, Agent } from '@/services/agentManagementService';
-import { Cloud, LogOut, Bot, ArrowLeft, AlertCircle, Trash2, Save } from 'lucide-react';
+import { Cloud, LogOut, Bot, ArrowLeft, AlertCircle, Trash2, Save, Users } from 'lucide-react';
 
 export function AgentEdit() {
   const { agentId } = useParams<{ agentId: string }>();
   const navigate = useNavigate();
-  const { signOut } = useAuth();
+  const { signOut, isAdmin } = useAuth();
   const [agent, setAgent] = useState<Agent | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -107,12 +107,18 @@ export function AgentEdit() {
   const handleDelete = async () => {
     if (!agent) return;
 
-    if (!confirm(`Are you sure you want to delete agent "${agent.name}"? This action cannot be undone.`)) {
+    if (!confirm(`⚠️ PERMANENT DELETE WARNING ⚠️
+
+This will PERMANENTLY remove agent "${agent.name}", all associated channel mappings, and usage logs.
+
+This action CANNOT be undone!
+
+Are you absolutely sure?`)) {
       return;
     }
 
     try {
-      await agentManagementService.deleteAgent(agent.id);
+      await agentManagementService.permanentlyDeleteAgent(agent.id);
       navigate('/agents');
     } catch (err) {
       console.error('Error deleting agent:', err);
@@ -206,6 +212,15 @@ export function AgentEdit() {
                 <Cloud className="h-5 w-5" />
                 <span className="hidden sm:inline">Files</span>
               </Link>
+              {isAdmin && (
+                <Link
+                  to="/users"
+                  className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                >
+                  <Users className="h-5 w-5" />
+                  <span className="hidden sm:inline">Users</span>
+                </Link>
+              )}
               <button
                 onClick={handleSignOut}
                 className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"

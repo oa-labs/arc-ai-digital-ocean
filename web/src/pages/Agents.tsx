@@ -14,12 +14,13 @@ import {
   LogOut,
   RefreshCw,
   Cloud,
+  Users,
 } from 'lucide-react';
 
 type TabType = 'agents' | 'mappings' | 'analytics';
 
 export function Agents() {
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -99,6 +100,15 @@ export function Agents() {
                 <Cloud className="h-5 w-5" />
                 <span className="hidden sm:inline">Files</span>
               </Link>
+              {isAdmin && (
+                <Link
+                  to="/users"
+                  className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                >
+                  <Users className="h-5 w-5" />
+                  <span className="hidden sm:inline">Users</span>
+                </Link>
+              )}
               <button
                 onClick={handleRefresh}
                 disabled={refreshing}

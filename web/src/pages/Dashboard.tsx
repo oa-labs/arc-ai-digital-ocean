@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { BucketList } from '@/components/BucketList';
 import { agentManagementService, Agent } from '@/services/agentManagementService';
-import { Cloud, LogOut, RefreshCw, Bot } from 'lucide-react';
+import { Cloud, LogOut, RefreshCw, Bot, Users } from 'lucide-react';
 
 export function Dashboard() {
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
   const [buckets, setBuckets] = useState<Map<string, Agent[]>>(new Map());
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -58,13 +58,24 @@ export function Dashboard() {
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <Link
-                to="/agents"
-                className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
-              >
-                <Bot className="h-5 w-5" />
-                <span className="hidden sm:inline">Agents</span>
-              </Link>
+              {isAdmin && (
+                <Link
+                  to="/agents"
+                  className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                >
+                  <Bot className="h-5 w-5" />
+                  <span className="hidden sm:inline">Agents</span>
+                </Link>
+              )}
+              {isAdmin && (
+                <Link
+                  to="/users"
+                  className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                >
+                  <Users className="h-5 w-5" />
+                  <span className="hidden sm:inline">Users</span>
+                </Link>
+              )}
               <button
                 onClick={handleRefresh}
                 disabled={refreshing}

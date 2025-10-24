@@ -3,6 +3,7 @@ import cors from 'cors';
 import type { ErrorRequestHandler } from 'express';
 import { MulterError } from 'multer';
 import { storageRouter } from './routes/storage.js';
+import { usersRouter } from './routes/users.js';
 import { config } from './env.js';
 import { ZodError } from 'zod';
 
@@ -65,6 +66,7 @@ export function createApp() {
   });
 
   app.use('/storage', storageRouter);
+  app.use('/users', usersRouter);
 
   app.use(errorHandler);
 
