@@ -13,7 +13,7 @@
     "start": "node dist/index.js",
     "start:dev": "tsc && node dist/index.js",
     "build:container": "SEMVER=$(node -p \"require('./package.json').version\") && SHORT_HASH=$(git rev-parse --short HEAD) && docker build --platform linux/amd64 -f Dockerfile -t ghcr.io/oa-labs/arcai-outline-bot:${SEMVER}-${SHORT_HASH} ../..",
-    "push:container": "SEMVER=$(node -p \"require('./package.json').version\") && SHORT_HASH=$(git rev-parse --short HEAD) && docker push -q ghcr.io/oa-labs/arcai-outline-bot:${SEMVER}-${SHORT_HASH}"
+    "push:container": "SEMVER=$(node -p \"require('./package.json').version\") && SHORT_HASH=$(git rev-parse --short HEAD) && docker push ghcr.io/oa-labs/arcai-outline-bot:${SEMVER}-${SHORT_HASH}"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.490.0",

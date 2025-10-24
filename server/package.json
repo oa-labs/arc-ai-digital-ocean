@@ -10,7 +10,7 @@
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit",
     "build:container": "SEMVER=$(node -p \"require('./package.json').version\") && SHORT_HASH=$(git rev-parse --short HEAD) && docker build --platform linux/amd64 -f Dockerfile -t ghcr.io/oa-labs/arcai-web-backend:${SEMVER}-${SHORT_HASH} ..",
-    "push:container": "SEMVER=$(node -p \"require('./package.json').version\") && SHORT_HASH=$(git rev-parse --short HEAD) && docker push -q ghcr.io/oa-labs/arcai-web-backend:${SEMVER}-${SHORT_HASH}"
+    "push:container": "SEMVER=$(node -p \"require('./package.json').version\") && SHORT_HASH=$(git rev-parse --short HEAD) && docker push -q ghcr.io/oa-labs/arcai-web-backend:${SEMVER}-${SHORT_HASH} && echo set-version: ${SEMVER}-${SHORT_HASH}"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.913.0",

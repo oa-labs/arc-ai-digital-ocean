@@ -15,7 +15,7 @@ COPY web/package.json ./web/
 
 # Install with cache mount
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm-store,sharing=locked \
-    PNPM_STORE_DIR=/pnpm-store pnpm install --frozen-lockfile --filter @arc-ai/shared --filter @arc-ai/web
+    PNPM_STORE_DIR=/pnpm-store pnpm install --frozen-lockfile --filter @arc-ai/shared --filter @arc-ai/web-ui
 
 # Build stage
 FROM deps AS builder
@@ -24,13 +24,9 @@ FROM deps AS builder
 COPY lib ./lib
 COPY web ./web
 
-# Build shared library
-RUN pnpm --filter @arc-ai/shared build
-
-# Build web app
-WORKDIR /workspace/web
+# Build shared library and web app
 ENV CI=true
-RUN pnpm run build
+RUN pnpm --filter @arc-ai/shared build && pnpm --filter @arc-ai/web-ui build
 
 # Production stage
 FROM nginx:alpine
