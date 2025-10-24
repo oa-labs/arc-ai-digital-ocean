@@ -9,7 +9,6 @@ import { Agents } from '@/pages/Agents';
 import { AgentEdit } from '@/pages/AgentEdit';
 import { BucketDetail } from '@/pages/BucketDetail';
 import { Users } from '@/pages/Users';
-import { DebugAuth } from '@/pages/DebugAuth';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -65,14 +64,6 @@ function App() {
                 <AdminRoute>
                   <Users />
                 </AdminRoute>
-              }
-            />
-            <Route
-              path="/debug-auth"
-              element={
-                <ProtectedRoute>
-                  <DebugAuth />
-                </ProtectedRoute>
               }
             />
             <Route path="*" element={<Navigate to="/" replace />} />

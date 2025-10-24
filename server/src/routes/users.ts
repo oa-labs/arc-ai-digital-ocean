@@ -10,23 +10,6 @@ const updateRoleSchema = z.object({
 export const usersRouter = Router();
 
 /**
- * Debug endpoint to check current user's role
- * Requires authentication only
- */
-usersRouter.get('/me/debug', requireAuth, async (req, res) => {
-  const authReq = req as any;
-  const user = authReq.user;
-
-  return res.json({
-    id: user.id,
-    email: user.email,
-    user_metadata: user.user_metadata,
-    role: user.user_metadata?.role || 'not set',
-    raw_user_meta_data: user.raw_user_meta_data,
-  });
-});
-
-/**
  * List all users
  * Requires admin access
  */

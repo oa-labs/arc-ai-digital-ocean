@@ -57,15 +57,6 @@ export const requireAdmin: RequestHandler = async (req: Request, res: Response, 
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  // Debug logging
-  console.log('=== Admin Check Debug ===');
-  console.log('User ID:', authReq.user.id);
-  console.log('User email:', authReq.user.email);
-  console.log('User metadata:', JSON.stringify(authReq.user.user_metadata, null, 2));
-  console.log('Extracted role:', getUserRole(authReq.user));
-  console.log('Is admin/owner:', isAdminOrOwner(authReq.user));
-  console.log('========================');
-
   if (!isAdminOrOwner(authReq.user)) {
     return res.status(403).json({ error: 'Forbidden: Admin access required' });
   }
