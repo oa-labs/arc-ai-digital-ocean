@@ -55,7 +55,9 @@ export function createThreadContextStore(
   supabaseKey?: string
 ): ThreadContextStore | null {
   const url = supabaseUrl || process.env.SUPABASE_URL;
-  const key = supabaseKey || process.env.SUPABASE_ANON_KEY;
+  // Use service role key for backend services to bypass RLS
+  // Fall back to anon key for backward compatibility
+  const key = supabaseKey || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
 
   if (!url || !key) {
     console.warn('[WARN] Supabase credentials not provided. Thread context storage will be disabled.');

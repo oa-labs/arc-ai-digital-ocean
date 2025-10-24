@@ -398,7 +398,9 @@ export class AgentManager {
  */
 export function createAgentManager(ragService: RAGService | null = null): AgentManager | null {
   const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_ANON_KEY;
+  // Use service role key for backend services to bypass RLS
+  // Fall back to anon key for backward compatibility
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
     console.warn('[AgentManager] Supabase credentials not configured. Agent manager will be disabled.');
