@@ -38,7 +38,16 @@ const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
     }
 
     if (err.message.includes('Failed to load agent credentials')) {
-      return res.status(502).json({ error: 'Unable to load bucket configuration' });
+      console.error('Bucket configuration error:', {
+        message: err.message,
+        stack: err.stack,
+        details: err
+      });
+      return res.status(502).json({ 
+        error: 'Unable to load bucket configuration',
+        message: err.message,
+        ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+      });
     }
   }
 

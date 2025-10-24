@@ -22,6 +22,8 @@ export function AgentEdit() {
     api_key_env_var: string;
     s3_bucket: string;
     s3_prefix: string;
+    s3_access_key_id_env_var: string;
+    s3_secret_key_env_var: string;
     endpoint: string;
     is_active: boolean;
     is_default: boolean;
@@ -33,6 +35,8 @@ export function AgentEdit() {
     api_key_env_var: '',
     s3_bucket: '',
     s3_prefix: '',
+    s3_access_key_id_env_var: '',
+    s3_secret_key_env_var: '',
     endpoint: '',
     is_active: true,
     is_default: false,
@@ -65,6 +69,8 @@ export function AgentEdit() {
           api_key_env_var: foundAgent.api_key_env_var,
           s3_bucket: foundAgent.s3_bucket,
           s3_prefix: foundAgent.s3_prefix || '',
+          s3_access_key_id_env_var: foundAgent.s3_access_key_id_env_var || '',
+          s3_secret_key_env_var: foundAgent.s3_secret_key_env_var || '',
           endpoint: foundAgent.endpoint || '',
           is_active: foundAgent.is_active,
           is_default: foundAgent.is_default || false,
@@ -368,9 +374,39 @@ Are you absolutely sure?`)) {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   />
                 </div>
+
+                <div>
+                  <label htmlFor="s3_access_key_id_env_var" className="block text-sm font-medium text-gray-700 mb-2">
+                    S3 Access Key ID Env Var
+                  </label>
+                  <input
+                    type="text"
+                    id="s3_access_key_id_env_var"
+                    name="s3_access_key_id_env_var"
+                    value={formData.s3_access_key_id_env_var}
+                    onChange={handleChange}
+                    placeholder="e.g., AGENT_X_S3_ACCESS_KEY"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="s3_secret_key_env_var" className="block text-sm font-medium text-gray-700 mb-2">
+                    S3 Secret Key Env Var
+                  </label>
+                  <input
+                    type="text"
+                    id="s3_secret_key_env_var"
+                    name="s3_secret_key_env_var"
+                    value={formData.s3_secret_key_env_var}
+                    onChange={handleChange}
+                    placeholder="e.g., AGENT_X_S3_SECRET_KEY"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono"
+                  />
+                </div>
               </div>
               <p className="mt-2 text-sm text-gray-500">
-                S3 credentials are managed on the backend. Provide server-side environment variable names if this agent needs custom access keys.
+                Optional: Provide custom S3 credential environment variable names. If not specified, defaults to S3_ACCESS_KEY_ID and S3_SECRET_ACCESS_KEY.
               </p>
             </div>
 

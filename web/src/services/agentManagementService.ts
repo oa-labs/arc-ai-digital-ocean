@@ -13,6 +13,8 @@ export interface Agent {
   organization?: string;
   s3_bucket: string;
   s3_prefix?: string;
+  s3_access_key_id_env_var?: string;
+  s3_secret_key_env_var?: string;
   system_prompt?: string;
   is_active: boolean;
   is_default?: boolean;
@@ -32,6 +34,8 @@ export interface CreateAgentInput {
   organization?: string;
   s3_bucket: string;
   s3_prefix?: string;
+  s3_access_key_id_env_var?: string;
+  s3_secret_key_env_var?: string;
   system_prompt?: string;
   is_active?: boolean;
 }
