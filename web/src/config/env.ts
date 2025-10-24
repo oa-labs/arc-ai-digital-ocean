@@ -16,7 +16,7 @@ const envSchema = z.object({
   VITE_SUPABASE_URL: z.string().url(),
   VITE_SUPABASE_ANON_KEY: z.string().min(1),
   VITE_APP_URL: z.string().url().optional().or(z.literal('')).optional(),
-  VITE_API_BASE_URL: z.string().min(1).optional(),
+  VITE_API_BASE_URL: z.string().url().optional().or(z.literal('')).optional(),
 });
 
 function getEnvValue(key: keyof typeof envSchema.shape): string | undefined {

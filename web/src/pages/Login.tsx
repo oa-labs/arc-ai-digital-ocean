@@ -36,7 +36,7 @@ export function Login() {
             ArcAI Portal
           </h1>
           <p className="text-gray-600">
-            Secure file storage and management
+            Agent and Knowledge Base Management
           </p>
         </div>
 
