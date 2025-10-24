@@ -46,13 +46,13 @@ npm run dev
 
 ```bash
 # Send a single message
-ichat-cli "What are the safety protocols for working at heights?"
+arcai-cli "What are the safety protocols for working at heights?"
 
 # Use a custom system prompt
-ichat-cli --system "You are a safety expert" "What PPE is required?"
+arcai-cli --system "You are a safety expert" "What PPE is required?"
 
 # Short form
-ichat-cli -s "You are a safety expert" "What PPE is required?"
+arcai-cli -s "You are a safety expert" "What PPE is required?"
 ```
 
 ### Interactive Mode
@@ -60,7 +60,7 @@ ichat-cli -s "You are a safety expert" "What PPE is required?"
 If no message is provided, the CLI enters interactive mode:
 
 ```bash
-ichat-cli
+arcai-cli
 ```
 
 Exit interactive mode with: `exit`, `quit`, `:q`, or `\q`
@@ -68,21 +68,21 @@ Exit interactive mode with: `exit`, `quit`, `:q`, or `\q`
 ### Pipe Input
 
 ```bash
-echo "What are the emergency procedures?" | ichat-cli
+echo "What are the emergency procedures?" | arcai-cli
 
-cat question.txt | ichat-cli
+cat question.txt | arcai-cli
 ```
 
 ### Help and Version
 
 ```bash
 # Show help
-ichat-cli --help
-ichat-cli -h
+arcai-cli --help
+arcai-cli -h
 
 # Show version
-ichat-cli --version
-ichat-cli -v
+arcai-cli --version
+arcai-cli -v
 ```
 
 ## Configuration
@@ -115,43 +115,43 @@ DIGITALOCEAN_MAX_TOKENS=1000
 
 ### Authentication
 ```bash
-ichat-cli auth login                    # Authenticate with API key
-ichat-cli auth logout                   # Clear authentication
+arcai-cli auth login                    # Authenticate with API key
+arcai-cli auth logout                   # Clear authentication
 ```
 
 ### Documents
 ```bash
-ichat-cli docs upload <file>            # Upload document
-ichat-cli docs list                     # List all documents
-ichat-cli docs delete <id>              # Delete document
+arcai-cli docs upload <file>            # Upload document
+arcai-cli docs list                     # List all documents
+arcai-cli docs delete <id>              # Delete document
 ```
 
 ### Users
 ```bash
-ichat-cli users create <email>          # Create user
-ichat-cli users list                    # List users
+arcai-cli users create <email>          # Create user
+arcai-cli users list                    # List users
 ```
 
 ### Chat
 ```bash
-ichat-cli chat start                    # Start interactive chat
+arcai-cli chat start                    # Start interactive chat
 ```
 
 ### Queries
 ```bash
-ichat-cli queries list                  # List escalated queries
-ichat-cli queries respond <id>          # Respond to escalated query
+arcai-cli queries list                  # List escalated queries
+arcai-cli queries respond <id>          # Respond to escalated query
 ```
 
 ### System
 ```bash
-ichat-cli system status                 # System health check
+arcai-cli system status                 # System health check
 ```
 
 ### Configuration
 ```bash
-ichat-cli config set <key> <value>      # Set configuration
-ichat-cli config get <key>              # Get configuration
+arcai-cli config set <key> <value>      # Set configuration
+arcai-cli config get <key>              # Get configuration
 ```
 
 ## Architecture
@@ -212,19 +212,19 @@ The CLI provides clear error messages for common issues:
 ### Safety Query
 
 ```bash
-ichat-cli "What are the requirements for confined space entry?"
+arcai-cli "What are the requirements for confined space entry?"
 ```
 
 ### Custom System Prompt
 
 ```bash
-ichat-cli -s "You are an OSHA compliance expert" "What are the fall protection requirements?"
+arcai-cli -s "You are an OSHA compliance expert" "What are the fall protection requirements?"
 ```
 
 ### Interactive Session
 
 ```bash
-$ ichat-cli
+$ arcai-cli
 Entering interactive mode. Type "exit" to quit.
 You> What is the proper way to use a fire extinguisher?
 Agent> Remember the PASS technique:

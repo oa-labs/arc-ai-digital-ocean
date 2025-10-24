@@ -127,7 +127,7 @@ export async function sendAgentMessage(
 export function printHelp(output: Writable = defaultOutput): void {
   output.write(`ArcAI CLI\n\n`);
   output.write(`Usage:\n`);
-  output.write(`  ichat-cli "Your message here"\n\n`);
+  output.write(`  arcai-cli "Your message here"\n\n`);
   output.write(`Options:\n`);
   output.write(`  -s, --system <prompt>   Override the default system prompt\n`);
   output.write(`  -h, --help              Show this help message\n`);

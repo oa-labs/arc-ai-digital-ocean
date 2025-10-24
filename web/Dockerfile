@@ -1,25 +1,33 @@
-# Build stage
-FROM node:22-alpine AS builder
+# syntax=docker/dockerfile:1.6
+
+# Dependencies stage
+FROM node:22-alpine AS deps
 
 # Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@10.19.0 --activate
 
 WORKDIR /workspace
 
-# Copy workspace files
-COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
+# Copy only package manifests for layer caching
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY lib/package.json ./lib/
+COPY web/package.json ./web/
 
-# Copy all workspace packages
+# Install with cache mount
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm-store,sharing=locked \
+    PNPM_STORE_DIR=/pnpm-store pnpm install --frozen-lockfile --filter @arc-ai/shared --filter @arc-ai/web
+
+# Build stage
+FROM deps AS builder
+
+# Copy source code
 COPY lib ./lib
 COPY web ./web
 
-# Install all dependencies
-RUN pnpm install --frozen-lockfile
-
-# Build the shared lib
+# Build shared library
 RUN pnpm --filter @arc-ai/shared build
 
-# Build the web app
+# Build web app
 WORKDIR /workspace/web
 ENV CI=true
 RUN pnpm run build
@@ -27,15 +35,11 @@ RUN pnpm run build
 # Production stage
 FROM nginx:alpine
 
-# No additional dependencies needed for simple HTTP serving
-
+# Copy built assets and config
 COPY --from=builder /workspace/web/dist /usr/share/nginx/html
 COPY web/nginx.conf /etc/nginx/conf.d/default.conf
-COPY web/startup.sh /startup.sh
+COPY --chmod=755 web/startup.sh /startup.sh
 
 EXPOSE 3000
-
-# Make startup script executable
-RUN chmod +x /startup.sh
 
 CMD ["/bin/sh", "/startup.sh"]

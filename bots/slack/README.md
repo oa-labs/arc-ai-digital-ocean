@@ -70,17 +70,17 @@ DEBUG=1 pnpm run start
 ### Building the Docker Image
 Build the production Docker image:
 ```bash
-docker build -t ichat-slack-bot .
+docker build -t arcai-slack-bot .
 ```
 
 ### Running the Container
 Run the container with your environment variables:
 ```bash
     docker run -d \
-    --name ichat-slack-bot \
+    --name arcai-slack-bot \
     -p 3000:3000 \
     --env-file .env \
-    ichat-slack-bot
+    arcai-slack-bot
 ```
 
 ### Environment Variables for Docker
@@ -98,22 +98,22 @@ The container includes a health check that monitors the `/health` endpoint every
 ```bash
 docker ps
 # or for detailed health status:
-docker inspect ichat-slack-bot
+docker inspect arcai-slack-bot
 ```
 
 ### Logs and Debugging
 View container logs:
 ```bash
-docker logs ichat-slack-bot
+docker logs arcai-slack-bot
 # Follow logs in real-time:
-docker logs -f ichat-slack-bot
+docker logs -f arcai-slack-bot
 ```
 
 ### Stopping the Container
 Stop and remove the container:
 ```bash
-docker stop ichat-slack-bot
-docker rm ichat-slack-bot
+docker stop arcai-slack-bot
+docker rm arcai-slack-bot
 ```
 
 ## Project Context

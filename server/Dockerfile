@@ -1,13 +1,50 @@
-FROM node:22-alpine AS base
-WORKDIR /app
+# syntax=docker/dockerfile:1.6
 
-COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
-COPY server/package.json server/tsconfig.json ./server/
+# Dependencies stage
+FROM node:22-alpine AS deps
+
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@10.19.0 --activate
+
+WORKDIR /workspace
+
+# Copy only package manifests for layer caching
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY lib/package.json ./lib/
-RUN corepack enable && pnpm install --filter @arc-ai/shared --filter @arc-ai/server
+COPY server/package.json server/tsconfig.json ./server/
 
+# Install with cache mount
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm-store,sharing=locked \
+    PNPM_STORE_DIR=/pnpm-store pnpm install --frozen-lockfile --filter @arc-ai/shared --filter @arc-ai/server
+
+# Build stage
+FROM deps AS builder
+
+# Copy source code
 COPY lib ./lib
 COPY server ./server
+
+# Build both packages
 RUN pnpm --filter @arc-ai/shared build && pnpm --filter @arc-ai/server build
 
-CMD ["node", "server/dist/index.js"]
+# Prune to production dependencies only
+RUN CI=true pnpm prune --prod
+
+# Production stage
+FROM node:22-alpine AS runner
+
+ENV NODE_ENV=production
+
+WORKDIR /app
+
+# Copy built artifacts and production dependencies
+COPY --from=builder /workspace/package.json ./package.json
+COPY --from=builder /workspace/lib/package.json ./lib/package.json
+COPY --from=builder /workspace/lib/dist ./lib/dist
+COPY --from=builder /workspace/server/package.json ./server/package.json
+COPY --from=builder /workspace/server/dist ./server/dist
+COPY --from=builder /workspace/node_modules ./node_modules
+
+WORKDIR /app/server
+
+CMD ["node", "dist/index.js"]

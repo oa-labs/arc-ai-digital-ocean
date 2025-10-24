@@ -29,7 +29,7 @@ runCli().catch(error => {
 });
 `;
 
-const executablePath = path.join(binDir, 'ichat-cli.js');
+const executablePath = path.join(binDir, 'arcai-cli.js');
 writeFileSync(executablePath, executableContent);
 
 // Make it executable on Unix-like systems
@@ -37,4 +37,4 @@ if (process.platform !== 'win32') {
   chmodSync(executablePath, 0o755);
 }
 
-console.log('[ichat-cli] Created Node.js executable at bin/ichat-cli.js');
+console.log('[arcai-cli] Created Node.js executable at bin/arcai-cli.js');

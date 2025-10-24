@@ -6,7 +6,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "ichat-cli": "./bin/ichat-cli.js"
+    "arcai-cli": "./bin/arcai-cli.js"
   },
   "files": [
     "dist/",

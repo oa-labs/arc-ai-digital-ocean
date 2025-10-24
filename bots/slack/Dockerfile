@@ -1,60 +1,59 @@
-# Multi-stage build for production Slack bot
-FROM node:22-alpine AS builder
+# syntax=docker/dockerfile:1.6
+
+# Dependencies stage
+FROM node:22-alpine AS deps
 
 # Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@10.19.0 --activate
 
 WORKDIR /app
 
-# Copy workspace files
-COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
+# Copy only package manifests for layer caching
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY lib/package.json ./lib/
+COPY bots/slack/package.json ./bots/slack/
 
-# Copy all workspace packages
+# Install with cache mount
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm-store,sharing=locked \
+    PNPM_STORE_DIR=/pnpm-store pnpm install --frozen-lockfile --filter @arc-ai/shared --filter @arc-ai/slack-bot
+
+# Build stage
+FROM deps AS builder
+
+# Copy source code
 COPY lib ./lib
 COPY bots/slack ./bots/slack
 
-# Install all dependencies
-RUN pnpm install --frozen-lockfile
+# Build both packages
+RUN pnpm --filter @arc-ai/shared build && pnpm --filter @arc-ai/slack-bot build
 
-# Build the shared lib
-RUN pnpm --filter @arc-ai/shared build
-
-# Build the slack bot
-RUN pnpm --filter @arc-ai/slack-bot build
+# Prune to production dependencies only
+RUN CI=true pnpm prune --prod
 
 # Production stage
 FROM node:22-alpine
 
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+ENV NODE_ENV=production
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
 
 WORKDIR /app
 
-# Copy workspace configuration
-COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
-
-# Copy package.json files for all packages
-COPY lib/package.json ./lib/
-COPY bots/slack/package.json ./bots/slack/
-
-# Install production dependencies only
-RUN pnpm install --frozen-lockfile --prod
-
-# Copy built artifacts
-COPY --from=builder /app/lib/dist ./lib/dist
-COPY --from=builder /app/bots/slack/dist ./bots/slack/dist
-
-# Set working directory to slack bot
-WORKDIR /app/bots/slack
-
-# Create non-root user for security
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001 && \
-    chown -R nodejs:nodejs /app
+# Copy built artifacts and production dependencies with proper ownership
+COPY --from=builder --chown=nodejs:nodejs /app/package.json ./package.json
+COPY --from=builder --chown=nodejs:nodejs /app/lib/package.json ./lib/package.json
+COPY --from=builder --chown=nodejs:nodejs /app/lib/dist ./lib/dist
+COPY --from=builder --chown=nodejs:nodejs /app/bots/slack/package.json ./bots/slack/package.json
+COPY --from=builder --chown=nodejs:nodejs /app/bots/slack/dist ./bots/slack/dist
+COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
 
 USER nodejs
 
-# Expose port (default 3000) - only needed for HTTP mode, not socket mode
+WORKDIR /app/bots/slack
+
+# Expose port (only needed for HTTP mode, not socket mode)
 EXPOSE 3000
 
 # Health check disabled for socket mode (no HTTP server)
@@ -62,5 +61,4 @@ EXPOSE 3000
 # HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 #   CMD node -e "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
 
-# Start the bot
 CMD ["node", "dist/index.js"]

@@ -5,7 +5,7 @@ node_modules/
 
 .pnpm-store/
 
-cli/lib/bin/ichat-cli
+cli/lib/bin/arcai-cli
 
 # Environment variables
 .env
@@ -74,7 +74,7 @@ docker-compose.override.yml
 *.pid
 
 # CLI config
-.ichat/
+.arcai/
 
 # Temporary files
 *.tmp

@@ -43,7 +43,7 @@ graph TD
 
 ```json
 {
-  "name": "@ichat/shared",
+  "name": "@arcai/shared",
   "dependencies": {
     "zod": "^3.22.0"
   }
@@ -54,7 +54,7 @@ graph TD
 
 ```json
 {
-  "name": "@ichat/backend",
+  "name": "@arcai/backend",
   "dependencies": {
     "@hono/zod-validator": "^0.1.0",
     "@supabase/supabase-js": "^2.39.0",
@@ -71,7 +71,7 @@ graph TD
 
 ```json
 {
-  "name": "@ichat/cli",
+  "name": "@arcai/cli",
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
     "commander": "^11.0.0",
@@ -104,7 +104,7 @@ graph TD
 
 ```json
 {
-  "name": "@ichat/shared",
+  "name": "@arcai/shared",
   "dependencies": {
     "zod": "^3.22.0"
   }
@@ -115,7 +115,7 @@ graph TD
 
 ```json
 {
-  "name": "@ichat/backend",
+  "name": "@arcai/backend",
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
     "zod": "^3.22.0"
@@ -250,7 +250,7 @@ export const EscalatedQuery = z.object({
 
 ```json
 {
-  "name": "@ichat/backend",
+  "name": "@arcai/backend",
   "dependencies": {
     "openai": "^4.0.0",
     "@anthropic-ai/sdk": "^0.17.0",
@@ -341,7 +341,7 @@ assertTest({
 
 ```json
 {
-  "name": "@ichat/backend",
+  "name": "@arcai/backend",
   "dependencies": {
     "pdf-parse": "^1.1.1",
     "mammoth": "^1.6.0",
@@ -381,7 +381,7 @@ assertTest({
 
 ```json
 {
-  "name": "@ichat/backend",
+  "name": "@arcai/backend",
   "dependencies": {
     "hono": "^4.0.0",
     "@supabase/supabase-js": "^2.39.0",
@@ -601,13 +601,13 @@ class ConfigService {
 
   constructor() {
     const homeDirectory = homedir();
-    this.configPath = join(homeDirectory, '.ichat', 'config.json');
+    this.configPath = join(homeDirectory, '.arcai', 'config.json');
     this.loadConfig();
   }
 
   private loadConfig() {
     const defaultConfig: CLIConfig = {
-      apiUrl: process.env.ICHAT_API_URL || 'https://api.ichat.company.com',
+      apiUrl: process.env.ICHAT_API_URL || 'https://api.arcai.company.com',
       timeout: 30000,
       format: 'table',
     };
@@ -681,7 +681,7 @@ services:
   db:
     image: pgvector/pgvector:pg15
     environment:
-      - POSTGRES_DB=ichat
+      - POSTGRES_DB=arcai
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
     ports:

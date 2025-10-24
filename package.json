@@ -9,6 +9,7 @@
     "dev": "pnpm --filter @arc-ai/shared dev",
     "clean": "pnpm -r clean",
     "test:deepeval": "vitest run tests/deepeval.test.js",
+    "docker:clean": "docker image prune -a --force --filter \"until=120h\"",
     "build:containers": "pnpm --filter web run build:container && pnpm --filter @arc-ai/server run build:container && pnpm --filter @arc-ai/slack-bot run build:container",
     "push:containers": "pnpm --filter web run push:container && pnpm --filter @arc-ai/server run push:container && pnpm --filter @arc-ai/slack-bot run push:container"
   },

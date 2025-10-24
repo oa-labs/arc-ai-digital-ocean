@@ -77,7 +77,6 @@
   ],
   "containerUser": "node",
   "mounts": [
-    "source=ichat-bun-cache,target=/root/.bun,type=volume",
     "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
     "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
   ]
