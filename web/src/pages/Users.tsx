@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 
 export function Users() {
-  const { user, signOut, isAdmin } = useAuth();
+  const { user, signOut } = useAuth();
   const [users, setUsers] = useState<AppUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);

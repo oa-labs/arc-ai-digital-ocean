@@ -54,7 +54,7 @@ USER nodejs
 WORKDIR /app/bots/slack
 
 # Expose port (only needed for HTTP mode, not socket mode)
-EXPOSE 3000
+#EXPOSE 3000
 
 # Health check disabled for socket mode (no HTTP server)
 # For HTTP mode, uncomment and add a /health endpoint:

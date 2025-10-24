@@ -1,14 +1,14 @@
 {
   "name": "@arc-ai/web-ui",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "build:container": "SEMVER=$(node -p \"require('./package.json').version\") && SHORT_HASH=$(git rev-parse --short HEAD) && docker build --platform linux/amd64 -f Dockerfile -t ghcr.io/oa-labs/arcai-web-frontend:${SEMVER}-${SHORT_HASH} ..",
-    "push:container": "SEMVER=$(node -p \"require('./package.json').version\") && SHORT_HASH=$(git rev-parse --short HEAD) && docker push -q ghcr.io/oa-labs/arcai-web-frontend:${SEMVER}-${SHORT_HASH} && echo set-version: ${SEMVER}-${SHORT_HASH}"
+    "build:container": "SEMVER=$(node -p \"require('../package.json').version\") && SHORT_HASH=$(git rev-parse --short HEAD) && docker build --platform linux/amd64 -f Dockerfile -t ghcr.io/oa-labs/arcai-web-frontend:${SEMVER}-${SHORT_HASH} ..",
+    "push:container": "SEMVER=$(node -p \"require('../package.json').version\") && SHORT_HASH=$(git rev-parse --short HEAD) && docker push -q ghcr.io/oa-labs/arcai-web-frontend:${SEMVER}-${SHORT_HASH} && echo set-version: ${SEMVER}-${SHORT_HASH}"
   },
   "dependencies": {
     "@arc-ai/shared": "workspace:*",
