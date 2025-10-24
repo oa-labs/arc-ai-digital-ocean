@@ -1,4 +1,4 @@
-# ArcAI KB Manager - Project Summary
+# ArcAI Portal - Project Summary
 
 ## Overview
 

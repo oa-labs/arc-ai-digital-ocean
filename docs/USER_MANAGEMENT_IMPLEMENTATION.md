@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document summarizes the implementation of the user management feature for the ArcAI KB Manager. The feature adds a "Users" menu item to the top navigation that allows administrator users to manage authenticated user accounts with role-based access control.
+This document summarizes the implementation of the user management feature for the ArcAI Portal. The feature adds a "Users" menu item to the top navigation that allows administrator users to manage authenticated user accounts with role-based access control.
 
 ## Implementation Date
 

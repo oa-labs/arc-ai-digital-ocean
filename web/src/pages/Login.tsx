@@ -33,7 +33,7 @@ export function Login() {
             <Cloud className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            ArcAI KB Manager
+            ArcAI Portal
           </h1>
           <p className="text-gray-600">
             Secure file storage and management

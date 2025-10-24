@@ -2,7 +2,7 @@
 
 ## Overview
 
-The ArcAI KB Manager includes a comprehensive user management system that allows administrators to manage authenticated user accounts and their roles. This system implements a three-tier role hierarchy with proper access controls.
+The ArcAI Portal includes a comprehensive user management system that allows administrators to manage authenticated user accounts and their roles. This system implements a three-tier role hierarchy with proper access controls.
 
 ## Features
 
