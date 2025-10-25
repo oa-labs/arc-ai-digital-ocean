@@ -82,4 +82,9 @@ if [ -n "$GITHUB_TOKEN" ] && [ -n "$GITHUB_USERNAME" ]; then
 fi
 
 sudo chown $(whoami) /var/run/docker.sock
+
+# Make deploy.sh available in PATH
+sudo cp .devcontainer/deploy.sh /usr/local/bin/deploy
+sudo chmod +x /usr/local/bin/deploy
+
 echo "Development environment setup complete!"
