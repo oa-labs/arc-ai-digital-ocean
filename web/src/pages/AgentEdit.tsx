@@ -278,7 +278,7 @@ Are you absolutely sure?`)) {
                   />
                 </div>
 
-                <div className="sm:col-span-2">
+                <div>
                   <label htmlFor="endpoint" className="block text-sm font-medium text-gray-700 mb-2">
                     Agent Endpoint URL
                   </label>
