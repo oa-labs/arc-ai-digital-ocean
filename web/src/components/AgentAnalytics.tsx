@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { agentManagementService, Agent, AgentStats, AgentUsageLog } from '@/services/agentManagementService';
 import { BarChart3, Clock, AlertCircle, RefreshCw, MessageSquare } from 'lucide-react';
+import { showToast } from '@/lib/toast';
 
 interface AgentAnalyticsProps {
   agents: Agent[];
@@ -40,7 +41,7 @@ export function AgentAnalytics({ agents }: AgentAnalyticsProps) {
       setRecentLogs(logs);
     } catch (error) {
       console.error('Error loading analytics:', error);
-      alert('Failed to load analytics. Please try again.');
+      showToast.error('Failed to load analytics. Please try again.');
     } finally {
       setLoading(false);
     }

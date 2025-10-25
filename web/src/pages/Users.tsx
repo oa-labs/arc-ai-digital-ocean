@@ -13,6 +13,7 @@ import {
   User,
   Crown,
 } from 'lucide-react';
+import { showToast } from '@/lib/toast';
 
 export function Users() {
   const { user, signOut } = useAuth();
@@ -28,7 +29,7 @@ export function Users() {
       setUsers(userList);
     } catch (error) {
       console.error('Error loading users:', error);
-      alert('Failed to load users. Please check your permissions.');
+      showToast.error('Failed to load users. Please check your permissions.');
     } finally {
       setLoading(false);
     }
@@ -56,11 +57,11 @@ export function Users() {
     try {
       setUpdatingUserId(userId);
       await userManagementService.updateUserRole(userId, newRole);
-      alert('User role updated successfully. The user must sign out and sign back in for changes to take effect.');
+      showToast.success('User role updated successfully. The user must sign out and sign back in for changes to take effect.');
       await loadUsers();
     } catch (error: any) {
       console.error('Error updating user role:', error);
-      alert(error.message || 'Failed to update user role');
+      showToast.error(error.message || 'Failed to update user role');
     } finally {
       setUpdatingUserId(null);
     }

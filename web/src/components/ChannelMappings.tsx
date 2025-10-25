@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { agentManagementService, ChannelAgent } from '@/services/agentManagementService';
 import { Hash, Bot, User, Calendar, RefreshCw } from 'lucide-react';
+import { showToast } from '@/lib/toast';
 
 export function ChannelMappings() {
   const [mappings, setMappings] = useState<ChannelAgent[]>([]);
@@ -14,7 +15,7 @@ export function ChannelMappings() {
       setMappings(data);
     } catch (error) {
       console.error('Error loading channel mappings:', error);
-      alert('Failed to load channel mappings. Please try again.');
+      showToast.error('Failed to load channel mappings. Please try again.');
     } finally {
       setLoading(false);
     }

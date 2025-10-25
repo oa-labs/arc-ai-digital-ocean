@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { UserRole } from '@/contexts/AuthContext';
+import { config } from '@/config/env';
 
 export interface AppUser {
   id: string;
@@ -70,8 +71,8 @@ class UserManagementService {
    * Get the API base URL from environment config
    */
   private getApiBaseUrl(): string {
-    // Check if we have a custom API base URL in config
-    const apiBase = import.meta.env.VITE_API_BASE_URL;
+    // Use centralized config which reads from window.ENV at runtime
+    const apiBase = config.api.baseUrl;
     if (apiBase) {
       return apiBase.endsWith('/') ? apiBase.slice(0, -1) : apiBase;
     }

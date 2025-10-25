@@ -5,6 +5,7 @@ import { RenameModal } from './RenameModal';
 import { S3File } from '@/types/file';
 import type { S3Service } from '@/services/s3Service';
 import { FolderOpen } from 'lucide-react';
+import { showToast } from '@/lib/toast';
 
 interface FileListProps {
   files: S3File[];
@@ -29,7 +30,7 @@ export function FileList({ files, onFileChange, loading, s3Service }: FileListPr
       onFileChange();
     } catch (error) {
       console.error('Delete error:', error);
-      alert('Failed to delete file');
+      showToast.error('Failed to delete file');
     } finally {
       setIsDeleting(false);
     }
@@ -45,7 +46,7 @@ export function FileList({ files, onFileChange, loading, s3Service }: FileListPr
       onFileChange();
     } catch (error) {
       console.error('Rename error:', error);
-      alert('Failed to rename file');
+      showToast.error('Failed to rename file');
     } finally {
       setIsRenaming(false);
     }

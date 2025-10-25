@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { FileText, Download, Trash2, Edit2 } from 'lucide-react';
 import { S3File } from '@/types/file';
 import type { S3Service } from '@/services/s3Service';
+import { showToast } from '@/lib/toast';
 
 interface FileItemProps {
   file: S3File;
@@ -45,7 +46,7 @@ export function FileItem({ file, onDelete, onRename, s3Service }: FileItemProps)
       document.body.removeChild(link);
     } catch (error) {
       console.error('Download error:', error);
-      alert('Failed to download file');
+      showToast.error('Failed to download file');
     } finally {
       setDownloading(false);
     }

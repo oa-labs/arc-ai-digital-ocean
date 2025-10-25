@@ -16,6 +16,7 @@ import {
   Cloud,
   Users,
 } from 'lucide-react';
+import { showToast } from '@/lib/toast';
 
 type TabType = 'agents' | 'mappings' | 'analytics';
 
@@ -36,7 +37,7 @@ export function Agents() {
       setAgents(agentList);
     } catch (error) {
       console.error('Error loading agents:', error);
-      alert('Failed to load agents. Please check your configuration.');
+      showToast.error('Failed to load agents. Please check your configuration.');
     } finally {
       setLoading(false);
     }

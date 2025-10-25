@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { agentManagementService, Agent } from '@/services/agentManagementService';
 import { Cloud, LogOut, Bot, ArrowLeft, AlertCircle, Trash2, Save, Users } from 'lucide-react';
+import { showToast } from '@/lib/toast';
 
 export function AgentEdit() {
   const { agentId } = useParams<{ agentId: string }>();
@@ -104,7 +105,7 @@ export function AgentEdit() {
       navigate('/agents');
     } catch (err) {
       console.error('Error updating agent:', err);
-      alert('Failed to update agent. Please try again.');
+      showToast.error('Failed to update agent. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -125,10 +126,11 @@ Are you absolutely sure?`)) {
 
     try {
       await agentManagementService.permanentlyDeleteAgent(agent.id);
+      showToast.success('Agent deleted successfully');
       navigate('/agents');
     } catch (err) {
       console.error('Error deleting agent:', err);
-      alert('Failed to delete agent. Please try again.');
+      showToast.error('Failed to delete agent. Please try again.');
     }
   };
 

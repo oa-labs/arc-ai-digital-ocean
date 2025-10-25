@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { BucketList } from '@/components/BucketList';
 import { agentManagementService, Agent } from '@/services/agentManagementService';
 import { Cloud, LogOut, RefreshCw, Bot, Users } from 'lucide-react';
+import { showToast } from '@/lib/toast';
 
 export function Dashboard() {
   const { user, signOut, isAdmin } = useAuth();
@@ -18,7 +19,7 @@ export function Dashboard() {
       setBuckets(bucketMap);
     } catch (error) {
       console.error('Error loading buckets:', error);
-      alert('Failed to load S3 buckets. Please check your configuration.');
+      showToast.error('Failed to load S3 buckets. Please check your configuration.');
     } finally {
       setLoading(false);
     }
