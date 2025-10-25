@@ -97,9 +97,8 @@ async function handleAgentList({
 
   const agentList = agents
     .map((agent) => {
-      const providerEmoji = agent.provider === 'openai' ? '🤖' : '🌊';
       const activeEmoji = agent.is_active ? '✅' : '⏸️';
-      return `${activeEmoji} ${providerEmoji} *${agent.name}* - ${agent.description || 'No description'} (${agent.provider})`;
+      return `${activeEmoji} 🌊 *${agent.name}* - ${agent.description || 'No description'}`;
     })
     .join('\n');
 
@@ -182,16 +181,14 @@ async function handleAgentSelect({
   }
 
   // Success - post public message to channel
-  const providerEmoji = result.agent?.provider === 'openai' ? '🤖' : '🌊';
-  
   await say({
-    text: `✅ This channel now uses the *${result.agent?.name}* agent (${result.agent?.provider})`,
+    text: `✅ This channel now uses the *${result.agent?.name}* agent`,
     blocks: [
       {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `${providerEmoji} *Agent Changed*\n\nThis channel now uses the *${result.agent?.name}* agent.\n\n*Provider:* ${result.agent?.provider}\n*Changed by:* <@${userId}>`,
+          text: `🌊 *Agent Changed*\n\nThis channel now uses the *${result.agent?.name}* agent.\n\n*Changed by:* <@${userId}>`,
         },
       },
     ],
@@ -232,7 +229,6 @@ async function handleAgentInfo({
     return;
   }
 
-  const providerEmoji = agentInfo.provider === 'openai' ? '🤖' : '🌊';
   const ragInfo = agentInfo.s3_prefix
     ? `s3://${agentInfo.s3_bucket}/${agentInfo.s3_prefix}`
     : `s3://${agentInfo.s3_bucket}`;
@@ -244,7 +240,7 @@ async function handleAgentInfo({
   await client.chat.postEphemeral({
     channel: channelId,
     user: userId,
-    text: `${providerEmoji} *Current Agent: ${agentInfo.name}*\n\n*Provider:* ${agentInfo.provider}\n*Model:* ${agentInfo.model || 'default'}\n*RAG Database:* ${ragInfo}\n*System Prompt:* ${systemPromptPreview}\n\n_Use \`/agent list\` to see all available agents_`,
+    text: `🌊 *Current Agent: ${agentInfo.name}*\n\n*RAG Database:* ${ragInfo}\n*System Prompt:* ${systemPromptPreview}\n\n_Use \`/agent list\` to see all available agents_`,
   });
 }
 
