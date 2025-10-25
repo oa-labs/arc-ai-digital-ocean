@@ -35,9 +35,7 @@ export function Dashboard() {
   }, []);
 
   const handleSignOut = async () => {
-    if (confirm('Are you sure you want to sign out?')) {
-      await signOut();
-    }
+    await signOut();
   };
 
   return (

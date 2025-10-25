@@ -45,9 +45,7 @@ export function Users() {
   }, []);
 
   const handleSignOut = async () => {
-    if (confirm('Are you sure you want to sign out?')) {
-      await signOut();
-    }
+    await signOut();
   };
 
   const handleRoleChange = async (userId: string, newRole: UserRole) => {

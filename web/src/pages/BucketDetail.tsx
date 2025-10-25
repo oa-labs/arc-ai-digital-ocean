@@ -93,9 +93,7 @@ export function BucketDetail() {
   }, [s3Service, agents]);
 
   const handleSignOut = async () => {
-    if (confirm('Are you sure you want to sign out?')) {
-      await signOut();
-    }
+    await signOut();
   };
 
   if (error && !s3Service) {
