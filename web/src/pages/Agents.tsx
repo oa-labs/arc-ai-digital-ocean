@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { agentManagementService, Agent } from '@/services/agentManagementService';
 import { AgentForm } from '@/components/AgentForm';
+import { AddAgentFromDigitalOcean } from '@/components/AddAgentFromDigitalOcean';
 import { ChannelMappings } from '@/components/ChannelMappings';
 import { AgentAnalytics } from '@/components/AgentAnalytics';
 import { Footer } from '@/components/Footer';
@@ -16,6 +17,7 @@ import {
   RefreshCw,
   Cloud,
   Users,
+  Download,
 } from 'lucide-react';
 import { showToast } from '@/lib/toast';
 
@@ -29,6 +31,7 @@ export function Agents() {
   const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('agents');
   const [showForm, setShowForm] = useState(false);
+  const [showAddFromDigitalOcean, setShowAddFromDigitalOcean] = useState(false);
   const [editingAgent, setEditingAgent] = useState<Agent | null>(null);
 
   const loadAgents = async () => {
@@ -59,9 +62,18 @@ export function Agents() {
     setShowForm(true);
   };
 
+  const handleAddFromDigitalOcean = () => {
+    setShowAddFromDigitalOcean(true);
+  };
+
   const handleFormClose = () => {
     setShowForm(false);
     setEditingAgent(null);
+    loadAgents();
+  };
+
+  const handleAddFromDigitalOceanClose = () => {
+    setShowAddFromDigitalOcean(false);
     loadAgents();
   };
 
@@ -180,13 +192,22 @@ export function Agents() {
                   Manage your AI agents and their configurations. Agents can be attached to slack channels and have their own RAGs via unique S3 buckets.
                 </p>
               </div>
-              <button
-                onClick={handleCreateAgent}
-                className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-              >
-                <Plus className="h-5 w-5" />
-                <span>Create Agent</span>
-              </button>
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={handleAddFromDigitalOcean}
+                  className="flex items-center space-x-2 px-4 py-2 bg-white text-primary-600 border border-primary-600 rounded-lg hover:bg-primary-50 transition-colors"
+                >
+                  <Download className="h-5 w-5" />
+                  <span>Add Agent</span>
+                </button>
+                <button
+                  onClick={handleCreateAgent}
+                  className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                >
+                  <Plus className="h-5 w-5" />
+                  <span>Create Agent</span>
+                </button>
+              </div>
             </div>
 
             {/* Agent List */}
@@ -274,6 +295,11 @@ export function Agents() {
       {/* Agent Form Modal */}
       {showForm && (
         <AgentForm agent={editingAgent} onClose={handleFormClose} />
+      )}
+
+      {/* Add Agent from DigitalOcean Modal */}
+      {showAddFromDigitalOcean && (
+        <AddAgentFromDigitalOcean onClose={handleAddFromDigitalOceanClose} />
       )}
     </div>
   );
