@@ -19,7 +19,7 @@ class UserManagementService {
     // We need to call a server-side endpoint since we can't directly query auth.users
     // from the client with the anon key
     const { data: { session } } = await supabase.auth.getSession();
-    
+
     if (!session) {
       throw new Error('Not authenticated');
     }
@@ -47,7 +47,7 @@ class UserManagementService {
    */
   async updateUserRole(userId: string, newRole: UserRole): Promise<void> {
     const { data: { session } } = await supabase.auth.getSession();
-    
+
     if (!session) {
       throw new Error('Not authenticated');
     }
@@ -74,9 +74,11 @@ class UserManagementService {
     // Use centralized config which reads from window.ENV at runtime
     const apiBase = config.api.baseUrl;
     if (apiBase) {
-      return apiBase.endsWith('/') ? apiBase.slice(0, -1) : apiBase;
+      // If a custom API base URL is configured, append /api prefix
+      const normalized = apiBase.endsWith('/') ? apiBase.slice(0, -1) : apiBase;
+      return `${normalized}/api`;
     }
-    
+
     // Default to current origin with /api prefix if not specified
     return `${window.location.origin}/api`;
   }

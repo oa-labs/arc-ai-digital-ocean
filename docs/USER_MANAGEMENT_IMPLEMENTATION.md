@@ -56,8 +56,8 @@ January 24, 2025
 ### Backend Routes
 
 6. **`server/src/routes/users.ts`**
-   - `GET /users` - List all users (admin-only)
-   - `PATCH /users/:userId/role` - Update user role (admin-only)
+   - `GET /api/users` - List all users (admin-only)
+   - `PATCH /api/users/:userId/role` - Update user role (admin-only)
    - Validates requests and enforces owner protection
 
 ### Backend Middleware
@@ -123,7 +123,7 @@ January 24, 2025
 
 7. **`server/src/app.ts`**
    - Imported `usersRouter`
-   - Registered `/users` route
+   - Registered `/api/users` route
 
 ## Architecture
 
@@ -209,14 +209,14 @@ Regular (default)
 
 ### Backend Testing
 
-- [ ] `GET /users` returns 401 without authentication
-- [ ] `GET /users` returns 403 for regular users
-- [ ] `GET /users` returns user list for admins
-- [ ] `GET /users` returns user list for owners
-- [ ] `PATCH /users/:userId/role` returns 401 without authentication
-- [ ] `PATCH /users/:userId/role` returns 403 for regular users
-- [ ] `PATCH /users/:userId/role` works for admins
-- [ ] `PATCH /users/:userId/role` rejects owner modification
+- [ ] `GET /api/users` returns 401 without authentication
+- [ ] `GET /api/users` returns 403 for regular users
+- [ ] `GET /api/users` returns user list for admins
+- [ ] `GET /api/users` returns user list for owners
+- [ ] `PATCH /api/users/:userId/role` returns 401 without authentication
+- [ ] `PATCH /api/users/:userId/role` returns 403 for regular users
+- [ ] `PATCH /api/users/:userId/role` works for admins
+- [ ] `PATCH /api/users/:userId/role` rejects owner modification
 - [ ] Invalid role values are rejected
 - [ ] User must sign out/in for role changes to take effect
 

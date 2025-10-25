@@ -74,8 +74,8 @@ export function createApp() {
     res.json({ status: 'ok' });
   });
 
-  app.use('/storage', storageRouter);
-  app.use('/users', usersRouter);
+  app.use('/api/storage', storageRouter);
+  app.use('/api/users', usersRouter);
 
   app.use(errorHandler);
 

@@ -129,7 +129,7 @@ The user management feature is automatically available once:
 
 The server provides two endpoints for user management:
 
-#### GET `/users`
+#### GET `/api/users`
 - **Authentication**: Required (Bearer token)
 - **Authorization**: Admin or owner role required
 - **Response**: List of all authenticated users
@@ -147,7 +147,7 @@ The server provides two endpoints for user management:
 }
 ```
 
-#### PATCH `/users/:userId/role`
+#### PATCH `/api/users/:userId/role`
 - **Authentication**: Required (Bearer token)
 - **Authorization**: Admin or owner role required
 - **Body**: `{ "role": "regular" | "admin" | "owner" }`

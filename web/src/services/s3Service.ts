@@ -15,7 +15,20 @@ export class S3Service {
   constructor(config?: S3Config) {
     this.bucket = config?.bucket;
     const base = config?.baseUrl ?? configEnvApiBase();
-    this.apiBaseUrl = normalizeBaseUrl(base);
+    this.apiBaseUrl = this.buildApiBaseUrl(base);
+  }
+
+  /**
+   * Build the API base URL with /api prefix
+   */
+  private buildApiBaseUrl(base: string): string {
+    const normalized = normalizeBaseUrl(base);
+    if (normalized) {
+      // If a custom API base URL is configured, append /api prefix
+      return `${normalized}/api`;
+    }
+    // Default to current origin with /api prefix if not specified
+    return `${typeof window !== 'undefined' ? window.location.origin : ''}/api`;
   }
 
   setBucket(bucket: string) {
