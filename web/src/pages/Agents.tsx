@@ -217,32 +217,39 @@ export function Agents() {
                   <div
                     key={agent.id}
                     onClick={() => navigate(`/agents/${agent.id}`)}
-                    className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow cursor-pointer"
+                    className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow cursor-pointer group"
                   >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2">
-                          <h3 className="text-lg font-semibold text-gray-900">
-                            {agent.name}
-                          </h3>
-                          {agent.is_default && (
-                            <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded">
-                              Default
-                            </span>
-                          )}
-                          {!agent.is_active && (
-                            <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded">
-                              Inactive
-                            </span>
-                          )}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="flex items-center justify-center w-12 h-12 bg-primary-100 rounded-lg group-hover:bg-primary-200 transition-colors">
+                          <Bot className="h-6 w-6 text-primary-600" />
                         </div>
-                        <p className="mt-1 text-sm text-gray-500 line-clamp-2">
-                          {agent.description || 'No description'}
-                        </p>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center space-x-2">
+                            <h3 className="text-lg font-semibold text-gray-900 truncate">
+                              {agent.name}
+                            </h3>
+                          </div>
+                          <p className="mt-1 text-sm text-gray-500 line-clamp-2">
+                            {agent.description || 'No description'}
+                          </p>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="mt-4 space-y-2">
+                    <div className="space-y-2">
+                      <div className="flex flex-wrap gap-2">
+                        {agent.is_default && (
+                          <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded">
+                            Default
+                          </span>
+                        )}
+                        {!agent.is_active && (
+                          <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded">
+                            Inactive
+                          </span>
+                        )}
+                      </div>
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-gray-500">S3 Bucket:</span>
                         <span className="text-gray-900 font-mono text-xs truncate max-w-[150px]">
