@@ -179,8 +179,8 @@ export function Users() {
                 <div className="mt-2 text-sm text-blue-700">
                   <ul className="list-disc list-inside space-y-1">
                     <li><strong>Owner:</strong> Has all admin privileges. Cannot be modified through the UI (database access required).</li>
-                    <li><strong>Admin:</strong> Can manage users and agents. Can promote/demote other admins.</li>
-                    <li><strong>Regular:</strong> Default role with no admin privileges.</li>
+                    <li><strong>Admin:</strong> Can manage users and agents. Can promote/demote other admins. Manages agents, S3 bucket files, and users.</li>
+                    <li><strong>Regular:</strong> Default role with no admin privileges. Can add/remove files from any S3 bucket used by the agents.</li>
                   </ul>
                   <p className="mt-2 text-xs">
                     Note: Users must sign out and sign back in for role changes to take effect.

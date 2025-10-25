@@ -177,7 +177,7 @@ export function Agents() {
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">AI Agents</h2>
                 <p className="mt-1 text-sm text-gray-500">
-                  Manage your AI agents and their configurations
+                  Manage your AI agents and their configurations. Agents can be attached to slack channels and have their own RAGs via unique S3 buckets.
                 </p>
               </div>
               <button

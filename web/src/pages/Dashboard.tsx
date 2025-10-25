@@ -107,7 +107,7 @@ export function Dashboard() {
               S3 Buckets
             </h2>
             <p className="text-gray-600">
-              Manage files in your S3 buckets. Each bucket is associated with one or more AI agents.
+              Manage files in the S3 buckets. Each bucket is associated with one or more AI agents.
             </p>
           </section>
 
