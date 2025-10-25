@@ -4,17 +4,13 @@ export interface Agent {
   id: string;
   name: string;
   description?: string;
-  provider: 'openai' | 'digitalocean';
+  provider: 'digitalocean';
   api_key_env_var: string;
-  model?: string;
   temperature?: number;
   max_tokens?: number;
   endpoint?: string;
-  organization?: string;
   s3_bucket: string;
   s3_prefix?: string;
-  s3_access_key_id_env_var?: string;
-  s3_secret_key_env_var?: string;
   system_prompt?: string;
   is_active: boolean;
   is_default?: boolean;
@@ -25,17 +21,13 @@ export interface Agent {
 export interface CreateAgentInput {
   name: string;
   description?: string;
-  provider: 'openai' | 'digitalocean';
+  provider: 'digitalocean';
   api_key_env_var: string;
-  model?: string;
   temperature?: number;
   max_tokens?: number;
   endpoint?: string;
-  organization?: string;
   s3_bucket: string;
   s3_prefix?: string;
-  s3_access_key_id_env_var?: string;
-  s3_secret_key_env_var?: string;
   system_prompt?: string;
   is_active?: boolean;
 }
@@ -63,7 +55,6 @@ export interface AgentUsageLog {
   prompt_tokens: number;
   completion_tokens: number;
   total_tokens: number;
-  model?: string;
   response_time_ms: number;
   error_message?: string;
   created_at: string;

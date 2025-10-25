@@ -13,13 +13,11 @@ export function AgentForm({ agent, onClose }: AgentFormProps) {
   const [formData, setFormData] = useState<CreateAgentInput & { is_active?: boolean; is_default?: boolean }>({
     name: '',
     description: '',
-    provider: 'openai',
+    provider: 'digitalocean',
     api_key_env_var: '',
-    model: '',
     temperature: 0.7,
     max_tokens: 1000,
     endpoint: '',
-    organization: '',
     s3_bucket: '',
     s3_prefix: '',
     system_prompt: '',
@@ -32,13 +30,11 @@ export function AgentForm({ agent, onClose }: AgentFormProps) {
       setFormData({
         name: agent.name,
         description: agent.description || '',
-        provider: agent.provider,
+        provider: 'digitalocean',
         api_key_env_var: agent.api_key_env_var,
-        model: agent.model || '',
         temperature: agent.temperature || 0.7,
         max_tokens: agent.max_tokens || 1000,
         endpoint: agent.endpoint || '',
-        organization: agent.organization || '',
         s3_bucket: agent.s3_bucket,
         s3_prefix: agent.s3_prefix || '',
         system_prompt: agent.system_prompt || '',
@@ -174,22 +170,7 @@ export function AgentForm({ agent, onClose }: AgentFormProps) {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900">Provider Configuration</h3>
 
-            <div>
-              <label htmlFor="provider" className="block text-sm font-medium text-gray-700">
-                Provider *
-              </label>
-              <select
-                id="provider"
-                name="provider"
-                required
-                value={formData.provider}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-              >
-                <option value="openai">OpenAI</option>
-                <option value="digitalocean">DigitalOcean</option>
-              </select>
-            </div>
+
 
             <div>
               <label htmlFor="api_key_env_var" className="block text-sm font-medium text-gray-700">
@@ -211,37 +192,20 @@ export function AgentForm({ agent, onClose }: AgentFormProps) {
             </div>
 
             <div>
-              <label htmlFor="model" className="block text-sm font-medium text-gray-700">
-                Model
+              <label htmlFor="endpoint" className="block text-sm font-medium text-gray-700">
+                API Endpoint *
               </label>
               <input
-                type="text"
-                id="model"
-                name="model"
-                value={formData.model}
+                type="url"
+                id="endpoint"
+                name="endpoint"
+                required
+                value={formData.endpoint}
                 onChange={handleChange}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm font-mono"
-                placeholder="e.g., gpt-4 or gpt-5-nano-2025-08-07"
+                placeholder="https://api.digitalocean.com/v2/ai/chat/completions"
               />
             </div>
-
-            {formData.provider === 'digitalocean' && (
-              <div>
-                <label htmlFor="endpoint" className="block text-sm font-medium text-gray-700">
-                  API Endpoint *
-                </label>
-                <input
-                  type="url"
-                  id="endpoint"
-                  name="endpoint"
-                  required={formData.provider === 'digitalocean'}
-                  value={formData.endpoint}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm font-mono"
-                  placeholder="https://api.digitalocean.com/v2/ai/chat/completions"
-                />
-              </div>
-            )}
 
             <div className="grid grid-cols-2 gap-4">
               <div>

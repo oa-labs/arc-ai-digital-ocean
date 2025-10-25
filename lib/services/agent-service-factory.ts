@@ -1,42 +1,31 @@
-import { OpenAiAgentService } from './openai-agent-service.js';
 import { DigitalOceanAgentService } from './digitalocean-agent-service.js';
 import { getConfig } from '../config/index.js';
 
-export type AgentService = OpenAiAgentService | DigitalOceanAgentService;
+export type AgentService = DigitalOceanAgentService;
 
 /**
- * Factory function to create the appropriate agent service based on configuration
+ * Factory function to create the DigitalOcean agent service
  */
 export function createAgentService(): AgentService {
   const config = getConfig();
 
-  switch (config.agentProvider) {
-    case 'openai':
-      return new OpenAiAgentService(config.agent);
-    case 'digitalocean':
-      return new DigitalOceanAgentService(config.agent);
-    default:
-      throw new Error(`Unsupported agent provider: ${config.agentProvider}`);
+  if (config.agentProvider !== 'digitalocean') {
+    throw new Error(`Only DigitalOcean provider is supported. Got: ${config.agentProvider}`);
   }
+
+  return new DigitalOceanAgentService(config.agent);
 }
 
 /**
- * Get the current agent provider
+ * Get the current agent provider (always returns 'digitalocean')
  */
 export function getAgentProvider(): string {
-  return getConfig().agentProvider;
+  return 'digitalocean';
 }
 
 /**
- * Check if the current provider is OpenAI
- */
-export function isOpenAIProvider(): boolean {
-  return getConfig().agentProvider === 'openai';
-}
-
-/**
- * Check if the current provider is DigitalOcean
+ * Check if the current provider is DigitalOcean (always returns true)
  */
 export function isDigitalOceanProvider(): boolean {
-  return getConfig().agentProvider === 'digitalocean';
+  return true;
 }

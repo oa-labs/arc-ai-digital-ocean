@@ -68,14 +68,6 @@ export function Agents() {
     await signOut();
   };
 
-  const getProviderBadge = (provider: string) => {
-    const colors = {
-      openai: 'bg-green-100 text-green-800',
-      digitalocean: 'bg-blue-100 text-blue-800',
-    };
-    return colors[provider as keyof typeof colors] || 'bg-gray-100 text-gray-800';
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -251,24 +243,6 @@ export function Agents() {
                     </div>
 
                     <div className="mt-4 space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-500">Provider:</span>
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${getProviderBadge(
-                            agent.provider
-                          )}`}
-                        >
-                          {agent.provider}
-                        </span>
-                      </div>
-                      {agent.model && (
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-500">Model:</span>
-                          <span className="text-gray-900 font-mono text-xs">
-                            {agent.model}
-                          </span>
-                        </div>
-                      )}
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-gray-500">S3 Bucket:</span>
                         <span className="text-gray-900 font-mono text-xs truncate max-w-[150px]">

@@ -7,13 +7,11 @@ export interface AgentRecord {
   id: string;
   name: string;
   description?: string;
-  provider: 'openai' | 'digitalocean';
+  provider: 'digitalocean';
   api_key_env_var: string;
-  model?: string;
   temperature?: number;
   max_tokens?: number;
   endpoint?: string;
-  organization?: string;
   s3_bucket: string;
   s3_prefix?: string;
   system_prompt?: string;
@@ -58,7 +56,6 @@ export interface AgentUsageLog {
   prompt_tokens?: number;
   completion_tokens?: number;
   total_tokens?: number;
-  model?: string;
   response_time_ms?: number;
   error_message?: string;
   created_at: string;

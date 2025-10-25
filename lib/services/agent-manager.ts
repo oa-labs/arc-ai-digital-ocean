@@ -9,10 +9,9 @@ import {
 } from '../types/agent-types.js';
 import { AgentConfig } from '../types/index.js';
 import { RAGService } from './rag-service.js';
-import { OpenAiAgentService } from './openai-agent-service.js';
 import { DigitalOceanAgentService } from './digitalocean-agent-service.js';
 
-export type AgentServiceInstance = OpenAiAgentService | DigitalOceanAgentService;
+export type AgentServiceInstance = DigitalOceanAgentService;
 
 /**
  * Manages AI agents: retrieval, instantiation, caching, and channel mapping
@@ -283,28 +282,17 @@ export class AgentManager {
       // Build agent config
       const config: AgentConfig = {
         apiKey,
-        model: agent.model,
         temperature: agent.temperature,
         maxTokens: agent.max_tokens,
-        organization: agent.organization,
         endpoint: agent.endpoint,
       };
 
-      // Create appropriate service based on provider
-      let service: AgentServiceInstance;
-
-      if (agent.provider === 'openai') {
-        service = new OpenAiAgentService(config);
-      } else if (agent.provider === 'digitalocean') {
-        if (!config.endpoint) {
-          console.error('[AgentManager] DigitalOcean provider requires endpoint');
-          return null;
-        }
-        service = new DigitalOceanAgentService(config);
-      } else {
-        console.error(`[AgentManager] Unsupported provider: ${agent.provider}`);
+      // Create DigitalOcean agent service
+      if (!config.endpoint) {
+        console.error('[AgentManager] DigitalOcean provider requires endpoint');
         return null;
       }
+      const service = new DigitalOceanAgentService(config);
 
       console.log(`[AgentManager] Created ${agent.provider} agent service for ${agent.name}`);
       return service;
