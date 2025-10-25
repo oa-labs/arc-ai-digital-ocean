@@ -5,6 +5,7 @@ import { agentManagementService, Agent } from '@/services/agentManagementService
 import { AgentForm } from '@/components/AgentForm';
 import { ChannelMappings } from '@/components/ChannelMappings';
 import { AgentAnalytics } from '@/components/AgentAnalytics';
+import { Footer } from '@/components/Footer';
 import {
   Bot,
   Plus,
@@ -267,6 +268,8 @@ export function Agents() {
         {activeTab === 'mappings' && <ChannelMappings />}
         {activeTab === 'analytics' && <AgentAnalytics agents={agents} />}
       </main>
+
+      <Footer />
 
       {/* Agent Form Modal */}
       {showForm && (

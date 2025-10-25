@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth, UserRole } from '@/contexts/AuthContext';
 import { userManagementService, AppUser } from '@/services/userManagementService';
+import { Footer } from '@/components/Footer';
 import {
   Users as UsersIcon,
   LogOut,
@@ -274,14 +275,7 @@ export function Users() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="mt-12 py-6 border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm text-gray-500">
-            &copy; 2025 OpenArc, LLC. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
