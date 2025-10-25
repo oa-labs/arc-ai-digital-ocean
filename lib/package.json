@@ -1,7 +1,7 @@
 {
   "name": "@arc-ai/shared",
   "version": "1.0.0",
-  "description": "Shared modules for ArcAI Ocean projects",
+  "description": "Shared modules for ArcAI  projects",
   "type": "module",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",

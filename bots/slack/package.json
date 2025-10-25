@@ -1,7 +1,7 @@
 {
   "name": "@arc-ai/slack-bot",
   "version": "1.0.5",
-  "description": "Slack bot for ArcAI Ocean",
+  "description": "Slack bot for ArcAI ",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

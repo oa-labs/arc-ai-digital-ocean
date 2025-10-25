@@ -1,10 +1,10 @@
-# ArcAI Ocean - Workplace Safety AI Assistant
+# ArcAI  - Workplace AI Assistant
 
-An AI-powered internal chat agent system for workplace safety queries, built with a modern monorepo architecture leveraging Supabase, document retrieval, and LLM integration.
+An AI-powered internal chat agent system for workplace queries, built with a modern monorepo architecture leveraging Supabase, document retrieval, and LLM integration.
 
 ## Overview
 
-ArcAI Ocean provides intelligent, context-aware responses to workplace questions by combining document retrieval from S3-compatible storage with large language models. The system includes Slack integration, a web-based file manager, CLI tools, and automated document synchronization from Outline.
+ArcAI provides intelligent, context-aware responses to workplace questions by combining document retrieval from S3-compatible storage with large language models. The system includes Slack integration, a web-based file manager, CLI tools, and automated document synchronization from Outline.
 
 ## Project Structure
 
@@ -15,16 +15,22 @@ arc-ai/
 │   ├── CLI.md              # CLI tool documentation
 │   ├── MILESTONES.md       # Project development milestones
 │   ├── ASSUMPTIONS.md       # Project assumptions
+│   ├── TECHNICAL_STACK.md   # Technical architecture details
 │   └── ...
 ├── bots/
-│   ├── slack/              # Slack bot integration
-│   └── outline/            # Outline to S3 sync bot
-├── cli/                    # Command-line interface tool
+│   ├── slack/              # Slack bot integration (@arc-ai/slack-bot)
+│   └── outline/            # Outline to S3 sync bot (@arc-ai/outline-bot)
+├── cli/                    # Command-line interface tool (@arc-ai/cli)
 ├── lib/                    # Shared library package (@arc-ai/shared)
-├── web/                    # Web-based file manager (s3-file-manager)
+├── server/                 # Express.js API server (@arc-ai/server)
+├── web/                    # React web application (@arc-ai/web-ui)
 ├── tests/                  # Test suites
-│   └── deepeval.test.js    # AI response quality tests (vitest-evals)
-├── package.json            # Workspace dependencies
+│   ├── deepeval.test.js    # AI response quality tests (vitest-evals)
+│   └── ...
+├── scripts/                # Database setup and utility scripts
+├── =deploy                 # Deployment script (symlink to .devcontainer/deploy.sh)
+├── package.json            # Workspace dependencies (pnpm monorepo)
+├── pnpm-workspace.yaml     # pnpm workspace configuration
 └── README.md              # This file
 ```
 
@@ -69,15 +75,18 @@ A passing test indicates the AI response meets quality standards for correctness
 
 ## Technology Stack
 
-- **Runtime**: Node.js 18+ with TypeScript
+- **Runtime**: Node.js 18+ with TypeScript 5.9+
 - **Package Manager**: pnpm workspaces (monorepo)
-- **Database**: Supabase PostgreSQL with pgvector
+- **Database**: Supabase PostgreSQL with pgvector extension
 - **Storage**: S3-compatible storage (AWS S3, DigitalOcean Spaces)
-- **LLM Providers**: OpenAI, DigitalOcean (configurable)
-- **Integrations**: Slack Bot API (`@slack/bolt`), Outline API
+- **LLM Providers**: OpenAI GPT-4/GPT-3.5-turbo, DigitalOcean (configurable)
+- **Integrations**: Slack Bot API (`@slack/bolt` v4.5+), Outline API
 - **Testing**: Vitest with `vitest-evals` and `autoevals` metrics
-- **Frontend**: React 18 with Vite, Tailwind CSS, TanStack Query
-- **Libraries**: `@aws-sdk/client-s3`, `@supabase/supabase-js`, OpenAI SDK
+- **Frontend**: React 18 with Vite 5.0+, Tailwind CSS, TanStack Query v5
+- **Backend**: Express.js with TypeScript, CORS, Multer for file uploads
+- **Libraries**: `@aws-sdk/client-s3` v3.913+, `@supabase/supabase-js` v2.75+, OpenAI SDK v4.0+
+- **Containerization**: Docker with multi-stage builds for all services
+- **Deployment**: Automated container building and pushing via `deploy` script
 
 ## Development
 
@@ -113,15 +122,46 @@ pnpm run dev
 # Slack bot
 pnpm --filter @arc-ai/slack-bot start:dev
 
-# Web file manager
-pnpm --filter s3-file-manager dev
+# Web application
+pnpm --filter @arc-ai/web-ui dev
+
+# API server
+pnpm --filter @arc-ai/server dev
 
 # CLI tool
 pnpm --filter @arc-ai/cli start
 
 # Outline sync bot
-pnpm --filter @arc-ai/outline-bot start
+pnpm --filter @arc-ai/outline-bot start:dev
+
+# Shared library (watch mode)
+pnpm --filter @arc-ai/shared dev
 ```
+
+### Deployment
+
+The project includes automated deployment via the `deploy` script:
+
+```bash
+# Deploy all containers to GitHub Container Registry
+deploy
+
+# Or manually:
+pnpm build:containers  # Build all Docker containers
+pnpm push:containers   # Push containers to registry
+```
+
+The deployment script:
+1. Bumps the patch version in `package.json`
+2. Builds Docker containers for all services (`web`, `server`, `slack-bot`)
+3. Tags containers with version and git hash
+4. Pushes to GitHub Container Registry (`ghcr.io/oa-labs/arcai-*`)
+
+Container names:
+- `ghcr.io/oa-labs/arcai-web-frontend:{version}-{hash}`
+- `ghcr.io/oa-labs/arcai-web-backend:{version}-{hash}`
+- `ghcr.io/oa-labs/arcai-slack-bot:{version}-{hash}`
+- `ghcr.io/oa-labs/arcai-outline-bot:{version}-{hash}`
 
 ## Documentation
 
@@ -135,8 +175,10 @@ pnpm --filter @arc-ai/outline-bot start
 - [Slack Bot](bots/slack/README.md) - Slack integration setup and configuration
 - [Outline Sync Bot](bots/outline/README.md) - Automated document sync from Outline to S3
 - [Shared Library](lib/README.md) - Common functionality and agent services
-- [Web File Manager](web/README.md) - S3 file management web interface
+- [Web Application](web/README.md) - React-based file management and admin interface
+- [API Server](server/) - Express.js backend for storage operations
 - [CLI Tool](cli/) - Command-line interface for agent interaction
+- [Technical Stack](docs/TECHNICAL_STACK.md) - Detailed architecture and implementation
 
 ## Future
 

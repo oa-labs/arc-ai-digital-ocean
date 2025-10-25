@@ -318,4 +318,4 @@ pnpm --filter @arc-ai/outline-bot dev
 
 ## License
 
-Part of the ArcAI Ocean monorepo.
+Part of the ArcAI  monorepo.

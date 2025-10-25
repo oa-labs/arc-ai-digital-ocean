@@ -1,6 +1,6 @@
-# ArcAI Ocean CLI
+# ArcAI  CLI
 
-Command line tool for interacting with the ArcAI Ocean agent service.
+Command line tool for interacting with the ArcAI  agent service.
 
 ## Features
 
@@ -162,7 +162,7 @@ The CLI uses the centralized `createAgentService` factory function from the shar
 2. Determines the appropriate agent provider (OpenAI or DigitalOcean)
 3. Creates and returns the correct service instance
 
-This ensures consistency across all ArcAI Ocean applications (CLI, Slack bot, web app).
+This ensures consistency across all ArcAI  applications (CLI, Slack bot, web app).
 
 ## Development
 
@@ -247,4 +247,4 @@ import { parseCliArguments, sendAgentMessage } from '@arc-ai/cli';
 
 ## License
 
-Part of the ArcAI Ocean project.
+Part of the ArcAI  project.

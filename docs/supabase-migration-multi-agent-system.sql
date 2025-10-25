@@ -1,6 +1,6 @@
 -- Migration: Multi-Agent System for Slack Bot
 -- Description: Creates tables for managing multiple AI agents with per-channel configuration
--- Author: ArcAI Ocean Team
+-- Author: ArcAI  Team
 -- Date: 2025-01-21
 
 -- ============================================================================

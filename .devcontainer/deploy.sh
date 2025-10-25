@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ..
+cd /workspaces/arc-ai
 
 # Bump patch version
 current_version=$(node -p "require('./package.json').version")

@@ -1,6 +1,6 @@
-# ArcAI Ocean Slack Bot
+# ArcAI  Slack Bot
 
-Slack bot integration for the ArcAI Ocean workplace safety AI assistant.
+Slack bot integration for the ArcAI  workplace safety AI assistant.
 
 ## Prerequisites
 - Node.js 22+
@@ -118,9 +118,9 @@ docker rm arcai-slack-bot
 
 ## Project Context
 
-This Slack bot is part of the ArcAI Ocean ecosystem. For more information about the overall project:
+This Slack bot is part of the ArcAI  ecosystem. For more information about the overall project:
 
-- [Main Project README](../README.md) - Overview of the complete ArcAI Ocean system
+- [Main Project README](../README.md) - Overview of the complete ArcAI  system
 - [Business Case](../docs/BUSINESS_CASE.md) - Project justification and ROI analysis
 - [Shared Library](../lib/README.md) - Common functionality and agent services
 

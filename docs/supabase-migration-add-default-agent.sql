@@ -1,6 +1,6 @@
 -- Migration: Add Default Agent Support
 -- Description: Adds is_default flag to agents table to support setting a default agent
--- Author: ArcAI Ocean Team
+-- Author: ArcAI  Team
 -- Date: 2025-01-21
 
 -- Add is_default column to agents table
