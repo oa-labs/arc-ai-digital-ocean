@@ -18,7 +18,6 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
   
   // Agent list state
   const [agents, setAgents] = useState<DigitalOceanAgent[]>([]);
-  const [selectedAgent, setSelectedAgent] = useState<DigitalOceanAgent | null>(null);
   const [agentDetail, setAgentDetail] = useState<DigitalOceanAgentDetail | null>(null);
   
   // Form state
@@ -55,7 +54,6 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
   const handleAgentSelect = async (agent: DigitalOceanAgent) => {
     setError(null);
     setLoading(true);
-    setSelectedAgent(agent);
 
     try {
       const detail = await digitalOceanService.getAgent(apiToken, agent.id);
@@ -114,7 +112,6 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
   const handleBack = () => {
     if (step === 'form') {
       setStep('list');
-      setSelectedAgent(null);
       setAgentDetail(null);
     } else if (step === 'list') {
       setStep('token');

@@ -23,16 +23,6 @@ class DigitalOceanService {
   private readonly baseUrl = 'https://api.digitalocean.com/v2';
 
   /**
-   * Get the DigitalOcean API token from environment or prompt user
-   * For now, we'll require the user to provide it in the UI
-   */
-  private async getApiToken(): Promise<string | null> {
-    // In a production app, you might store this securely or get it from backend
-    // For now, we'll pass it as a parameter to methods
-    return null;
-  }
-
-  /**
    * List all deployed agents from DigitalOcean
    * GET https://api.digitalocean.com/v2/genai/agents
    */
