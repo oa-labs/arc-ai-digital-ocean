@@ -24,11 +24,11 @@ class DigitalOceanService {
 
   /**
    * List all deployed agents from DigitalOcean
-   * GET https://api.digitalocean.com/v2/genai/agents
+   * GET https://api.digitalocean.com/v2/gen-ai/agents
    */
   async listAgents(apiToken: string): Promise<DigitalOceanAgent[]> {
     try {
-      const response = await fetch(`${this.baseUrl}/genai/agents`, {
+      const response = await fetch(`${this.baseUrl}/gen-ai/agents`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${apiToken}`,
@@ -54,11 +54,11 @@ class DigitalOceanService {
 
   /**
    * Get detailed information about a specific agent
-   * GET https://api.digitalocean.com/v2/genai/agents/{agent_id}
+   * GET https://api.digitalocean.com/v2/gen-ai/agents/{agent_id}
    */
   async getAgent(apiToken: string, agentId: string): Promise<DigitalOceanAgentDetail> {
     try {
-      const response = await fetch(`${this.baseUrl}/genai/agents/${agentId}`, {
+      const response = await fetch(`${this.baseUrl}/gen-ai/agents/${agentId}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${apiToken}`,

@@ -192,20 +192,20 @@ export function Agents() {
                   Manage your AI agents and their configurations. Agents can be attached to slack channels and have their own RAGs via unique S3 buckets.
                 </p>
               </div>
-              <div className="flex items-center space-x-3">
-                <button
-                  onClick={handleAddFromDigitalOcean}
-                  className="flex items-center space-x-2 px-4 py-2 bg-white text-primary-600 border border-primary-600 rounded-lg hover:bg-primary-50 transition-colors"
-                >
-                  <Download className="h-5 w-5" />
-                  <span>Add Agent</span>
-                </button>
+              <div className="flex flex-col space-y-3">
                 <button
                   onClick={handleCreateAgent}
                   className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
                 >
                   <Plus className="h-5 w-5" />
                   <span>Create Agent</span>
+                </button>
+                <button
+                  onClick={handleAddFromDigitalOcean}
+                  className="flex items-center space-x-2 px-4 py-2 bg-white text-primary-600 border border-primary-600 rounded-lg hover:bg-primary-50 transition-colors"
+                >
+                  <Download className="h-5 w-5" />
+                  <span>Add Agent</span>
                 </button>
               </div>
             </div>
