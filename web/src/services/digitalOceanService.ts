@@ -20,6 +20,11 @@ export interface DigitalOceanAgentDetail extends DigitalOceanAgent {
   [key: string]: any;
 }
 
+export interface DigitalOceanBucket {
+  Name: string;
+  CreationDate: string;
+}
+
 class DigitalOceanService {
   private readonly baseUrl = 'https://api.digitalocean.com/v2';
 
@@ -79,6 +84,36 @@ class DigitalOceanService {
       return data.agent || data;
     } catch (error) {
       console.error('Error getting DigitalOcean agent:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * List all S3 buckets (Spaces) from DigitalOcean
+   * Uses AWS S3 API compatible endpoint
+   * Documentation: https://docs.digitalocean.com/reference/api/spaces/#bucket-management
+   */
+  async listBuckets(apiToken: string): Promise<DigitalOceanBucket[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/spaces/buckets`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${apiToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to list DigitalOcean buckets (${response.status}): ${errorText}`);
+      }
+
+      const data = await response.json();
+      
+      // AWS S3 API format: { Buckets: [...] }
+      return data.Buckets || data.buckets || [];
+    } catch (error) {
+      console.error('Error listing DigitalOcean buckets:', error);
       throw error;
     }
   }

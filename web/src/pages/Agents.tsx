@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { agentManagementService, Agent } from '@/services/agentManagementService';
+import { userSettingsService } from '@/services/userSettingsService';
 import { AgentForm } from '@/components/AgentForm';
 import { AddAgentFromDigitalOcean } from '@/components/AddAgentFromDigitalOcean';
 import { ChannelMappings } from '@/components/ChannelMappings';
@@ -33,6 +34,7 @@ export function Agents() {
   const [showForm, setShowForm] = useState(false);
   const [showAddFromDigitalOcean, setShowAddFromDigitalOcean] = useState(false);
   const [editingAgent, setEditingAgent] = useState<Agent | null>(null);
+  const [hasDigitalOceanToken, setHasDigitalOceanToken] = useState(false);
 
   const loadAgents = async () => {
     try {
@@ -47,14 +49,26 @@ export function Agents() {
     }
   };
 
+  const checkDigitalOceanToken = async () => {
+    try {
+      const hasToken = await userSettingsService.hasDigitalOceanToken();
+      setHasDigitalOceanToken(hasToken);
+    } catch (error) {
+      console.error('Error checking DigitalOcean token:', error);
+      setHasDigitalOceanToken(false);
+    }
+  };
+
   const handleRefresh = async () => {
     setRefreshing(true);
     await loadAgents();
+    await checkDigitalOceanToken();
     setRefreshing(false);
   };
 
   useEffect(() => {
     loadAgents();
+    checkDigitalOceanToken();
   }, []);
 
   const handleCreateAgent = () => {
@@ -200,13 +214,15 @@ export function Agents() {
                   <Plus className="h-5 w-5" />
                   <span>Create Agent</span>
                 </button>
-                <button
-                  onClick={handleAddFromDigitalOcean}
-                  className="flex items-center space-x-2 px-4 py-2 bg-white text-primary-600 border border-primary-600 rounded-lg hover:bg-primary-50 transition-colors"
-                >
-                  <Download className="h-5 w-5" />
-                  <span>Add Agent</span>
-                </button>
+                {hasDigitalOceanToken && (
+                  <button
+                    onClick={handleAddFromDigitalOcean}
+                    className="flex items-center space-x-2 px-4 py-2 bg-white text-primary-600 border border-primary-600 rounded-lg hover:bg-primary-50 transition-colors"
+                  >
+                    <Download className="h-5 w-5" />
+                    <span>Add Agent</span>
+                  </button>
+                )}
               </div>
             </div>
 

@@ -4,14 +4,13 @@ import { useAuth } from '@/contexts/AuthContext';
 import { BucketList } from '@/components/BucketList';
 import { Footer } from '@/components/Footer';
 import { agentManagementService, Agent } from '@/services/agentManagementService';
-import { Cloud, LogOut, RefreshCw, Bot, Users } from 'lucide-react';
+import { Cloud, LogOut, Settings, Bot, Users } from 'lucide-react';
 import { showToast } from '@/lib/toast';
 
 export function Dashboard() {
   const { user, signOut, isAdmin } = useAuth();
   const [buckets, setBuckets] = useState<Map<string, Agent[]>>(new Map());
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
 
   const loadBuckets = async () => {
     try {
@@ -24,12 +23,6 @@ export function Dashboard() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await loadBuckets();
-    setRefreshing(false);
   };
 
   useEffect(() => {
@@ -76,16 +69,13 @@ export function Dashboard() {
                   <span className="hidden sm:inline">Users</span>
                 </Link>
               )}
-              <button
-                onClick={handleRefresh}
-                disabled={refreshing}
-                className="p-2 text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-50"
-                title="Refresh"
+              <Link
+                to="/settings"
+                className="p-2 text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                title="Settings"
               >
-                <RefreshCw
-                  className={`h-5 w-5 ${refreshing ? 'animate-spin' : ''}`}
-                />
-              </button>
+                <Settings className="h-5 w-5" />
+              </Link>
               <button
                 onClick={handleSignOut}
                 className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"

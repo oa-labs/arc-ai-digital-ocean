@@ -1,17 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Save, AlertCircle, Cloud, Loader2, ChevronRight } from 'lucide-react';
-import { digitalOceanService, DigitalOceanAgent, DigitalOceanAgentDetail } from '@/services/digitalOceanService';
+import { digitalOceanService, DigitalOceanAgent, DigitalOceanAgentDetail, DigitalOceanBucket } from '@/services/digitalOceanService';
 import { agentManagementService, CreateAgentInput } from '@/services/agentManagementService';
+import { userSettingsService } from '@/services/userSettingsService';
 import { showToast } from '@/lib/toast';
 
 interface AddAgentFromDigitalOceanProps {
   onClose: () => void;
 }
 
-type Step = 'token' | 'list' | 'form';
+type Step = 'list' | 'form';
 
 export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanProps) {
-  const [step, setStep] = useState<Step>('token');
+  const [step, setStep] = useState<Step>('list');
   const [apiToken, setApiToken] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -19,6 +20,10 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
   // Agent list state
   const [agents, setAgents] = useState<DigitalOceanAgent[]>([]);
   const [agentDetail, setAgentDetail] = useState<DigitalOceanAgentDetail | null>(null);
+  
+  // Bucket list state
+  const [buckets, setBuckets] = useState<DigitalOceanBucket[]>([]);
+  const [loadingBuckets, setLoadingBuckets] = useState(false);
   
   // Form state
   const [formData, setFormData] = useState<CreateAgentInput>({
@@ -35,21 +40,32 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
     is_active: true,
   });
 
-  const handleTokenSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
+  // Load stored API token and fetch agents on mount
+  useEffect(() => {
+    const loadTokenAndAgents = async () => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const agentList = await digitalOceanService.listAgents(apiToken);
-      setAgents(agentList);
-      setStep('list');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to connect to DigitalOcean API');
-    } finally {
-      setLoading(false);
-    }
-  };
+      try {
+        const token = await userSettingsService.getDigitalOceanToken();
+        if (!token) {
+          setError('No DigitalOcean Personal Access Token found. Please configure it in Settings.');
+          setLoading(false);
+          return;
+        }
+
+        setApiToken(token);
+        const agentList = await digitalOceanService.listAgents(token);
+        setAgents(agentList);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to connect to DigitalOcean API');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadTokenAndAgents();
+  }, []);
 
   const handleAgentSelect = async (agent: DigitalOceanAgent) => {
     setError(null);
@@ -75,6 +91,9 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
       });
       
       setStep('form');
+      
+      // Fetch buckets when entering form step
+      fetchBuckets();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch agent details');
     } finally {
@@ -82,8 +101,21 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
     }
   };
 
+  const fetchBuckets = async () => {
+    setLoadingBuckets(true);
+    try {
+      const bucketList = await digitalOceanService.listBuckets(apiToken);
+      setBuckets(bucketList);
+    } catch (err) {
+      console.error('Failed to fetch buckets:', err);
+      // Don't set error state, just log - buckets are optional
+    } finally {
+      setLoadingBuckets(false);
+    }
+  };
+
   const handleFormChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
@@ -113,9 +145,6 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
     if (step === 'form') {
       setStep('list');
       setAgentDetail(null);
-    } else if (step === 'list') {
-      setStep('token');
-      setAgents([]);
     }
   };
 
@@ -149,61 +178,16 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
           </div>
         )}
 
-        {/* Step 1: API Token Input */}
-        {step === 'token' && (
-          <form onSubmit={handleTokenSubmit} className="p-6 space-y-6">
-            <div>
-              <p className="text-sm text-gray-600 mb-4">
-                Enter your DigitalOcean API token to list available agents from your deployment.
-              </p>
-              <label htmlFor="apiToken" className="block text-sm font-medium text-gray-700 mb-2">
-                DigitalOcean API Token *
-              </label>
-              <input
-                type="password"
-                id="apiToken"
-                value={apiToken}
-                onChange={(e) => setApiToken(e.target.value)}
-                required
-                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm font-mono"
-                placeholder="dop_v1_..."
-              />
-              <p className="mt-2 text-xs text-gray-500">
-                Your API token is used only for this session and is not stored.
-              </p>
-            </div>
-
-            <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={loading || !apiToken}
-                className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-md hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Connecting...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Continue</span>
-                    <ChevronRight className="h-4 w-4" />
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
+        {/* Loading State */}
+        {loading && !error && (
+          <div className="p-12 flex flex-col items-center justify-center">
+            <Loader2 className="h-12 w-12 text-primary-600 animate-spin mb-4" />
+            <p className="text-sm text-gray-600">Loading agents from DigitalOcean...</p>
+          </div>
         )}
 
-        {/* Step 2: Agent List */}
-        {step === 'list' && (
+        {/* Agent List */}
+        {!loading && !error && step === 'list' && (
           <div className="p-6 space-y-6">
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -246,14 +230,7 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
               </div>
             )}
 
-            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-              <button
-                type="button"
-                onClick={handleBack}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-              >
-                Back
-              </button>
+            <div className="flex items-center justify-end pt-4 border-t border-gray-200">
               <button
                 type="button"
                 onClick={onClose}
@@ -317,16 +294,39 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
                 <label htmlFor="s3_bucket" className="block text-sm font-medium text-gray-700">
                   S3 Bucket Name *
                 </label>
-                <input
-                  type="text"
-                  id="s3_bucket"
-                  name="s3_bucket"
-                  required
-                  value={formData.s3_bucket}
-                  onChange={handleFormChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm font-mono"
-                  placeholder="my-rag-bucket"
-                />
+                {loadingBuckets ? (
+                  <div className="mt-1 flex items-center space-x-2 text-sm text-gray-500">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Loading buckets...</span>
+                  </div>
+                ) : buckets.length > 0 ? (
+                  <select
+                    id="s3_bucket"
+                    name="s3_bucket"
+                    required
+                    value={formData.s3_bucket}
+                    onChange={handleFormChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                  >
+                    <option value="">Select a bucket...</option>
+                    {buckets.map((bucket) => (
+                      <option key={bucket.Name} value={bucket.Name}>
+                        {bucket.Name}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    id="s3_bucket"
+                    name="s3_bucket"
+                    required
+                    value={formData.s3_bucket}
+                    onChange={handleFormChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm font-mono"
+                    placeholder="my-rag-bucket"
+                  />
+                )}
                 <p className="mt-1 text-xs text-gray-500">
                   The S3 bucket where RAG documents are stored for this agent.
                 </p>

@@ -10,6 +10,7 @@ import { Agents } from '@/pages/Agents';
 import { AgentEdit } from '@/pages/AgentEdit';
 import { BucketDetail } from '@/pages/BucketDetail';
 import { Users } from '@/pages/Users';
+import { Settings } from '@/pages/Settings';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -66,6 +67,14 @@ function App() {
                 <AdminRoute>
                   <Users />
                 </AdminRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
               }
             />
             <Route path="*" element={<Navigate to="/" replace />} />
