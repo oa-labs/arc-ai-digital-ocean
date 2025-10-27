@@ -4,11 +4,12 @@
  */
 
 export interface DigitalOceanAgent {
-  id: string;
+  uuid: string;
   name: string;
   description?: string;
   created_at: string;
   updated_at: string;
+  url: string;
   // Add other fields as needed from the API response
 }
 

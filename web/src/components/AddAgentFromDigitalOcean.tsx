@@ -56,7 +56,7 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
     setLoading(true);
 
     try {
-      const detail = await digitalOceanService.getAgent(apiToken, agent.id);
+      const detail = await digitalOceanService.getAgent(apiToken, agent.uuid);
       setAgentDetail(detail);
       
       // Pre-populate form with agent details
@@ -226,7 +226,7 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
               <div className="space-y-3 max-h-96 overflow-y-auto">
                 {agents.map((agent) => (
                   <button
-                    key={agent.id}
+                    key={agent.uuid}
                     onClick={() => handleAgentSelect(agent)}
                     disabled={loading}
                     className="w-full text-left p-4 border border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -237,7 +237,7 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
                         {agent.description && (
                           <p className="mt-1 text-sm text-gray-600">{agent.description}</p>
                         )}
-                        <p className="mt-2 text-xs text-gray-500">ID: {agent.id}</p>
+                        <p className="mt-2 text-xs text-gray-500">{agent.url}</p>
                       </div>
                       <ChevronRight className="h-5 w-5 text-gray-400" />
                     </div>
