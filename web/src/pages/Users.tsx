@@ -1,14 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth, UserRole } from '@/contexts/AuthContext';
+import { UserRole } from '@/contexts/AuthContext';
 import { userManagementService, AppUser } from '@/services/userManagementService';
+import { AppHeader } from '@/components/AppHeader';
 import { Footer } from '@/components/Footer';
 import {
   Users as UsersIcon,
-  LogOut,
-  RefreshCw,
-  Cloud,
-  Bot,
   Shield,
   ShieldCheck,
   User,
@@ -17,10 +13,8 @@ import {
 import { showToast } from '@/lib/toast';
 
 export function Users() {
-  const { user, signOut } = useAuth();
   const [users, setUsers] = useState<AppUser[]>([]);
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
   const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
 
   const loadUsers = async () => {
@@ -36,19 +30,9 @@ export function Users() {
     }
   };
 
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await loadUsers();
-    setRefreshing(false);
-  };
-
   useEffect(() => {
     loadUsers();
   }, []);
-
-  const handleSignOut = async () => {
-    await signOut();
-  };
 
   const handleRoleChange = async (userId: string, newRole: UserRole) => {
     if (!confirm(`Are you sure you want to change this user's role to ${newRole}?`)) {
@@ -103,53 +87,7 @@ export function Users() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="flex items-center justify-center w-10 h-10 bg-primary-600 rounded-lg">
-                <UsersIcon className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">User Management</h1>
-                <p className="text-sm text-gray-500">{user?.email}</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Link
-                to="/"
-                className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
-              >
-                <Cloud className="h-5 w-5" />
-                <span className="hidden sm:inline">Files</span>
-              </Link>
-              <Link
-                to="/agents"
-                className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
-              >
-                <Bot className="h-5 w-5" />
-                <span className="hidden sm:inline">Agents</span>
-              </Link>
-              <button
-                onClick={handleRefresh}
-                disabled={refreshing}
-                className="p-2 text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-50"
-                title="Refresh"
-              >
-                <RefreshCw className={`h-5 w-5 ${refreshing ? 'animate-spin' : ''}`} />
-              </button>
-              <button
-                onClick={handleSignOut}
-                className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-              >
-                <LogOut className="h-5 w-5" />
-                <span className="hidden sm:inline">Sign Out</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <AppHeader title="User Management" icon={UsersIcon} currentPage="users" />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

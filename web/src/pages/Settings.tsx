@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
 import { userSettingsService } from '@/services/userSettingsService';
+import { AppHeader } from '@/components/AppHeader';
 import { Footer } from '@/components/Footer';
-import { Cloud, LogOut, Settings as SettingsIcon, Save, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Cloud, Settings as SettingsIcon, Save, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { showToast } from '@/lib/toast';
 
 export function Settings() {
-  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -53,10 +52,6 @@ export function Settings() {
     }
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-  };
-
   const handleBack = () => {
     navigate('/');
   };
@@ -71,33 +66,7 @@ export function Settings() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="flex items-center justify-center w-10 h-10 bg-primary-600 rounded-lg">
-                <Cloud className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">
-                  ArcAI Portal
-                </h1>
-                <p className="text-sm text-gray-500">{user?.email}</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={handleSignOut}
-                className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-              >
-                <LogOut className="h-5 w-5" />
-                <span className="hidden sm:inline">Sign Out</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <AppHeader title="ArcAI Portal" icon={Cloud} currentPage="settings" />
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
