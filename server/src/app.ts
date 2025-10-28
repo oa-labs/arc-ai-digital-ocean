@@ -4,6 +4,7 @@ import type { ErrorRequestHandler } from 'express';
 import { MulterError } from 'multer';
 import { storageRouter } from './routes/storage.js';
 import { usersRouter } from './routes/users.js';
+import { systemPreferencesRouter } from './routes/system-preferences.js';
 import { config } from './env.js';
 import { ZodError } from 'zod';
 
@@ -76,6 +77,7 @@ export function createApp() {
 
   app.use('/api/storage', storageRouter);
   app.use('/api/users', usersRouter);
+  app.use('/api/system-preferences', systemPreferencesRouter);
 
   app.use(errorHandler);
 

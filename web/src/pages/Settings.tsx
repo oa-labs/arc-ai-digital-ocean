@@ -1,18 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userSettingsService } from '@/services/userSettingsService';
+import { systemPreferencesService, AIModel } from '@/services/systemPreferencesService';
 import { AppHeader } from '@/components/AppHeader';
 import { Footer } from '@/components/Footer';
 import { Cloud, Settings as SettingsIcon, Save, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { showToast } from '@/lib/toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function Settings() {
   const navigate = useNavigate();
+  const { isOwner } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [digitalOceanToken, setDigitalOceanToken] = useState('');
   const [showToken, setShowToken] = useState(false);
   const [hasExistingToken, setHasExistingToken] = useState(false);
+  const [availableModels, setAvailableModels] = useState<AIModel[]>([]);
+  const [selectedModel, setSelectedModel] = useState<string>('');
+  const [loadingModels, setLoadingModels] = useState(false);
 
   useEffect(() => {
     loadSettings();
@@ -25,6 +31,24 @@ export function Settings() {
       if (settings && settings.digitalocean_token) {
         setDigitalOceanToken(settings.digitalocean_token);
         setHasExistingToken(true);
+      }
+
+      if (isOwner) {
+        setLoadingModels(true);
+        try {
+          const [models, defaultModel] = await Promise.all([
+            systemPreferencesService.getAvailableModels(),
+            systemPreferencesService.getDefaultModel(),
+          ]);
+          setAvailableModels(models);
+          if (defaultModel) {
+            setSelectedModel(defaultModel);
+          }
+        } catch (error) {
+          console.error('Error loading models:', error);
+        } finally {
+          setLoadingModels(false);
+        }
       }
     } catch (error) {
       console.error('Error loading settings:', error);
@@ -39,9 +63,20 @@ export function Settings() {
     
     try {
       setSaving(true);
-      await userSettingsService.upsertUserSettings({
-        digitalocean_token: digitalOceanToken || null,
-      });
+      
+      const promises: Promise<any>[] = [
+        userSettingsService.upsertUserSettings({
+          digitalocean_token: digitalOceanToken || null,
+        })
+      ];
+
+      if (isOwner && selectedModel) {
+        promises.push(
+          systemPreferencesService.setDefaultModel(selectedModel)
+        );
+      }
+
+      await Promise.all(promises);
       showToast.success('Settings saved successfully');
       setHasExistingToken(!!digitalOceanToken);
     } catch (error) {
@@ -144,6 +179,53 @@ export function Settings() {
                 </p>
               </div>
             </div>
+
+            {/* System Preferences - Only for Owners */}
+            {isOwner && (
+              <div className="pt-6 border-t border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  System Preferences
+                </h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Configure system-wide settings that apply to all users.
+                </p>
+
+                <div>
+                  <label htmlFor="default_model" className="block text-sm font-medium text-gray-700 mb-2">
+                    Default AI Model
+                  </label>
+                  {loadingModels ? (
+                    <div className="flex items-center space-x-2 text-gray-500">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></div>
+                      <span className="text-sm">Loading models...</span>
+                    </div>
+                  ) : availableModels.length > 0 ? (
+                    <>
+                      <select
+                        id="default_model"
+                        value={selectedModel}
+                        onChange={(e) => setSelectedModel(e.target.value)}
+                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                      >
+                        <option value="">Select a model...</option>
+                        {availableModels.map((model) => (
+                          <option key={model.id} value={model.id}>
+                            {model.name} {model.description && `- ${model.description}`}
+                          </option>
+                        ))}
+                      </select>
+                      <p className="mt-2 text-xs text-gray-500">
+                        This model will be used by default for all agents in the system.
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-sm text-gray-500">
+                      No models available. Please ensure DigitalOcean API is configured.
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Save Button */}
             <div className="flex items-center justify-end pt-6 border-t border-gray-200">
