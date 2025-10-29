@@ -38,7 +38,7 @@ systemPreferencesRouter.get('/models', requireAuth, async (req, res, next) => {
 
     const doApiKey = settings.digitalocean_token;
 
-    const response = await fetch('https://api.digitalocean.com/v2/genai/models', {
+    const response = await fetch('https://api.digitalocean.com/v2/gen-ai/models', {
       headers: {
         'Authorization': `Bearer ${doApiKey}`,
         'Content-Type': 'application/json',
