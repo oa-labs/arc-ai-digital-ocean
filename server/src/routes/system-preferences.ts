@@ -19,16 +19,26 @@ async function isOwner(userId: string): Promise<boolean> {
 
 systemPreferencesRouter.get('/models', requireAuth, async (req, res, next) => {
   try {
-    const doApiKey = process.env.DIGITALOCEAN_API_KEY;
-    
-    if (!doApiKey) {
-      return res.status(503).json({ 
-        error: 'DigitalOcean API key not configured',
-        models: [] 
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.user.id;
+
+    // Get user's DigitalOcean token from settings
+    const { data: settings, error: settingsError } = await supabaseAdmin
+      .from('user_settings')
+      .select('digitalocean_token')
+      .eq('user_id', userId)
+      .single();
+
+    if (settingsError || !settings?.digitalocean_token) {
+      return res.status(503).json({
+        error: 'DigitalOcean API token not configured for user',
+        models: []
       });
     }
 
-    const response = await fetch('https://api.digitalocean.com/v2/ml/models', {
+    const doApiKey = settings.digitalocean_token;
+
+    const response = await fetch('https://api.digitalocean.com/v2/genai/models', {
       headers: {
         'Authorization': `Bearer ${doApiKey}`,
         'Content-Type': 'application/json',
@@ -37,9 +47,9 @@ systemPreferencesRouter.get('/models', requireAuth, async (req, res, next) => {
 
     if (!response.ok) {
       console.error('DigitalOcean API error:', response.status, await response.text());
-      return res.status(response.status).json({ 
+      return res.status(response.status).json({
         error: 'Failed to fetch models from DigitalOcean',
-        models: [] 
+        models: []
       });
     }
 
