@@ -25,6 +25,10 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
   const [buckets, setBuckets] = useState<DigitalOceanBucket[]>([]);
   const [loadingBuckets, setLoadingBuckets] = useState(false);
   
+  // Knowledge base buckets state
+  const [kbBuckets, setKbBuckets] = useState<string[]>([]);
+  const [loadingKbBuckets, setLoadingKbBuckets] = useState(false);
+  
   // Form state
   const [formData, setFormData] = useState<CreateAgentInput>({
     name: '',
@@ -94,6 +98,7 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
       
       // Fetch buckets when entering form step
       fetchBuckets();
+      fetchKnowledgeBaseBuckets(detail);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch agent details');
     } finally {
@@ -111,6 +116,19 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
       // Don't set error state, just log - buckets are optional
     } finally {
       setLoadingBuckets(false);
+    }
+  };
+
+  const fetchKnowledgeBaseBuckets = async (detail: DigitalOceanAgentDetail) => {
+    setLoadingKbBuckets(true);
+    try {
+      const bucketNames = await digitalOceanService.getSpacesBucketsFromAgent(apiToken, detail);
+      setKbBuckets(bucketNames);
+    } catch (err) {
+      console.error('Failed to fetch knowledge base buckets:', err);
+      // Don't set error state, just log - knowledge base buckets are optional
+    } finally {
+      setLoadingKbBuckets(false);
     }
   };
 
@@ -294,39 +312,72 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
                 <label htmlFor="s3_bucket" className="block text-sm font-medium text-gray-700">
                   S3 Bucket Name *
                 </label>
-                {loadingBuckets ? (
+                {(loadingBuckets || loadingKbBuckets) ? (
                   <div className="mt-1 flex items-center space-x-2 text-sm text-gray-500">
                     <Loader2 className="h-4 w-4 animate-spin" />
                     <span>Loading buckets...</span>
                   </div>
-                ) : buckets.length > 0 ? (
-                  <select
-                    id="s3_bucket"
-                    name="s3_bucket"
-                    required
-                    value={formData.s3_bucket}
-                    onChange={handleFormChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                  >
-                    <option value="">Select a bucket...</option>
-                    {buckets.map((bucket) => (
-                      <option key={bucket.Name} value={bucket.Name}>
-                        {bucket.Name}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    type="text"
-                    id="s3_bucket"
-                    name="s3_bucket"
-                    required
-                    value={formData.s3_bucket}
-                    onChange={handleFormChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm font-mono"
-                    placeholder="my-rag-bucket"
-                  />
-                )}
+                ) : (() => {
+                  // Combine buckets from both sources
+                  const allBucketNames = new Set<string>();
+                  
+                  // Add buckets from knowledge bases (priority source)
+                  kbBuckets.forEach(name => allBucketNames.add(name));
+                  
+                  // Add buckets from general bucket list
+                  buckets.forEach(bucket => allBucketNames.add(bucket.Name));
+                  
+                  const allBuckets = Array.from(allBucketNames).sort();
+                  
+                  return allBuckets.length > 0 ? (
+                    <>
+                      <select
+                        id="s3_bucket"
+                        name="s3_bucket"
+                        required
+                        value={formData.s3_bucket}
+                        onChange={handleFormChange}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                      >
+                        <option value="">Select a bucket...</option>
+                        {kbBuckets.length > 0 && (
+                          <optgroup label="From Agent Knowledge Bases">
+                            {kbBuckets.map((bucketName) => (
+                              <option key={`kb-${bucketName}`} value={bucketName}>
+                                {bucketName}
+                              </option>
+                            ))}
+                          </optgroup>
+                        )}
+                        {buckets.length > 0 && (
+                          <optgroup label="All Available Buckets">
+                            {buckets.map((bucket) => (
+                              <option key={`all-${bucket.Name}`} value={bucket.Name}>
+                                {bucket.Name}
+                              </option>
+                            ))}
+                          </optgroup>
+                        )}
+                      </select>
+                      {kbBuckets.length > 0 && (
+                        <p className="mt-1 text-xs text-primary-600">
+                          Found {kbBuckets.length} bucket{kbBuckets.length !== 1 ? 's' : ''} from agent&apos;s knowledge bases
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <input
+                      type="text"
+                      id="s3_bucket"
+                      name="s3_bucket"
+                      required
+                      value={formData.s3_bucket}
+                      onChange={handleFormChange}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm font-mono"
+                      placeholder="my-rag-bucket"
+                    />
+                  );
+                })()}
                 <p className="mt-1 text-xs text-gray-500">
                   The S3 bucket where RAG documents are stored for this agent.
                 </p>

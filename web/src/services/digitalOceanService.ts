@@ -17,12 +17,29 @@ export interface DigitalOceanAgentDetail extends DigitalOceanAgent {
   // Additional fields that might be in the detail response
   endpoint?: string;
   model?: string;
+  knowledge_bases?: string[];
   [key: string]: any;
 }
 
 export interface DigitalOceanBucket {
   Name: string;
   CreationDate: string;
+}
+
+export interface SpacesDataSource {
+  bucket_name: string;
+  [key: string]: any;
+}
+
+export interface KnowledgeBaseDataSource {
+  uuid: string;
+  type: string;
+  spaces_data_source?: SpacesDataSource;
+  [key: string]: any;
+}
+
+export interface KnowledgeBaseDataSourcesResponse {
+  knowledge_base_data_sources: KnowledgeBaseDataSource[];
 }
 
 class DigitalOceanService {
@@ -114,6 +131,79 @@ class DigitalOceanService {
       return data.Buckets || data.buckets || [];
     } catch (error) {
       console.error('Error listing DigitalOcean buckets:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get data sources for a specific knowledge base
+   * GET https://api.digitalocean.com/v2/genai/knowledge_bases/{knowledge_base_id}/data_sources
+   */
+  async getKnowledgeBaseDataSources(
+    apiToken: string,
+    knowledgeBaseId: string
+  ): Promise<KnowledgeBaseDataSource[]> {
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/genai/knowledge_bases/${knowledgeBaseId}/data_sources`,
+        {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${apiToken}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `Failed to get knowledge base data sources (${response.status}): ${errorText}`
+        );
+      }
+
+      const data: KnowledgeBaseDataSourcesResponse = await response.json();
+      return data.knowledge_base_data_sources || [];
+    } catch (error) {
+      console.error('Error getting knowledge base data sources:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get all Spaces bucket names from knowledge bases associated with an agent
+   */
+  async getSpacesBucketsFromAgent(
+    apiToken: string,
+    agentDetail: DigitalOceanAgentDetail
+  ): Promise<string[]> {
+    try {
+      const knowledgeBases = agentDetail.knowledge_bases || [];
+      
+      if (knowledgeBases.length === 0) {
+        return [];
+      }
+
+      // Fetch data sources for all knowledge bases in parallel
+      const dataSourcesPromises = knowledgeBases.map((kbId) =>
+        this.getKnowledgeBaseDataSources(apiToken, kbId)
+      );
+
+      const dataSourcesArrays = await Promise.all(dataSourcesPromises);
+      
+      // Flatten and extract bucket names
+      const bucketNames = new Set<string>();
+      dataSourcesArrays.forEach((dataSources) => {
+        dataSources.forEach((dataSource) => {
+          if (dataSource.spaces_data_source?.bucket_name) {
+            bucketNames.add(dataSource.spaces_data_source.bucket_name);
+          }
+        });
+      });
+
+      return Array.from(bucketNames);
+    } catch (error) {
+      console.error('Error getting Spaces buckets from agent:', error);
       throw error;
     }
   }
