@@ -196,11 +196,6 @@ export function BucketDetail() {
                 >
                   <span className="font-medium text-gray-900">{agent.name}</span>
                   <span className="ml-2 text-gray-500">({agent.provider})</span>
-                  {agent.s3_prefix && (
-                    <span className="ml-2 text-xs text-gray-400 font-mono">
-                      /{agent.s3_prefix}
-                    </span>
-                  )}
                 </Link>
               ))}
             </div>

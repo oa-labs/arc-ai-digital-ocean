@@ -39,7 +39,6 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
     max_tokens: 1000,
     endpoint: '',
     s3_bucket: '',
-    s3_prefix: '',
     system_prompt: '',
     is_active: true,
   });
@@ -89,7 +88,6 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
         max_tokens: 1000,
         endpoint: detail.endpoint || '',
         s3_bucket: '',
-        s3_prefix: '',
         system_prompt: '',
         is_active: true,
       });

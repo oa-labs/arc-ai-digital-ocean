@@ -104,7 +104,7 @@ Modal form for creating and editing agents.
 
 **RAG Configuration:**
 - **S3 Bucket** (required) - Bucket name for RAG documents
-- **S3 Prefix** (optional) - Folder path within bucket (e.g., "safety-docs/")
+
 
 **System Prompt:**
 - **Custom System Prompt** (optional) - Override default system prompt
@@ -340,7 +340,7 @@ The web UI is a static React application that can be deployed to:
 ### Planned Features
 
 1. **RAG Document Management**
-   - Upload documents directly to agent-specific S3 prefixes
+   - Upload documents directly to agent-specific S3 buckets
    - Preview document content
    - Bulk upload and delete
    - Document search and filtering

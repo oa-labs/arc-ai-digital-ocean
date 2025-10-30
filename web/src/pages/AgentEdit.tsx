@@ -22,7 +22,6 @@ export function AgentEdit() {
 
     api_key_env_var: string;
     s3_bucket: string;
-    s3_prefix: string;
 
     endpoint: string;
     is_active: boolean;
@@ -33,7 +32,6 @@ export function AgentEdit() {
     provider: 'digitalocean',
     api_key_env_var: '',
     s3_bucket: '',
-    s3_prefix: '',
     endpoint: '',
     is_active: true,
     is_default: false,
@@ -64,7 +62,6 @@ export function AgentEdit() {
           provider: 'digitalocean',
           api_key_env_var: foundAgent.api_key_env_var,
           s3_bucket: foundAgent.s3_bucket,
-          s3_prefix: foundAgent.s3_prefix || '',
           endpoint: foundAgent.endpoint || '',
           is_active: foundAgent.is_active,
           is_default: foundAgent.is_default || false,
@@ -298,7 +295,7 @@ Are you absolutely sure?`)) {
             {/* S3 Configuration */}
             <div className="pt-6 border-t border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">S3 Configuration</h2>
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-6">
                 <div>
                   <label htmlFor="s3_bucket" className="block text-sm font-medium text-gray-700 mb-2">
                     S3 Bucket *
@@ -310,21 +307,6 @@ Are you absolutely sure?`)) {
                     required
                     value={formData.s3_bucket}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="s3_prefix" className="block text-sm font-medium text-gray-700 mb-2">
-                    S3 Prefix
-                  </label>
-                  <input
-                    type="text"
-                    id="s3_prefix"
-                    name="s3_prefix"
-                    value={formData.s3_prefix}
-                    onChange={handleChange}
-                    placeholder="e.g., documents/"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   />
                 </div>

@@ -141,7 +141,6 @@ INSERT INTO agents (
   api_key_env_var,
   model,
   s3_bucket,
-  s3_prefix,
   system_prompt
 ) VALUES (
   'default-agent',
@@ -150,7 +149,6 @@ INSERT INTO agents (
   'OPENAI_API_KEY',
   'gpt-4',
   'your-rag-bucket',
-  'default/',
   'You are a helpful AI assistant.'
 );
 ```

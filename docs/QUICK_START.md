@@ -68,7 +68,7 @@ VITE_S3_SECRET_ACCESS_KEY=your-secret
 ```sql
 INSERT INTO agents (
   name, description, provider, api_key_env_var, 
-  model, s3_bucket, s3_prefix, system_prompt
+  model, s3_bucket, system_prompt
 ) VALUES (
   'default-agent',
   'Default AI assistant',
@@ -76,7 +76,6 @@ INSERT INTO agents (
   'OPENAI_API_KEY',
   'gpt-4',
   'your-rag-bucket',
-  'default/',
   'You are a helpful AI assistant.'
 );
 ```

@@ -19,7 +19,6 @@ export function AgentForm({ agent, onClose }: AgentFormProps) {
     max_tokens: 1000,
     endpoint: '',
     s3_bucket: '',
-    s3_prefix: '',
     system_prompt: '',
     is_active: true,
     is_default: false,
@@ -36,7 +35,6 @@ export function AgentForm({ agent, onClose }: AgentFormProps) {
         max_tokens: agent.max_tokens || 1000,
         endpoint: agent.endpoint || '',
         s3_bucket: agent.s3_bucket,
-        s3_prefix: agent.s3_prefix || '',
         system_prompt: agent.system_prompt || '',
         is_active: agent.is_active,
         is_default: agent.is_default || false,
@@ -260,24 +258,6 @@ export function AgentForm({ agent, onClose }: AgentFormProps) {
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm font-mono"
                 placeholder="my-rag-bucket"
               />
-            </div>
-
-            <div>
-              <label htmlFor="s3_prefix" className="block text-sm font-medium text-gray-700">
-                S3 Prefix (Optional)
-              </label>
-              <input
-                type="text"
-                id="s3_prefix"
-                name="s3_prefix"
-                value={formData.s3_prefix}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm font-mono"
-                placeholder="safety-docs/"
-              />
-              <p className="mt-1 text-xs text-gray-500">
-                Optional folder path within the bucket
-              </p>
             </div>
 
           </div>

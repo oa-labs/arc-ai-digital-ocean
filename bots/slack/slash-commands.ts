@@ -229,9 +229,7 @@ async function handleAgentInfo({
     return;
   }
 
-  const ragInfo = agentInfo.s3_prefix
-    ? `s3://${agentInfo.s3_bucket}/${agentInfo.s3_prefix}`
-    : `s3://${agentInfo.s3_bucket}`;
+  const ragInfo = `s3://${agentInfo.s3_bucket}`;
 
   const systemPromptPreview = agentInfo.system_prompt
     ? agentInfo.system_prompt.substring(0, 100) + (agentInfo.system_prompt.length > 100 ? '...' : '')

@@ -46,7 +46,7 @@ Run SQL to create your first agent:
 
 - [ ] Create OpenAI agent:
   ```sql
-  INSERT INTO agents (name, description, provider, api_key_env_var, model, s3_bucket, s3_prefix, system_prompt)
+  INSERT INTO agents (name, description, provider, api_key_env_var, model, s3_bucket, system_prompt)
   VALUES (
     'safety-bot',
     'AI agent specialized in workplace safety',
@@ -54,7 +54,6 @@ Run SQL to create your first agent:
     'AGENT_SAFETY_OPENAI_KEY',
     'gpt-4',
     'my-rag-bucket',
-    'safety-docs/',
     'You are a workplace safety expert. Provide clear, actionable safety guidance.'
   );
   ```
