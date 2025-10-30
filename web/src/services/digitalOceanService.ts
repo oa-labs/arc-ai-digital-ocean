@@ -9,7 +9,14 @@ export interface DigitalOceanAgent {
   description?: string;
   created_at: string;
   updated_at: string;
-  url: string;
+  deployment?: {
+    uuid: string;
+    url: string;
+    status: string;
+    visibility: string;
+    created_at: string;
+    updated_at: string;
+  };
   // Add other fields as needed from the API response
 }
 

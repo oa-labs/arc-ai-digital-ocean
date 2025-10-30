@@ -1,0 +1,144 @@
+{
+  "agents": [
+    {
+      "uuid": "bbb907cf-aebc-11f0-b074-4e013e2ddde4",
+      "name": "agent-ptools",
+      "created_at": "2025-10-21T20:30:07Z",
+      "updated_at": "2025-10-21T20:30:07Z",
+      "instruction": "You are a helpful assistant to engineers and IT personnel custom supporting payroll integrations across several customers. ",
+      "model": {
+        "uuid": "18bc9b8f-73c5-11f0-b074-4e013e2ddde4",
+        "name": "OpenAI GPT-oss-120b",
+        "inference_name": "openai-gpt-oss-120b",
+        "version": { "major": 1 },
+        "inference_version": "4294967296",
+        "is_foundational": true,
+        "upload_complete": true,
+        "created_at": "2025-08-07T19:31:20Z",
+        "updated_at": "2025-08-20T16:52:12Z",
+        "metadata": {
+          "agreements": {
+            "list": [
+              {
+                "title": "License",
+                "url": "https://www.apache.org/licenses/LICENSE-2.0"
+              }
+            ],
+            "title": "OpenAI GPT-oss-120b"
+          },
+          "description": "A larger, more capable 120B parameter open-source model optimized for complex reasoning and high-quality output.",
+          "max_tokens": { "default": 2048, "max": 16384, "min": 128 },
+          "temperature": { "default": 1, "max": 1, "min": 0 },
+          "top_p": { "default": 1, "max": 1, "min": 0.1 }
+        },
+        "parent_uuid": "00000000-0000-0000-0000-000000000000",
+        "agreement": {
+          "uuid": "11ef84ed-830c-c894-bf8f-4e013e2ddde4",
+          "name": "Apache 2.0 License",
+          "description": "By purchasing, deploying, accessing, or using this model, you agree to comply with the terms of the",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0"
+        },
+        "usecases": [
+          "MODEL_USECASE_AGENT",
+          "MODEL_USECASE_REASONING",
+          "MODEL_USECASE_SERVERLESS"
+        ]
+      },
+      "deployment": {
+        "uuid": "bbbbe65d-aebc-11f0-b074-4e013e2ddde4",
+        "url": "https://s7f47j2xtaajo6pkkuosqebb.agents.do-ai.run",
+        "status": "STATUS_RUNNING",
+        "visibility": "VISIBILITY_PLAYGROUND",
+        "created_at": "2025-10-21T20:30:07Z",
+        "updated_at": "2025-10-25T02:07:30Z"
+      },
+      "k": 10,
+      "temperature": 1,
+      "top_p": 1,
+      "max_tokens": 2048,
+      "project_id": "86de7253-3366-437f-b6e9-049309b9cd38",
+      "route_uuid": "00000000-0000-0000-0000-000000000000",
+      "region": "tor1",
+      "route_created_at": "0001-01-01T00:00:00Z",
+      "user_id": "14278674",
+      "chatbot_identifiers": [
+        { "agent_chatbot_identifier": "9B1l7nYTXnN762ucrzkPZvzzr2OgfSeg" }
+      ],
+      "retrieval_method": "RETRIEVAL_METHOD_NONE"
+    },
+    {
+      "uuid": "59e23cf9-9b1c-11f0-b074-4e013e2ddde4",
+      "name": "agent-hq",
+      "created_at": "2025-09-26T21:04:11Z",
+      "updated_at": "2025-10-24T16:11:52Z",
+      "instruction": "Act as a manager of the company who provides helpful and friendly answers to employees. Always respond in 400 words or less.",
+      "model": {
+        "uuid": "18bc9b8f-73c5-11f0-b074-4e013e2ddde4",
+        "name": "OpenAI GPT-oss-120b",
+        "inference_name": "openai-gpt-oss-120b",
+        "version": { "major": 1 },
+        "inference_version": "4294967296",
+        "is_foundational": true,
+        "upload_complete": true,
+        "created_at": "2025-08-07T19:31:20Z",
+        "updated_at": "2025-08-20T16:52:12Z",
+        "metadata": {
+          "agreements": {
+            "list": [
+              {
+                "title": "License",
+                "url": "https://www.apache.org/licenses/LICENSE-2.0"
+              }
+            ],
+            "title": "OpenAI GPT-oss-120b"
+          },
+          "description": "A larger, more capable 120B parameter open-source model optimized for complex reasoning and high-quality output.",
+          "max_tokens": { "default": 2048, "max": 16384, "min": 128 },
+          "temperature": { "default": 1, "max": 1, "min": 0 },
+          "top_p": { "default": 1, "max": 1, "min": 0.1 }
+        },
+        "parent_uuid": "00000000-0000-0000-0000-000000000000",
+        "agreement": {
+          "uuid": "11ef84ed-830c-c894-bf8f-4e013e2ddde4",
+          "name": "Apache 2.0 License",
+          "description": "By purchasing, deploying, accessing, or using this model, you agree to comply with the terms of the",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0"
+        },
+        "usecases": [
+          "MODEL_USECASE_AGENT",
+          "MODEL_USECASE_REASONING",
+          "MODEL_USECASE_SERVERLESS"
+        ]
+      },
+      "deployment": {
+        "uuid": "59e7dace-9b1c-11f0-b074-4e013e2ddde4",
+        "url": "https://ri22biyjwgqt7t4e62h6bkqc.agents.do-ai.run",
+        "status": "STATUS_RUNNING",
+        "visibility": "VISIBILITY_PLAYGROUND",
+        "created_at": "2025-09-26T21:04:11Z",
+        "updated_at": "2025-10-25T02:15:09Z"
+      },
+      "k": 10,
+      "temperature": 0.2,
+      "top_p": 1,
+      "max_tokens": 2048,
+      "project_id": "86de7253-3366-437f-b6e9-049309b9cd38",
+      "route_uuid": "00000000-0000-0000-0000-000000000000",
+      "region": "tor1",
+      "route_created_at": "0001-01-01T00:00:00Z",
+      "user_id": "14278674",
+      "chatbot_identifiers": [
+        { "agent_chatbot_identifier": "2lU9Qj7WKV7WeC85QHzNboDb5K5gXsmO" }
+      ],
+      "retrieval_method": "RETRIEVAL_METHOD_REWRITE",
+      "provide_citations": true
+    }
+  ],
+  "links": {
+    "pages": {
+      "first": "https://api.digitalocean.com/v2/gen-ai/agents?page=1\u0026per_page=1000",
+      "last": "https://api.digitalocean.com/v2/gen-ai/agents?page=1\u0026per_page=1000"
+    }
+  },
+  "meta": { "total": 2, "page": 1, "pages": 1 }
+}

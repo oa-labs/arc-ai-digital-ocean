@@ -237,7 +237,7 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
                         {agent.description && (
                           <p className="mt-1 text-sm text-gray-600">{agent.description}</p>
                         )}
-                        <p className="mt-2 text-xs text-gray-500">{agent.url}</p>
+                        <p className="mt-2 text-xs text-gray-500 agent-url">{agent.deployment?.url}</p>
                       </div>
                       <ChevronRight className="h-5 w-5 text-gray-400" />
                     </div>
