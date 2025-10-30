@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { agentManagementService, Agent } from '@/services/agentManagementService';
 import { userSettingsService } from '@/services/userSettingsService';
-import { AgentForm } from '@/components/AgentForm';
 import { AddAgentFromDigitalOcean } from '@/components/AddAgentFromDigitalOcean';
 import { ChannelMappings } from '@/components/ChannelMappings';
 import { AgentAnalytics } from '@/components/AgentAnalytics';
@@ -10,7 +9,6 @@ import { AppHeader } from '@/components/AppHeader';
 import { Footer } from '@/components/Footer';
 import {
   Bot,
-  Plus,
   Activity,
   Settings,
   BarChart3,
@@ -25,9 +23,7 @@ export function Agents() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabType>('agents');
-  const [showForm, setShowForm] = useState(false);
   const [showAddFromDigitalOcean, setShowAddFromDigitalOcean] = useState(false);
-  const [editingAgent, setEditingAgent] = useState<Agent | null>(null);
   const [hasDigitalOceanToken, setHasDigitalOceanToken] = useState(false);
 
   const loadAgents = async () => {
@@ -58,19 +54,8 @@ export function Agents() {
     checkDigitalOceanToken();
   }, []);
 
-  const handleCreateAgent = () => {
-    setEditingAgent(null);
-    setShowForm(true);
-  };
-
   const handleAddFromDigitalOcean = () => {
     setShowAddFromDigitalOcean(true);
-  };
-
-  const handleFormClose = () => {
-    setShowForm(false);
-    setEditingAgent(null);
-    loadAgents();
   };
 
   const handleAddFromDigitalOceanClose = () => {
@@ -133,7 +118,7 @@ export function Agents() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {activeTab === 'agents' && (
           <div className="space-y-6">
-            {/* Header with Create Button */}
+            {/* Header with Add Agent Button */}
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">AI Agents</h2>
@@ -141,24 +126,15 @@ export function Agents() {
                   Manage your AI agents and their configurations. Agents can be attached to slack channels and have their own RAGs via unique S3 buckets.
                 </p>
               </div>
-              <div className="flex flex-col space-y-3">
+              {hasDigitalOceanToken && (
                 <button
-                  onClick={handleCreateAgent}
+                  onClick={handleAddFromDigitalOcean}
                   className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
                 >
-                  <Plus className="h-5 w-5" />
-                  <span>Create Agent</span>
+                  <Download className="h-5 w-5" />
+                  <span>Add Agent</span>
                 </button>
-                {hasDigitalOceanToken && (
-                  <button
-                    onClick={handleAddFromDigitalOcean}
-                    className="flex items-center space-x-2 px-4 py-2 bg-white text-primary-600 border border-primary-600 rounded-lg hover:bg-primary-50 transition-colors"
-                  >
-                    <Download className="h-5 w-5" />
-                    <span>Add Agent</span>
-                  </button>
-                )}
-              </div>
+              )}
             </div>
 
             {/* Agent List */}
@@ -172,17 +148,19 @@ export function Agents() {
                 <Bot className="mx-auto h-12 w-12 text-gray-400" />
                 <h3 className="mt-2 text-sm font-medium text-gray-900">No agents</h3>
                 <p className="mt-1 text-sm text-gray-500">
-                  Get started by creating a new AI agent.
+                  Get started by adding an agent from DigitalOcean.
                 </p>
-                <div className="mt-6">
-                  <button
-                    onClick={handleCreateAgent}
-                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700"
-                  >
-                    <Plus className="h-5 w-5 mr-2" />
-                    Create Agent
-                  </button>
-                </div>
+                {hasDigitalOceanToken && (
+                  <div className="mt-6">
+                    <button
+                      onClick={handleAddFromDigitalOcean}
+                      className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700"
+                    >
+                      <Download className="h-5 w-5 mr-2" />
+                      Add Agent
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -242,11 +220,6 @@ export function Agents() {
       </main>
 
       <Footer />
-
-      {/* Agent Form Modal */}
-      {showForm && (
-        <AgentForm agent={editingAgent} onClose={handleFormClose} />
-      )}
 
       {/* Add Agent from DigitalOcean Modal */}
       {showAddFromDigitalOcean && (

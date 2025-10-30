@@ -83,9 +83,10 @@ INSERT INTO agents (
 
 **Option B: Using Web UI** (after Step 4)
 1. Go to http://localhost:5173/agents
-2. Click "Create Agent"
-3. Fill in the form
-4. Click "Create Agent"
+2. Click "Add Agent" (requires DigitalOcean token configured)
+3. Select an agent from your DigitalOcean deployment
+4. Configure S3 bucket and settings
+5. Click "Import Agent"
 
 ### Step 4: Start the Web UI (30 sec)
 
@@ -157,18 +158,18 @@ Should get a response from the agent.
 
 ## 📊 Usage
 
-### Create Agents
+### Add Agents
 
 **Via Web UI:**
 1. Go to Agents page
-2. Click "Create Agent"
-3. Fill in:
-   - Name (e.g., "safety-bot")
-   - Provider (OpenAI or DigitalOcean)
-   - API Key Env Var (e.g., "AGENT_SAFETY_KEY")
-   - Model (e.g., "gpt-4")
+2. Click "Add Agent" (requires DigitalOcean token)
+3. Select an agent from your DigitalOcean deployment
+4. Configure:
    - S3 Bucket & Prefix
-4. Click "Create Agent"
+   - API Key Env Var (e.g., "AGENT_SAFETY_KEY")
+   - Temperature and max tokens
+   - System prompt
+5. Click "Import Agent"
 
 **Via SQL:**
 ```sql

@@ -34,7 +34,7 @@ The main page for agent management with three tabs.
 
 **Features:**
 - **View all agents** - Grid view of all configured agents
-- **Create new agents** - Form to create agents with full configuration
+- **Add agents from DigitalOcean** - Import agents from your DigitalOcean deployment
 - **Edit agents** - Modify existing agent settings
 - **Delete agents** - Soft delete (sets `is_active` to false)
 - **Agent cards** show:
@@ -45,8 +45,8 @@ The main page for agent management with three tabs.
   - Active/inactive status
 
 **Actions:**
-- Click "Create Agent" to open the agent form
-- Click "Edit" on any agent card to modify settings
+- Click "Add Agent" to import an agent from DigitalOcean
+- Click on any agent card to view and modify settings
 - Click "Delete" to deactivate an agent
 
 #### Tab 2: Channel Mappings
@@ -211,16 +211,18 @@ The UI uses Tailwind CSS with a consistent design system:
 
 ## Data Flow
 
-### Creating an Agent
+### Adding an Agent from DigitalOcean
 
-1. User clicks "Create Agent" button
-2. AgentForm modal opens
-3. User fills in required fields
-4. User clicks "Create Agent"
-5. agentManagementService.createAgent() called
-6. Supabase inserts new row in `agents` table
-7. Modal closes and agent list refreshes
-8. New agent appears in grid
+1. User clicks "Add Agent" button
+2. AddAgentFromDigitalOcean modal opens
+3. User selects an agent from their DigitalOcean deployment
+4. Agent details are fetched and pre-populated in the form
+5. User configures S3 bucket and other settings
+6. User clicks "Import Agent"
+7. agentManagementService.createAgent() called
+8. Supabase inserts new row in `agents` table
+9. Modal closes and agent list refreshes
+10. New agent appears in grid
 
 ### Viewing Analytics
 
@@ -304,9 +306,12 @@ The web UI is a static React application that can be deployed to:
    - Verify `agents` table exists
    - Check if agents exist: `SELECT * FROM agents;`
 
-### Cannot create agent
+### Cannot add agent
 
-1. Check form validation:
+1. Check DigitalOcean token:
+   - Verify token is set in user settings
+   - Ensure token has proper permissions
+2. Check form validation:
    - All required fields filled
    - Valid values for temperature and max_tokens
 
