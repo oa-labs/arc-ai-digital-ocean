@@ -86,7 +86,7 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
         api_key_env_var: '',
         temperature: 0.7,
         max_tokens: 1000,
-        endpoint: detail.endpoint || '',
+        endpoint: agent.deployment?.url || '',
         s3_bucket: '',
         system_prompt: '',
         is_active: true,
