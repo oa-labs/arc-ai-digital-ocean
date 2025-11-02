@@ -5,6 +5,8 @@ set -e
 sudo apt-get update
 sudo apt-get install -y make uidmap
 
+sudo npm install -g opencode-ai
+
 # Set up subuid and subgid for user namespace mapping
 # First, remove any existing entries for vscode user to avoid conflicts
 sudo sed -i '/^vscode:/d' /etc/subuid /etc/subgid 2>/dev/null || true
