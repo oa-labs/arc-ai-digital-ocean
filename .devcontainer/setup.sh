@@ -7,6 +7,9 @@ sudo apt-get install -y make uidmap
 
 sudo npm install -g opencode-ai
 
+wget https://github.com/digitalocean/doctl/releases/download/v1.146.0/doctl-1.146.0-linux-amd64.tar.gz -O /tmp/doctl.tgz
+tar -xzf /tmp/doctl.tgz -C /tmp && sudo mv /tmp/doctl /usr/local/bin/ && rm /tmp/doctl.tgz
+
 # Set up subuid and subgid for user namespace mapping
 # First, remove any existing entries for vscode user to avoid conflicts
 sudo sed -i '/^vscode:/d' /etc/subuid /etc/subgid 2>/dev/null || true
