@@ -24,6 +24,7 @@ export function AgentEdit() {
     s3_bucket: string;
 
     endpoint: string;
+    system_prompt: string;
     is_active: boolean;
     is_default: boolean;
   }>({
@@ -33,6 +34,7 @@ export function AgentEdit() {
     api_key_env_var: '',
     s3_bucket: '',
     endpoint: '',
+    system_prompt: '',
     is_active: true,
     is_default: false,
   });
@@ -63,6 +65,7 @@ export function AgentEdit() {
           api_key_env_var: foundAgent.api_key_env_var,
           s3_bucket: foundAgent.s3_bucket,
           endpoint: foundAgent.endpoint || '',
+          system_prompt: foundAgent.system_prompt || '',
           is_active: foundAgent.is_active,
           is_default: foundAgent.is_default || false,
         });
@@ -255,6 +258,24 @@ Are you absolutely sure?`)) {
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label htmlFor="system_prompt" className="block text-sm font-medium text-gray-700 mb-2">
+                    Agent Instructions
+                  </label>
+                  <textarea
+                    id="system_prompt"
+                    name="system_prompt"
+                    rows={6}
+                    value={formData.system_prompt}
+                    onChange={handleChange}
+                    placeholder="Enter specific instructions for how this agent should behave, respond, and handle different types of requests..."
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">
+                    These instructions guide the agent&apos;s behavior and response style in conversations.
+                  </p>
                 </div>
 
 

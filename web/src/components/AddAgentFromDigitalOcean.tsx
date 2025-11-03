@@ -300,6 +300,24 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
                 />
               </div>
+
+              <div>
+                <label htmlFor="system_prompt" className="block text-sm font-medium text-gray-700">
+                  Agent Instructions
+                </label>
+                <textarea
+                  id="system_prompt"
+                  name="system_prompt"
+                  rows={6}
+                  value={formData.system_prompt}
+                  onChange={handleFormChange}
+                  placeholder="Enter specific instructions for how this agent should behave, respond, and handle different types of requests..."
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  These instructions guide the agent&apos;s behavior and response style in conversations.
+                </p>
+              </div>
             </div>
 
             {/* Manual input fields */}
