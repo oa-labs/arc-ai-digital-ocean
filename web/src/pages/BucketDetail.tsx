@@ -8,6 +8,7 @@ import { agentManagementService, Agent } from '@/services/agentManagementService
 import { S3File } from '@/types/file';
 import { Cloud, LogOut, RefreshCw, Bot, ArrowLeft, AlertCircle, Users } from 'lucide-react';
 import { config } from '@/config/env';
+import { Footer } from '@/components/Footer';
 
 export function BucketDetail() {
   const { bucketName } = useParams<{ bucketName: string }>();
@@ -233,14 +234,7 @@ export function BucketDetail() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="mt-12 py-6 border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm text-gray-500">
-            &copy; 2025 OpenArc, LLC. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
