@@ -313,15 +313,22 @@ export class AgentManager {
       return [];
     }
 
+    // Use s3_bucket for backward compatibility, fallback to empty if not present
+    const s3Bucket = agent.s3_bucket;
+    if (!s3Bucket) {
+      console.warn('[AgentManager] No S3 bucket configured for agent:', agent.id);
+      return [];
+    }
+
     // Check cache first
-    const cacheKey = agent.s3_bucket;
+    const cacheKey = s3Bucket;
     const cached = this.ragDocumentCache.get(cacheKey);
     if (cached) {
       return cached;
     }
 
     try {
-      const documents = await this.ragService.loadDocuments(agent.s3_bucket);
+      const documents = await this.ragService.loadDocuments(s3Bucket);
 
       // Cache the documents
       this.ragDocumentCache.set(cacheKey, documents);

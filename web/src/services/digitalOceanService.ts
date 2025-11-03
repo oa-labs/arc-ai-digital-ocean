@@ -35,6 +35,7 @@ export interface DigitalOceanBucket {
 
 export interface SpacesDataSource {
   bucket_name: string;
+  key_prefix?: string;
   [key: string]: any;
 }
 
@@ -179,6 +180,7 @@ class DigitalOceanService {
 
   /**
    * Get all Spaces bucket names from knowledge bases associated with an agent
+   * @deprecated Use getSpacesSourcesFromAgent instead
    */
   async getSpacesBucketsFromAgent(
     apiToken: string,
@@ -211,6 +213,53 @@ class DigitalOceanService {
       return Array.from(bucketNames);
     } catch (error) {
       console.error('Error getting Spaces buckets from agent:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get all Spaces storage sources (with prefixes) from knowledge bases associated with an agent
+   */
+  async getSpacesSourcesFromAgent(
+    apiToken: string,
+    agentDetail: DigitalOceanAgentDetail
+  ): Promise<{ bucket_name: string; prefix?: string }[]> {
+    try {
+      const knowledgeBases = agentDetail.knowledge_bases || [];
+      
+      if (knowledgeBases.length === 0) {
+        return [];
+      }
+
+      // Fetch data sources for all knowledge bases in parallel
+      const dataSourcesPromises = knowledgeBases.map((kbId) =>
+        this.getKnowledgeBaseDataSources(apiToken, kbId)
+      );
+
+      const dataSourcesArrays = await Promise.all(dataSourcesPromises);
+      
+      // Flatten and extract bucket sources with prefixes
+      const sourcesMap = new Map<string, { bucket_name: string; prefix?: string }>();
+      dataSourcesArrays.forEach((dataSources) => {
+        dataSources.forEach((dataSource) => {
+          if (dataSource.spaces_data_source?.bucket_name) {
+            const bucketName = dataSource.spaces_data_source.bucket_name;
+            const prefix = dataSource.spaces_data_source.key_prefix || '';
+            const key = `${bucketName}|${prefix}`;
+            
+            if (!sourcesMap.has(key)) {
+              sourcesMap.set(key, {
+                bucket_name: bucketName,
+                prefix: prefix || undefined,
+              });
+            }
+          }
+        });
+      });
+
+      return Array.from(sourcesMap.values());
+    } catch (error) {
+      console.error('Error getting Spaces sources from agent:', error);
       throw error;
     }
   }

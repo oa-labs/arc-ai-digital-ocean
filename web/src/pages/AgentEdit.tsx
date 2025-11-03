@@ -61,7 +61,7 @@ export function AgentEdit() {
           description: foundAgent.description || '',
           provider: 'digitalocean',
           api_key_env_var: foundAgent.api_key_env_var,
-          s3_bucket: foundAgent.s3_bucket,
+          s3_bucket: foundAgent.s3_bucket || '',
           endpoint: foundAgent.endpoint || '',
           is_active: foundAgent.is_active,
           is_default: foundAgent.is_default || false,
