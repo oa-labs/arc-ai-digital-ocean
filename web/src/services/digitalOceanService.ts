@@ -145,7 +145,7 @@ class DigitalOceanService {
 
   /**
    * Get data sources for a specific knowledge base
-   * GET https://api.digitalocean.com/v2/genai/knowledge_bases/{knowledge_base_id}/data_sources
+   * GET https://api.digitalocean.com/v2/gen-ai/knowledge_bases/{knowledge_base_id}/data_sources
    */
   async getKnowledgeBaseDataSources(
     apiToken: string,
