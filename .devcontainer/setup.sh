@@ -5,8 +5,6 @@ set -e
 sudo apt-get update
 sudo apt-get install -y make uidmap
 
-sudo npm install -g opencode-ai
-
 wget https://github.com/digitalocean/doctl/releases/download/v1.146.0/doctl-1.146.0-linux-amd64.tar.gz -O /tmp/doctl.tgz
 tar -xzf /tmp/doctl.tgz -C /tmp && sudo mv /tmp/doctl /usr/local/bin/ && rm /tmp/doctl.tgz
 
@@ -87,6 +85,9 @@ if [ -n "$GITHUB_TOKEN" ] && [ -n "$GITHUB_USERNAME" ]; then
 fi
 
 sudo chown $(whoami) /var/run/docker.sock
+
+# login to docker so we can push images
+docker login ghcr.io -u $GITHUB_USERNAME -p $GITHUB_TOKEN
 
 # Make deploy.sh available in PATH
 sudo cp .devcontainer/deploy.sh /usr/local/bin/deploy
