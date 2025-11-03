@@ -1,6 +1,19 @@
 // Type definitions for multi-agent system
 
 /**
+ * S3 storage source for an agent
+ */
+export interface AgentS3Source {
+  id?: string;
+  agent_id?: string;
+  provider: 'digitalocean' | 'aws' | 'gcs';
+  bucket_name: string;
+  prefix?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+/**
  * Agent record from the database
  */
 export interface AgentRecord {
@@ -12,8 +25,9 @@ export interface AgentRecord {
   temperature?: number;
   max_tokens?: number;
   endpoint?: string;
-  s3_bucket: string;
-  s3_prefix?: string;
+  s3_bucket?: string; // DEPRECATED: use s3_sources instead
+  s3_prefix?: string; // DEPRECATED: use s3_sources instead
+  s3_sources?: AgentS3Source[]; // Multiple S3 sources for this agent
   system_prompt?: string;
   created_at: string;
   updated_at: string;

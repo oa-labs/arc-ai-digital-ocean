@@ -1,5 +1,15 @@
 import { supabase } from '@/lib/supabase';
 
+export interface AgentS3Source {
+  id?: string;
+  agent_id?: string;
+  provider: 'digitalocean' | 'aws' | 'gcs';
+  bucket_name: string;
+  prefix?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface Agent {
   id: string;
   name: string;
@@ -9,8 +19,9 @@ export interface Agent {
   temperature?: number;
   max_tokens?: number;
   endpoint?: string;
-  s3_bucket: string;
-  s3_prefix?: string;
+  s3_bucket?: string; // DEPRECATED: use s3_sources instead
+  s3_prefix?: string; // DEPRECATED: use s3_sources instead
+  s3_sources?: AgentS3Source[];
   system_prompt?: string;
   is_active: boolean;
   is_default?: boolean;
@@ -26,8 +37,9 @@ export interface CreateAgentInput {
   temperature?: number;
   max_tokens?: number;
   endpoint?: string;
-  s3_bucket: string;
-  s3_prefix?: string;
+  s3_bucket?: string; // DEPRECATED: use s3_sources instead
+  s3_prefix?: string; // DEPRECATED: use s3_sources instead
+  s3_sources?: { bucket_name: string; prefix?: string }[];
   system_prompt?: string;
   is_active?: boolean;
 }
@@ -124,11 +136,15 @@ class AgentManagementService {
    * Create a new agent
    */
   async createAgent(input: CreateAgentInput): Promise<Agent> {
+    const { s3_sources, ...agentData } = input;
+    
     const { data, error } = await supabase
       .from('agents')
       .insert({
-        ...input,
-        is_active: input.is_active ?? true,
+        ...agentData,
+        is_active: agentData.is_active ?? true,
+        s3_bucket: null,
+        s3_prefix: null,
       })
       .select()
       .single();
@@ -136,6 +152,34 @@ class AgentManagementService {
     if (error) {
       console.error('Failed to create agent:', error);
       throw new Error(`Failed to create agent: ${error.message}`);
+    }
+
+    if (s3_sources && s3_sources.length > 0) {
+      const s3SourcesData = s3_sources.map((source) => ({
+        agent_id: data.id,
+        provider: input.provider as 'digitalocean' | 'aws' | 'gcs',
+        bucket_name: source.bucket_name,
+        prefix: source.prefix || '',
+      }));
+
+      const { error: s3Error } = await supabase
+        .from('agent_s3_sources')
+        .insert(s3SourcesData);
+
+      if (s3Error) {
+        console.error('Failed to create S3 sources:', s3Error);
+        await this.permanentlyDeleteAgent(data.id);
+        throw new Error(`Failed to create S3 sources: ${s3Error.message}`);
+      }
+
+      const { data: s3Data, error: s3FetchError } = await supabase
+        .from('agent_s3_sources')
+        .select('*')
+        .eq('agent_id', data.id);
+
+      if (!s3FetchError && s3Data) {
+        data.s3_sources = s3Data;
+      }
     }
 
     return data;
@@ -366,6 +410,7 @@ class AgentManagementService {
 
   /**
    * Get unique S3 buckets with their associated agents
+   * @deprecated Legacy method for backward compatibility
    */
   async getS3Buckets(): Promise<Map<string, Agent[]>> {
     const agents = await this.listAgents(true); // Only active agents
@@ -374,10 +419,12 @@ class AgentManagementService {
 
     for (const agent of agents) {
       const bucket = agent.s3_bucket;
-      if (!bucketMap.has(bucket)) {
-        bucketMap.set(bucket, []);
+      if (bucket) {
+        if (!bucketMap.has(bucket)) {
+          bucketMap.set(bucket, []);
+        }
+        bucketMap.get(bucket)!.push(agent);
       }
-      bucketMap.get(bucket)!.push(agent);
     }
 
     return bucketMap;
