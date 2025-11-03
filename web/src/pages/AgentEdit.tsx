@@ -298,7 +298,7 @@ Are you absolutely sure?`)) {
               <div className="grid grid-cols-1 gap-6">
                 <div>
                   <label htmlFor="s3_bucket" className="block text-sm font-medium text-gray-700 mb-2">
-                    S3 Bucket *
+                    S3 Bucket
                   </label>
                   <input
                     type="text"
