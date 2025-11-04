@@ -57,16 +57,16 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
     {
       id: 'basic',
       title: 'Basic Information',
-      description: 'Agent name, description, and instructions',
+      description: 'Agent name and description',
       icon: <Settings className="h-4 w-4" />,
       isCompleted: false,
       isRequired: true,
     },
     {
-      id: 'storage',
-      title: 'Storage Configuration',
-      description: 'S3 bucket for RAG documents',
-      icon: <Database className="h-4 w-4" />,
+      id: 'instructions',
+      title: 'Agent Instructions',
+      description: 'Behavior and response guidelines',
+      icon: <Info className="h-4 w-4" />,
       isCompleted: false,
       isRequired: true,
     },
@@ -190,10 +190,10 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
             ...section,
             isCompleted: !!(data.name.trim() && (data.description || '').trim())
           };
-        case 'storage':
+        case 'instructions':
           return {
             ...section,
-            isCompleted: !!data.s3_bucket.trim()
+            isCompleted: !!(data.system_prompt || '').trim()
           };
         case 'api':
           return {
