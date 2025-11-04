@@ -21,9 +21,13 @@ export function AppHeader({ title, icon: Icon, currentPage }: AppHeaderProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="flex items-center justify-center w-10 h-10 bg-primary-600 rounded-lg">
+            <Link 
+              to="/"
+              className="flex items-center justify-center w-10 h-10 bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors"
+              title="Home"
+            >
               <Icon className="h-6 w-6 text-white" />
-            </div>
+            </Link>
             <div>
               <h1 className="text-xl font-bold text-gray-900">{title}</h1>
               <p className="text-sm text-gray-500">{user?.email}</p>
