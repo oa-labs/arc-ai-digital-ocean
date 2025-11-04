@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, Save, AlertCircle, Cloud, Loader2, ChevronRight, CheckCircle, Info, Settings, Database, Key } from 'lucide-react';
-import { digitalOceanService, DigitalOceanAgent, DigitalOceanAgentDetail, DigitalOceanBucket } from '@/services/digitalOceanService';
+import { digitalOceanService, DigitalOceanAgent, DigitalOceanAgentDetail } from '@/services/digitalOceanService';
 import { agentManagementService, CreateAgentInput } from '@/services/agentManagementService';
 import { userSettingsService } from '@/services/userSettingsService';
 import { showToast } from '@/lib/toast';
@@ -173,7 +173,7 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
         case 'storage':
           return {
             ...section,
-            isCompleted: !!data.s3_bucket.trim()
+            isCompleted: !!(data.s3_sources && data.s3_sources.length > 0)
           };
         case 'api':
           return {

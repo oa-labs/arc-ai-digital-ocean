@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { agentManagementService, Agent } from '@/services/agentManagementService';
-import { Cloud, LogOut, Bot, ArrowLeft, AlertCircle, Trash2, Save, Users, Info, Settings, Database, Key } from 'lucide-react';
+import { Cloud, LogOut, Bot, ArrowLeft, AlertCircle, Trash2, Save, Users, Info, Settings, Key } from 'lucide-react';
 import { showToast } from '@/lib/toast';
 import { Footer } from '@/components/Footer';
 
