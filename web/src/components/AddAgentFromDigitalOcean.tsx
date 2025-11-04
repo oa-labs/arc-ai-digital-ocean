@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Save, AlertCircle, Cloud, Loader2, ChevronRight } from 'lucide-react';
+import { X, Save, AlertCircle, Cloud, Loader2, ChevronRight, CheckCircle, Info, Settings, Database, Key } from 'lucide-react';
 import { digitalOceanService, DigitalOceanAgent, DigitalOceanAgentDetail, DigitalOceanBucket } from '@/services/digitalOceanService';
 import { agentManagementService, CreateAgentInput } from '@/services/agentManagementService';
 import { userSettingsService } from '@/services/userSettingsService';
@@ -10,6 +10,15 @@ interface AddAgentFromDigitalOceanProps {
 }
 
 type Step = 'list' | 'form';
+
+interface FormSection {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  isCompleted: boolean;
+  isRequired: boolean;
+}
 
 export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanProps) {
   const [step, setStep] = useState<Step>('list');
@@ -42,6 +51,34 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
     system_prompt: '',
     is_active: true,
   });
+
+  // Form sections for progress tracking
+  const [formSections, setFormSections] = useState<FormSection[]>([
+    {
+      id: 'basic',
+      title: 'Basic Information',
+      description: 'Agent name, description, and instructions',
+      icon: <Settings className="h-4 w-4" />,
+      isCompleted: false,
+      isRequired: true,
+    },
+    {
+      id: 'storage',
+      title: 'Storage Configuration',
+      description: 'S3 bucket for RAG documents',
+      icon: <Database className="h-4 w-4" />,
+      isCompleted: false,
+      isRequired: true,
+    },
+    {
+      id: 'api',
+      title: 'API Configuration',
+      description: 'Environment variable for API key',
+      icon: <Key className="h-4 w-4" />,
+      isCompleted: false,
+      isRequired: true,
+    },
+  ]);
 
   // Load stored API token and fetch agents on mount
   useEffect(() => {
@@ -135,10 +172,43 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
   ) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
-    setFormData((prev) => ({
-      ...prev,
+    const newFormData = {
+      ...formData,
       [name]: type === 'checkbox' ? checked : type === 'number' ? parseFloat(value) : value,
+    };
+    setFormData(newFormData);
+    
+    // Update form sections completion status
+    updateFormSections(newFormData);
+  };
+
+  const updateFormSections = (data: CreateAgentInput) => {
+    setFormSections(prev => prev.map(section => {
+      switch (section.id) {
+        case 'basic':
+          return {
+            ...section,
+            isCompleted: !!(data.name.trim() && (data.description || '').trim())
+          };
+        case 'storage':
+          return {
+            ...section,
+            isCompleted: !!data.s3_bucket.trim()
+          };
+        case 'api':
+          return {
+            ...section,
+            isCompleted: !!data.api_key_env_var.trim()
+          };
+        default:
+          return section;
+      }
     }));
+  };
+
+  const getOverallProgress = () => {
+    const completedSections = formSections.filter(section => section.isCompleted).length;
+    return Math.round((completedSections / formSections.length) * 100);
   };
 
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -261,73 +331,182 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
         {/* Step 3: Form */}
         {step === 'form' && agentDetail && (
           <form onSubmit={handleFormSubmit} className="p-6 space-y-6">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Complete Agent Configuration
-              </h3>
-              <p className="text-sm text-gray-600">
-                Review and complete the configuration for <strong>{agentDetail.name}</strong>.
-              </p>
-            </div>
-
-            {/* Pre-populated fields */}
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                  Agent Name *
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  required
-                  value={formData.name}
-                  onChange={handleFormChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                />
+            {/* Progress Header */}
+            <div className="bg-gradient-to-r from-primary-50 to-blue-50 rounded-lg p-6 border border-primary-200">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Complete Agent Configuration
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Configure <strong>{agentDetail.name}</strong> for deployment
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-primary-600">{getOverallProgress()}%</div>
+                  <div className="text-xs text-gray-500">Complete</div>
+                </div>
               </div>
-
-              <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                  Description
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  rows={3}
-                  value={formData.description}
-                  onChange={handleFormChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="system_prompt" className="block text-sm font-medium text-gray-700">
-                  Agent Instructions
-                </label>
-                <textarea
-                  id="system_prompt"
-                  name="system_prompt"
-                  rows={6}
-                  value={formData.system_prompt}
-                  onChange={handleFormChange}
-                  placeholder="Enter specific instructions for how this agent should behave, respond, and handle different types of requests..."
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                />
-                <p className="mt-1 text-xs text-gray-500">
-                  These instructions guide the agent&apos;s behavior and response style in conversations.
-                </p>
-              </div>
-            </div>
-
-            {/* Manual input fields */}
-            <div className="space-y-4 pt-4 border-t border-gray-200">
-              <h4 className="text-md font-semibold text-gray-900">Additional Configuration</h4>
               
-              <div>
-                <label htmlFor="s3_bucket" className="block text-sm font-medium text-gray-700">
-                  S3 Bucket Name *
-                </label>
+              {/* Progress Bar */}
+              <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+                <div 
+                  className="bg-gradient-to-r from-primary-500 to-primary-600 h-2 rounded-full transition-all duration-300 ease-out"
+                  style={{ width: `${getOverallProgress()}%` }}
+                />
+              </div>
+
+              {/* Section Progress */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {formSections.map((section) => (
+                  <div 
+                    key={section.id}
+                    className={`flex items-center space-x-2 p-2 rounded-lg border ${
+                      section.isCompleted 
+                        ? 'bg-green-50 border-green-200' 
+                        : 'bg-white border-gray-200'
+                    }`}
+                  >
+                    <div className={`flex-shrink-0 ${
+                      section.isCompleted ? 'text-green-600' : 'text-gray-400'
+                    }`}>
+                      {section.isCompleted ? (
+                        <CheckCircle className="h-4 w-4" />
+                      ) : (
+                        section.icon
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className={`text-xs font-medium ${
+                        section.isCompleted ? 'text-green-800' : 'text-gray-700'
+                      }`}>
+                        {section.title}
+                      </div>
+                      <div className="text-xs text-gray-500 truncate">
+                        {section.description}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Basic Information Section */}
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+              <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200">
+                <div className="flex items-center space-x-3">
+                  <div className={`flex-shrink-0 ${
+                    formSections.find(s => s.id === 'basic')?.isCompleted 
+                      ? 'text-green-600' 
+                      : 'text-gray-500'
+                  }`}>
+                    {formSections.find(s => s.id === 'basic')?.isCompleted ? (
+                      <CheckCircle className="h-5 w-5" />
+                    ) : (
+                      <Settings className="h-5 w-5" />
+                    )}
+                  </div>
+                  <div>
+                    <h4 className="text-base font-semibold text-gray-900">Basic Information</h4>
+                    <p className="text-sm text-gray-600">Configure agent identity and behavior</p>
+                  </div>
+                  {formSections.find(s => s.id === 'basic')?.isRequired && (
+                    <span className="px-2 py-1 text-xs font-medium bg-red-100 text-red-700 rounded-full">
+                      Required
+                    </span>
+                  )}
+                </div>
+              </div>
+              
+              <div className="p-6 space-y-4">
+                <div>
+                  <label htmlFor="name" className="flex items-center space-x-1 text-sm font-medium text-gray-700 mb-2">
+                    <span>Agent Name</span>
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    required
+                    value={formData.name}
+                    onChange={handleFormChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                    placeholder="e.g., safety-bot, support-assistant"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    rows={3}
+                    value={formData.description}
+                    onChange={handleFormChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                    placeholder="Brief description of this agent's purpose and capabilities"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="system_prompt" className="block text-sm font-medium text-gray-700 mb-2">
+                    Agent Instructions
+                  </label>
+                  <textarea
+                    id="system_prompt"
+                    name="system_prompt"
+                    rows={6}
+                    value={formData.system_prompt}
+                    onChange={handleFormChange}
+                    placeholder="Enter specific instructions for how this agent should behave, respond, and handle different types of requests..."
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm font-mono"
+                  />
+                  <div className="mt-2 flex items-start space-x-2">
+                    <Info className="h-4 w-4 text-gray-400 flex-shrink-0 mt-0.5" />
+                    <p className="text-xs text-gray-500">
+                      These instructions guide the agent&apos;s behavior and response style in conversations.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Storage Configuration Section */}
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
+                <div className="flex items-center space-x-3">
+                  <div className={`flex-shrink-0 ${
+                    formSections.find(s => s.id === 'storage')?.isCompleted 
+                      ? 'text-green-600' 
+                      : 'text-blue-500'
+                  }`}>
+                    {formSections.find(s => s.id === 'storage')?.isCompleted ? (
+                      <CheckCircle className="h-5 w-5" />
+                    ) : (
+                      <Database className="h-5 w-5" />
+                    )}
+                  </div>
+                  <div>
+                    <h4 className="text-base font-semibold text-gray-900">Storage Configuration</h4>
+                    <p className="text-sm text-gray-600">Configure RAG document storage</p>
+                  </div>
+                  {formSections.find(s => s.id === 'storage')?.isRequired && (
+                    <span className="px-2 py-1 text-xs font-medium bg-red-100 text-red-700 rounded-full">
+                      Required
+                    </span>
+                  )}
+                </div>
+              </div>
+              
+              <div className="p-6 space-y-4">
+                <div>
+                  <label htmlFor="s3_bucket" className="flex items-center space-x-1 text-sm font-medium text-gray-700 mb-2">
+                    <span>S3 Bucket Name</span>
+                    <span className="text-red-500">*</span>
+                  </label>
                 {(loadingBuckets || loadingKbBuckets) ? (
                   <div className="mt-1 flex items-center space-x-2 text-sm text-gray-500">
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -394,15 +573,49 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
                     />
                   );
                 })()}
-                <p className="mt-1 text-xs text-gray-500">
-                  The S3 bucket where RAG documents are stored for this agent.
-                </p>
+                  <div className="mt-2 flex items-start space-x-2">
+                    <Info className="h-4 w-4 text-gray-400 flex-shrink-0 mt-0.5" />
+                    <p className="text-xs text-gray-500">
+                      The S3 bucket where RAG documents are stored for this agent.
+                    </p>
+                  </div>
+                </div>
               </div>
+            </div>
 
-              <div>
-                <label htmlFor="api_key_env_var" className="block text-sm font-medium text-gray-700">
-                  API Key Environment Variable *
-                </label>
+            {/* API Configuration Section */}
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+              <div className="bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-4 border-b border-gray-200">
+                <div className="flex items-center space-x-3">
+                  <div className={`flex-shrink-0 ${
+                    formSections.find(s => s.id === 'api')?.isCompleted 
+                      ? 'text-green-600' 
+                      : 'text-amber-500'
+                  }`}>
+                    {formSections.find(s => s.id === 'api')?.isCompleted ? (
+                      <CheckCircle className="h-5 w-5" />
+                    ) : (
+                      <Key className="h-5 w-5" />
+                    )}
+                  </div>
+                  <div>
+                    <h4 className="text-base font-semibold text-gray-900">API Configuration</h4>
+                    <p className="text-sm text-gray-600">Configure API access credentials</p>
+                  </div>
+                  {formSections.find(s => s.id === 'api')?.isRequired && (
+                    <span className="px-2 py-1 text-xs font-medium bg-red-100 text-red-700 rounded-full">
+                      Required
+                    </span>
+                  )}
+                </div>
+              </div>
+              
+              <div className="p-6 space-y-4">
+                <div>
+                  <label htmlFor="api_key_env_var" className="flex items-center space-x-1 text-sm font-medium text-gray-700 mb-2">
+                    <span>API Key Environment Variable</span>
+                    <span className="text-red-500">*</span>
+                  </label>
                 <input
                   type="text"
                   id="api_key_env_var"
@@ -413,9 +626,13 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm font-mono"
                   placeholder="e.g., AGENT_MY_AGENT_DO_KEY"
                 />
-                <p className="mt-1 text-xs text-gray-500">
-                  The environment variable name containing the API key (not the key itself).
-                </p>
+                  <div className="mt-2 flex items-start space-x-2">
+                    <Info className="h-4 w-4 text-gray-400 flex-shrink-0 mt-0.5" />
+                    <p className="text-xs text-gray-500">
+                      The environment variable name containing the API key (not the key itself).
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 

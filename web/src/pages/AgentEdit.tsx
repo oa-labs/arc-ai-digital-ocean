@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { agentManagementService, Agent } from '@/services/agentManagementService';
-import { Cloud, LogOut, Bot, ArrowLeft, AlertCircle, Trash2, Save, Users } from 'lucide-react';
+import { Cloud, LogOut, Bot, ArrowLeft, AlertCircle, Trash2, Save, Users, Info, Settings, Database, Key } from 'lucide-react';
 import { showToast } from '@/lib/toast';
 
 export function AgentEdit() {
@@ -38,6 +38,8 @@ export function AgentEdit() {
     is_active: true,
     is_default: false,
   });
+
+
 
   useEffect(() => {
     const loadAgent = async () => {
@@ -221,181 +223,271 @@ Are you absolutely sure?`)) {
         </div>
       </header>
 
-      {/* Main Content */}
+       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <div className="space-y-6">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Basic Information */}
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h2>
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                    Agent Name *
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    required
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                  />
+            {/* Basic Information Section */}
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+              <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200">
+                <div className="flex items-center space-x-3">
+                  <div className="flex-shrink-0 text-gray-500">
+                    <Settings className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-base font-semibold text-gray-900">Basic Information</h4>
+                    <p className="text-sm text-gray-600">Configure agent identity and behavior</p>
+                  </div>
                 </div>
+              </div>
+              
+              <div className="p-6">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="name" className="flex items-center space-x-1 text-sm font-medium text-gray-700 mb-2">
+                      <span>Agent Name</span>
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      required
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    />
+                  </div>
 
+                  <div>
+                    <label htmlFor="api_key_env_var" className="flex items-center space-x-1 text-sm font-medium text-gray-700 mb-2">
+                      <span>API Key Environment Variable</span>
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="api_key_env_var"
+                      name="api_key_env_var"
+                      required
+                      value={formData.api_key_env_var}
+                      onChange={handleChange}
+                      placeholder="e.g., AGENT_SAFETY_OPENAI_KEY"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono"
+                    />
+                  </div>
 
+                  <div className="sm:col-span-2">
+                    <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+                      Description
+                    </label>
+                    <textarea
+                      id="description"
+                      name="description"
+                      rows={3}
+                      value={formData.description}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                      placeholder="Brief description of this agent's purpose and capabilities"
+                    />
+                  </div>
 
-                <div className="sm:col-span-2">
-                  <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-                    Description
-                  </label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    rows={3}
-                    value={formData.description}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                  />
-                </div>
+                  <div className="sm:col-span-2">
+                    <label htmlFor="system_prompt" className="block text-sm font-medium text-gray-700 mb-2">
+                      Agent Instructions
+                    </label>
+                    <textarea
+                      id="system_prompt"
+                      name="system_prompt"
+                      rows={6}
+                      value={formData.system_prompt}
+                      onChange={handleChange}
+                      placeholder="Enter specific instructions for how this agent should behave, respond, and handle different types of requests..."
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono"
+                    />
+                    <div className="mt-2 flex items-start space-x-2">
+                      <Info className="h-4 w-4 text-gray-400 flex-shrink-0 mt-0.5" />
+                      <p className="text-xs text-gray-500">
+                        These instructions guide the agent&apos;s behavior and response style in conversations.
+                      </p>
+                    </div>
+                  </div>
 
-                <div className="sm:col-span-2">
-                  <label htmlFor="system_prompt" className="block text-sm font-medium text-gray-700 mb-2">
-                    Agent Instructions
-                  </label>
-                  <textarea
-                    id="system_prompt"
-                    name="system_prompt"
-                    rows={6}
-                    value={formData.system_prompt}
-                    onChange={handleChange}
-                    placeholder="Enter specific instructions for how this agent should behave, respond, and handle different types of requests..."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                  />
-                  <p className="mt-1 text-xs text-gray-500">
-                    These instructions guide the agent&apos;s behavior and response style in conversations.
-                  </p>
-                </div>
-
-
-
-                <div>
-                  <label htmlFor="api_key_env_var" className="block text-sm font-medium text-gray-700 mb-2">
-                    API Key Environment Variable *
-                  </label>
-                  <input
-                    type="text"
-                    id="api_key_env_var"
-                    name="api_key_env_var"
-                    required
-                    value={formData.api_key_env_var}
-                    onChange={handleChange}
-                    placeholder="e.g., AGENT_SAFETY_OPENAI_KEY"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="endpoint" className="block text-sm font-medium text-gray-700 mb-2">
-                    Agent Endpoint URL
-                  </label>
-                  <input
-                    type="text"
-                    id="endpoint"
-                    name="endpoint"
-                    value={formData.endpoint}
-                    readOnly
-                    placeholder="e.g., https://api.example.com"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed"
-                  />
+                  <div className="sm:col-span-2">
+                    <label htmlFor="endpoint" className="block text-sm font-medium text-gray-700 mb-2">
+                      Agent Endpoint URL
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        id="endpoint"
+                        name="endpoint"
+                        value={formData.endpoint}
+                        readOnly
+                        placeholder="e.g., https://api.example.com"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed pr-10"
+                      />
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                        <Info className="h-4 w-4 text-gray-400" />
+                      </div>
+                    </div>
+                    <p className="mt-1 text-xs text-gray-500">
+                      This endpoint is read-only and managed by the system
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* S3 Configuration */}
-            <div className="pt-6 border-t border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">S3 Configuration</h2>
-              <div className="grid grid-cols-1 gap-6">
+            {/* S3 Configuration Section */}
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
+                <div className="flex items-center space-x-3">
+                  <div className="flex-shrink-0 text-blue-500">
+                    <Database className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-base font-semibold text-gray-900">S3 Configuration</h4>
+                    <p className="text-sm text-gray-600">Storage bucket for RAG documents</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="p-6">
                 <div>
-                  <label htmlFor="s3_bucket" className="block text-sm font-medium text-gray-700 mb-2">
-                    S3 Bucket *
+                  <label htmlFor="s3_bucket" className="flex items-center space-x-1 text-sm font-medium text-gray-700 mb-2">
+                    <span>S3 Bucket</span>
+                    <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    id="s3_bucket"
-                    name="s3_bucket"
-                    required
-                    value={formData.s3_bucket}
-                    onChange={handleChange}
-                    readOnly
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed"
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="s3_bucket"
+                      name="s3_bucket"
+                      required
+                      value={formData.s3_bucket}
+                      onChange={handleChange}
+                      readOnly
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed pr-10 font-mono"
+                    />
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                      <Info className="h-4 w-4 text-gray-400" />
+                    </div>
+                  </div>
+                  <div className="mt-2 flex items-start space-x-2">
+                    <Info className="h-4 w-4 text-gray-400 flex-shrink-0 mt-0.5" />
+                    <p className="text-xs text-gray-500">
+                      This bucket is read-only and managed by the system configuration
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Settings */}
-            <div className="pt-6 border-t border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Settings</h2>
-              <div className="space-y-4">
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="is_active"
-                    name="is_active"
-                    checked={formData.is_active}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="is_active" className="ml-2 block text-sm text-gray-900">
-                    Active
-                  </label>
+            {/* Settings Section */}
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+              <div className="bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-4 border-b border-gray-200">
+                <div className="flex items-center space-x-3">
+                  <div className="flex-shrink-0 text-amber-500">
+                    <Key className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-base font-semibold text-gray-900">Agent Settings</h4>
+                    <p className="text-sm text-gray-600">Configure agent behavior and defaults</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="p-6 space-y-4">
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      id="is_active"
+                      name="is_active"
+                      checked={formData.is_active}
+                      onChange={handleChange}
+                      className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                    />
+                    <div>
+                      <label htmlFor="is_active" className="block text-sm font-medium text-gray-900">
+                        Active
+                      </label>
+                      <p className="text-xs text-gray-500">
+                        Agent is available for use in conversations
+                      </p>
+                    </div>
+                  </div>
+                  <div className={`px-2 py-1 text-xs font-medium rounded-full ${
+                    formData.is_active 
+                      ? 'bg-green-100 text-green-700' 
+                      : 'bg-gray-100 text-gray-600'
+                  }`}>
+                    {formData.is_active ? 'Active' : 'Inactive'}
+                  </div>
                 </div>
 
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="is_default"
-                    name="is_default"
-                    checked={formData.is_default}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="is_default" className="ml-2 block text-sm text-gray-900">
-                    Set as default agent
-                  </label>
+                <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      id="is_default"
+                      name="is_default"
+                      checked={formData.is_default}
+                      onChange={handleChange}
+                      className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                    />
+                    <div>
+                      <label htmlFor="is_default" className="block text-sm font-medium text-gray-900">
+                        Set as default agent
+                      </label>
+                      <p className="text-xs text-gray-500">
+                        Used as fallback when no channel-specific agent is configured
+                      </p>
+                    </div>
+                  </div>
+                  {formData.is_default && (
+                    <div className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">
+                      Default
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="pt-6 border-t border-gray-200 flex items-center justify-between">
-              <button
-                type="button"
-                onClick={handleDelete}
-                className="flex items-center space-x-2 px-4 py-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
-              >
-                <Trash2 className="h-5 w-5" />
-                <span>Delete Agent</span>
-              </button>
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <button
+                    type="button"
+                    onClick={handleDelete}
+                    className="flex items-center space-x-2 px-4 py-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors border border-red-200"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                    <span>Delete Agent</span>
+                  </button>
+                  <div className="text-sm text-gray-500">
+                    <span className="font-medium">Warning:</span> This action cannot be undone
+                  </div>
+                </div>
 
-              <div className="flex items-center space-x-3">
-                <button
-                  type="button"
-                  onClick={() => navigate('/agents')}
-                  className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
-                >
-                  <Save className="h-5 w-5" />
-                  <span>{saving ? 'Saving...' : 'Save Changes'}</span>
-                </button>
+                <div className="flex items-center space-x-3">
+                  <button
+                    type="button"
+                    onClick={() => navigate('/agents')}
+                    className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors border border-gray-300"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 border border-primary-600"
+                  >
+                    <Save className="h-5 w-5" />
+                    <span>{saving ? 'Saving...' : 'Save Changes'}</span>
+                  </button>
+                </div>
               </div>
             </div>
           </form>
