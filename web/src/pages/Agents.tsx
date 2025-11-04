@@ -202,9 +202,9 @@ export function Agents() {
                         )}
                       </div>
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-500">S3 Bucket:</span>
+                        <span className="text-gray-500">URL:</span>
                         <span className="text-gray-900 font-mono text-xs truncate max-w-[150px]">
-                          {agent.s3_bucket}
+                          {agent.endpoint || 'N/A'}
                         </span>
                       </div>
                     </div>
