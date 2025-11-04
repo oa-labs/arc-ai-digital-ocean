@@ -6,7 +6,7 @@ import { LucideIcon } from 'lucide-react';
 interface AppHeaderProps {
   title: string;
   icon: LucideIcon;
-  currentPage?: 'dashboard' | 'agents' | 'users' | 'settings';
+  currentPage?: 'analytics' | 'files' | 'agents' | 'users' | 'settings';
 }
 
 export function AppHeader({ title, icon: Icon, currentPage }: AppHeaderProps) {
@@ -30,10 +30,10 @@ export function AppHeader({ title, icon: Icon, currentPage }: AppHeaderProps) {
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            {/* Dashboard Link - show on all pages except dashboard */}
-            {currentPage !== 'dashboard' && (
+            {/* Files Link - show on all pages except files */}
+            {currentPage !== 'files' && (
               <Link
-                to="/"
+                to="/files"
                 className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
               >
                 <Cloud className="h-5 w-5" />

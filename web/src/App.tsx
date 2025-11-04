@@ -5,7 +5,8 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { AdminRoute } from '@/components/AdminRoute';
 import { Login } from '@/pages/Login';
-import { Dashboard } from '@/pages/Dashboard';
+import { Analytics } from '@/pages/Analytics';
+import { Files } from '@/pages/Files';
 import { Agents } from '@/pages/Agents';
 import { AgentEdit } from '@/pages/AgentEdit';
 import { BucketDetail } from '@/pages/BucketDetail';
@@ -33,7 +34,15 @@ function App() {
               path="/"
               element={
                 <ProtectedRoute>
-                  <Dashboard />
+                  <Analytics />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/files"
+              element={
+                <ProtectedRoute>
+                  <Files />
                 </ProtectedRoute>
               }
             />
