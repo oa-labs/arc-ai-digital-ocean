@@ -402,6 +402,23 @@ class AgentManagementService {
     return data || [];
   }
 
+  /**
+   * Get all S3 sources with agent info
+   */
+  async getAllS3Sources(): Promise<(AgentS3Source & { agent: Agent })[]> {
+    const { data, error } = await supabase
+      .from('agent_s3_sources')
+      .select('*, agent:agents(*)')
+      .order('bucket_name', { ascending: true });
+
+    if (error) {
+      console.error('Failed to get all S3 sources:', error);
+      throw new Error(`Failed to get all S3 sources: ${error.message}`);
+    }
+
+    return data || [];
+  }
+
 
 }
 

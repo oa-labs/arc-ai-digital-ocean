@@ -13,19 +13,15 @@ export function Files() {
   const loadBuckets = async () => {
     try {
       setLoading(true);
-      const allAgents = await agentManagementService.listAgents(true);
+      const allS3Sources = await agentManagementService.getAllS3Sources();
       
-      // Build bucket map from s3_sources
+      // Build bucket map from agent_s3_sources
       const bucketMap = new Map<string, Agent[]>();
-      for (const agent of allAgents) {
-        if (agent.s3_sources) {
-          for (const source of agent.s3_sources) {
-            if (!bucketMap.has(source.bucket_name)) {
-              bucketMap.set(source.bucket_name, []);
-            }
-            bucketMap.get(source.bucket_name)!.push(agent);
-          }
+      for (const source of allS3Sources) {
+        if (!bucketMap.has(source.bucket_name)) {
+          bucketMap.set(source.bucket_name, []);
         }
+        bucketMap.get(source.bucket_name)!.push(source.agent);
       }
       
       setBuckets(bucketMap);
