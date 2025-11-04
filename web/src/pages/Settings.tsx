@@ -105,112 +105,142 @@ export function Settings() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 font-medium">Loading Settings...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <AppHeader title="ArcAI Portal" icon={Cloud} currentPage="settings" />
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6">
+        <div className="mb-8 group">
           <button
             onClick={handleBack}
-            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+            className="flex items-center space-x-2 text-gray-600 hover:text-primary-600 transition-all duration-200 hover:translate-x-[-2px]"
           >
-            <ArrowLeft className="h-5 w-5" />
-            <span>Back to Analytics</span>
+            <ArrowLeft className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-[-2px]" />
+            <span className="font-medium">Back to Analytics</span>
           </button>
         </div>
 
-        <div className="bg-white rounded-lg shadow">
+        <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
           {/* Settings Header */}
-          <div className="px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center space-x-3">
-              <SettingsIcon className="h-6 w-6 text-gray-600" />
-              <h2 className="text-xl font-bold text-gray-900">Settings</h2>
+          <div className="bg-gradient-to-r from-primary-50 to-primary-100 px-8 py-6 border-b border-primary-200">
+            <div className="flex items-center space-x-4">
+              <div className="p-2 bg-primary-600 rounded-lg shadow-sm">
+                <SettingsIcon className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Settings</h2>
+                <p className="text-sm text-gray-600 mt-1">Manage your application preferences</p>
+              </div>
             </div>
           </div>
 
           {/* Settings Form */}
-          <form onSubmit={handleSave} className="p-6 space-y-6">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                DigitalOcean Configuration
-              </h3>
-              <p className="text-sm text-gray-600 mb-4">
-                Configure your DigitalOcean Personal Access Token to enable importing agents from your DigitalOcean deployment.
-              </p>
-
-              <div>
-                <label htmlFor="digitalocean_token" className="block text-sm font-medium text-gray-700 mb-2">
-                  Personal Access Token
-                </label>
-                <div className="relative">
-                  <input
-                    type={showToken ? 'text' : 'password'}
-                    id="digitalocean_token"
-                    value={digitalOceanToken}
-                    onChange={(e) => setDigitalOceanToken(e.target.value)}
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm font-mono pr-10"
-                    placeholder="dop_v1_..."
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowToken(!showToken)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                  >
-                    {showToken ? (
-                      <EyeOff className="h-5 w-5" />
-                    ) : (
-                      <Eye className="h-5 w-5" />
-                    )}
-                  </button>
+          <form onSubmit={handleSave} className="p-8 space-y-8">
+            <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Cloud className="h-5 w-5 text-blue-600" />
                 </div>
-                <p className="mt-2 text-xs text-gray-500">
-                  Your Personal Access Token is stored securely and encrypted. It will be used to list and import agents from your DigitalOcean deployment.
-                  {hasExistingToken && !digitalOceanToken && (
-                    <span className="block mt-1 text-amber-600">
-                      Leave empty to keep your existing token, or enter a new one to replace it.
-                    </span>
-                  )}
-                </p>
-                <p className="mt-2 text-xs text-gray-500">
-                  <a
-                    href="https://cloud.digitalocean.com/account/api/tokens"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary-600 hover:text-primary-700 underline"
-                  >
-                    Generate a Personal Access Token in DigitalOcean
-                  </a>
-                </p>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    DigitalOcean Configuration
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Configure your DigitalOcean Personal Access Token to enable importing agents from your DigitalOcean deployment.
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="digitalocean_token" className="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                    Personal Access Token
+                    <span className="ml-2 px-2 py-1 bg-amber-100 text-amber-700 text-xs rounded-full font-medium">Required</span>
+                  </label>
+                  <div className="relative group">
+                    <input
+                      type={showToken ? 'text' : 'password'}
+                      id="digitalocean_token"
+                      value={digitalOceanToken}
+                      onChange={(e) => setDigitalOceanToken(e.target.value)}
+                      className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 focus:ring-2 sm:text-sm font-mono pr-12 py-3 transition-all duration-200 group-hover:border-gray-400 bg-white"
+                      placeholder="dop_v1_..."
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowToken(!showToken)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-primary-600 transition-colors duration-200"
+                    >
+                      {showToken ? (
+                        <EyeOff className="h-5 w-5" />
+                      ) : (
+                        <Eye className="h-5 w-5" />
+                      )}
+                    </button>
+                  </div>
+                  <div className="mt-3 space-y-2">
+                    <p className="text-xs text-gray-600 flex items-start">
+                      <span className="mr-1">🔒</span>
+                      Your Personal Access Token is stored securely and encrypted. It will be used to list and import agents from your DigitalOcean deployment.
+                    </p>
+                    {hasExistingToken && !digitalOceanToken && (
+                      <p className="text-xs text-amber-600 bg-amber-50 p-2 rounded-md border border-amber-200">
+                        ⚠️ Leave empty to keep your existing token, or enter a new one to replace it.
+                      </p>
+                    )}
+                    <p className="text-xs text-gray-500">
+                      <a
+                        href="https://cloud.digitalocean.com/account/api/tokens"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary-600 hover:text-primary-700 underline font-medium inline-flex items-center"
+                      >
+                        Generate a Personal Access Token in DigitalOcean →
+                      </a>
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* System Preferences - Only for Owners */}
             {isOwner && (
-              <div className="pt-6 border-t border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  System Preferences
-                </h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  Configure system-wide settings that apply to all users.
-                </p>
+              <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg p-6 border border-purple-200">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="p-2 bg-purple-600 rounded-lg shadow-sm">
+                    <SettingsIcon className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      System Preferences
+                    </h3>
+                    <p className="text-sm text-gray-600 mt-1">
+                      Configure system-wide settings that apply to all users.
+                    </p>
+                  </div>
+                  <span className="ml-auto px-3 py-1 bg-purple-100 text-purple-700 text-xs rounded-full font-medium">Owner Only</span>
+                </div>
 
                 <div className="space-y-6">
-                  <div>
-                    <label htmlFor="default_model" className="block text-sm font-medium text-gray-700 mb-2">
+                  <div className="bg-white rounded-lg p-4 border border-purple-100">
+                    <label htmlFor="default_model" className="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
                       Default AI Model
+                      <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">System-wide</span>
                     </label>
                     {loadingModels ? (
-                      <div className="flex items-center space-x-2 text-gray-500">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></div>
-                        <span className="text-sm">Loading models...</span>
+                      <div className="flex items-center space-x-3 text-gray-500 py-3">
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-purple-500"></div>
+                        <span className="text-sm font-medium">Loading models...</span>
                       </div>
                     ) : availableModels.length > 0 ? (
                       <>
@@ -218,7 +248,7 @@ export function Settings() {
                           id="default_model"
                           value={selectedModel}
                           onChange={(e) => setSelectedModel(e.target.value)}
-                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                          className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 focus:ring-2 sm:text-sm py-3 transition-all duration-200 bg-white"
                         >
                           <option value="">Select a model...</option>
                           {availableModels.map((model) => (
@@ -227,31 +257,32 @@ export function Settings() {
                             </option>
                           ))}
                         </select>
-                        <p className="mt-2 text-xs text-gray-500">
-                          This model will be used by default for all agents in the system.
+                        <p className="mt-3 text-xs text-gray-600 bg-blue-50 p-3 rounded-md border border-blue-100">
+                          🤖 This model will be used by default for all agents in the system.
                         </p>
                       </>
                     ) : (
-                      <p className="text-sm text-gray-500">
-                        No models available. Please ensure DigitalOcean API is configured.
-                      </p>
+                      <div className="text-sm text-gray-500 bg-amber-50 p-3 rounded-md border border-amber-200">
+                        ⚠️ No models available. Please ensure DigitalOcean API is configured.
+                      </div>
                     )}
                   </div>
 
-                  <div>
-                    <label htmlFor="default_instructions" className="block text-sm font-medium text-gray-700 mb-2">
+                  <div className="bg-white rounded-lg p-4 border border-purple-100">
+                    <label htmlFor="default_instructions" className="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
                       Default Agent Instructions
+                      <span className="ml-2 px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full font-medium">Template</span>
                     </label>
                     <textarea
                       id="default_instructions"
                       value={defaultInstructions}
                       onChange={(e) => setDefaultInstructions(e.target.value)}
                       rows={8}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm font-mono"
+                      className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 focus:ring-2 sm:text-sm font-mono p-3 transition-all duration-200 bg-white resize-none"
                       placeholder="Enter default system instructions for new agents..."
                     />
-                    <p className="mt-2 text-xs text-gray-500">
-                      These instructions will be used as the default system prompt when creating new agents.
+                    <p className="mt-3 text-xs text-gray-600 bg-green-50 p-3 rounded-md border border-green-100">
+                      📝 These instructions will be used as the default system prompt when creating new agents.
                     </p>
                   </div>
                 </div>
@@ -259,24 +290,33 @@ export function Settings() {
             )}
 
             {/* Save Button */}
-            <div className="flex items-center justify-end pt-6 border-t border-gray-200">
-              <button
-                type="submit"
-                disabled={saving}
-                className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-md hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {saving ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    <span>Saving...</span>
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-4 w-4" />
-                    <span>Save Settings</span>
-                  </>
-                )}
-              </button>
+            <div className="flex items-center justify-end pt-8 border-t border-gray-200 bg-gray-50 -mx-8 px-8 py-6 -mb-8 rounded-b-xl">
+              <div className="flex items-center space-x-3">
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="px-6 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 hover:shadow-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="flex items-center space-x-2 px-6 py-3 text-sm font-semibold text-white bg-primary-600 border border-transparent rounded-lg hover:bg-primary-700 hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:scale-100"
+                >
+                  {saving ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      <span>Saving Settings...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4" />
+                      <span>Save Settings</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </form>
         </div>
