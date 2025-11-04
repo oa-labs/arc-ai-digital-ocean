@@ -105,7 +105,7 @@ export function Login() {
                     AI Agent Creation
                   </h3>
                   <p className="text-gray-600 lg:text-gray-300">
-                    Deploy sophisticated AI agents directly in Digital Ocean with custom configurations
+                    Deploy and manage sophisticated AI agents configured in Digital Ocean
                   </p>
                 </div>
               </div>

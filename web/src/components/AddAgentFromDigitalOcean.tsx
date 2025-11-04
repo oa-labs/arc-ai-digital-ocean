@@ -3,6 +3,7 @@ import { X, Save, AlertCircle, Cloud, Loader2, ChevronRight, CheckCircle, Info, 
 import { digitalOceanService, DigitalOceanAgent, DigitalOceanAgentDetail } from '@/services/digitalOceanService';
 import { agentManagementService, CreateAgentInput } from '@/services/agentManagementService';
 import { userSettingsService } from '@/services/userSettingsService';
+import { systemPreferencesService } from '@/services/systemPreferencesService';
 import { showToast } from '@/lib/toast';
 
 interface AddAgentFromDigitalOceanProps {
@@ -25,6 +26,7 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
   const [apiToken, setApiToken] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [defaultInstructions, setDefaultInstructions] = useState<string>('');
   
   // Agent list state
   const [agents, setAgents] = useState<DigitalOceanAgent[]>([]);
@@ -82,7 +84,11 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
       setError(null);
 
       try {
-        const token = await userSettingsService.getDigitalOceanToken();
+        const [token, instructions] = await Promise.all([
+          userSettingsService.getDigitalOceanToken(),
+          systemPreferencesService.getDefaultAgentInstructions(),
+        ]);
+
         if (!token) {
           setError('No DigitalOcean Personal Access Token found. Please configure it in Settings.');
           setLoading(false);
@@ -90,6 +96,7 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
         }
 
         setApiToken(token);
+        setDefaultInstructions(instructions || '');
         const agentList = await digitalOceanService.listAgents(token);
         setAgents(agentList);
       } catch (err) {
@@ -119,7 +126,7 @@ export function AddAgentFromDigitalOcean({ onClose }: AddAgentFromDigitalOceanPr
         temperature: 0.7,
         max_tokens: 1000,
         endpoint: agent.deployment?.url || '',
-        system_prompt: '',
+        system_prompt: defaultInstructions,
         is_active: true,
       });
       
