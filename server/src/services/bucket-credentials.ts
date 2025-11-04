@@ -15,10 +15,9 @@ function buildCredentialsHash(config: StorageConfig): string {
 
 async function verifyBucketRegistered(bucket: string): Promise<void> {
   const { data, error } = await supabaseAdmin
-    .from('agents')
-    .select('id')
-    .eq('s3_bucket', bucket)
-    .eq('is_active', true)
+    .from('agent_s3_sources')
+    .select('agent_id')
+    .eq('bucket_name', bucket)
     .limit(1);
 
   if (error) {
@@ -27,6 +26,18 @@ async function verifyBucketRegistered(bucket: string): Promise<void> {
 
   if (!data || data.length === 0) {
     throw new Error('Bucket not registered');
+  }
+
+  // Verify the agent is still active
+  const { data: agent, error: agentError } = await supabaseAdmin
+    .from('agents')
+    .select('id')
+    .eq('id', data[0].agent_id)
+    .eq('is_active', true)
+    .single();
+
+  if (agentError || !agent) {
+    throw new Error('Bucket not associated with an active agent');
   }
 }
 

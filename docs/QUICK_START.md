@@ -57,7 +57,6 @@ Edit `web/.env`:
 ```bash
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
-VITE_S3_BUCKET=your-bucket
 VITE_S3_ACCESS_KEY_ID=your-key
 VITE_S3_SECRET_ACCESS_KEY=your-secret
 ```
@@ -66,17 +65,26 @@ VITE_S3_SECRET_ACCESS_KEY=your-secret
 
 **Option A: Using SQL**
 ```sql
+-- First, create the agent
 INSERT INTO agents (
   name, description, provider, api_key_env_var, 
-  model, s3_bucket, system_prompt
+  model, system_prompt
 ) VALUES (
   'default-agent',
   'Default AI assistant',
   'openai',
   'OPENAI_API_KEY',
   'gpt-4',
-  'your-rag-bucket',
   'You are a helpful AI assistant.'
+);
+
+-- Then, configure its S3 source
+INSERT INTO agent_s3_sources (
+  agent_id, bucket, prefix
+) VALUES (
+  (SELECT id FROM agents WHERE name = 'default-agent'),
+  'your-rag-bucket',
+  ''
 );
 ```
 
@@ -84,7 +92,7 @@ INSERT INTO agents (
 1. Go to http://localhost:5173/agents
 2. Click "Add Agent" (requires DigitalOcean token configured)
 3. Select an agent from your DigitalOcean deployment
-4. Configure S3 bucket and settings
+4. Configure S3 source settings
 5. Click "Import Agent"
 
 ### Step 4: Start the Web UI (30 sec)
@@ -164,7 +172,7 @@ Should get a response from the agent.
 2. Click "Add Agent" (requires DigitalOcean token)
 3. Select an agent from your DigitalOcean deployment
 4. Configure:
-   - S3 Bucket & Prefix
+   - S3 Sources
    - API Key Env Var (e.g., "AGENT_SAFETY_KEY")
    - Temperature and max tokens
    - System prompt
@@ -172,8 +180,17 @@ Should get a response from the agent.
 
 **Via SQL:**
 ```sql
-INSERT INTO agents (name, provider, api_key_env_var, model, s3_bucket)
-VALUES ('safety-bot', 'openai', 'AGENT_SAFETY_KEY', 'gpt-4', 'safety-docs');
+-- Create the agent
+INSERT INTO agents (name, provider, api_key_env_var, model)
+VALUES ('safety-bot', 'openai', 'AGENT_SAFETY_KEY', 'gpt-4');
+
+-- Add S3 source
+INSERT INTO agent_s3_sources (agent_id, bucket, prefix)
+VALUES (
+  (SELECT id FROM agents WHERE name = 'safety-bot'),
+  'safety-docs',
+  ''
+);
 ```
 
 ### Assign Agents to Channels
@@ -189,7 +206,7 @@ In Slack (admin only):
 1. Go to Files page (Dashboard)
 2. Click "Upload Files"
 3. Select files
-4. Upload to agent's S3 bucket/prefix
+4. Upload to agent's configured S3 sources
 
 **Via S3 CLI:**
 ```bash
@@ -303,7 +320,7 @@ ORDER BY changed_at DESC;
 
 ### RAG documents not loading
 1. Check S3 credentials in `.env`
-2. Check bucket and prefix match agent config
+2. Check agent_s3_sources table for agent's S3 configuration
 3. Check documents exist in S3
 4. Check file extensions (.txt, .md, .pdf)
 
@@ -333,7 +350,7 @@ ORDER BY changed_at DESC;
 ## 💡 Tips
 
 - **Agent Naming**: Use descriptive names (e.g., "safety-bot", "support-bot")
-- **S3 Organization**: Use prefixes to organize documents (e.g., "safety/", "support/")
+- **S3 Organization**: Use agent_s3_sources table to configure multiple S3 sources per agent with different prefixes
 - **API Keys**: Use separate keys for each agent for better tracking
 - **Testing**: Create a test channel to try new agents before production
 - **Monitoring**: Check Analytics tab regularly for usage patterns

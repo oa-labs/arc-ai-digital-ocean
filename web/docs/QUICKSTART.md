@@ -32,7 +32,6 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 # Get these from your DigitalOcean Spaces
 VITE_S3_REGION=nyc3
 VITE_S3_ENDPOINT=https://nyc3.digitaloceanspaces.com
-VITE_S3_BUCKET=my-bucket-name
 VITE_S3_ACCESS_KEY_ID=DO00XXXXXXXXXXXXX
 VITE_S3_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```

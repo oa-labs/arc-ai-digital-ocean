@@ -153,7 +153,7 @@ class DigitalOceanService {
   ): Promise<KnowledgeBaseDataSource[]> {
     try {
       const response = await fetch(
-        `${this.baseUrl}/genai/knowledge_bases/${knowledgeBaseId}/data_sources`,
+        `${this.baseUrl}/gen-ai/knowledge_bases/${knowledgeBaseId}/data_sources`,
         {
           method: 'GET',
           headers: {

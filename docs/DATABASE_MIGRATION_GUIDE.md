@@ -134,13 +134,13 @@ psql "postgresql://postgres:[YOUR-PASSWORD]@db.[YOUR-PROJECT-REF].supabase.co:54
 After the migration is complete, create a test agent:
 
 ```sql
+-- Create the agent
 INSERT INTO agents (
   name,
   description,
   provider,
   api_key_env_var,
   model,
-  s3_bucket,
   system_prompt
 ) VALUES (
   'default-agent',
@@ -148,17 +148,33 @@ INSERT INTO agents (
   'openai',
   'OPENAI_API_KEY',
   'gpt-4',
-  'your-rag-bucket',
   'You are a helpful AI assistant.'
+);
+
+-- Add S3 source for RAG documents
+INSERT INTO agent_s3_sources (
+  agent_id,
+  bucket,
+  prefix
+) VALUES (
+  (SELECT id FROM agents WHERE name = 'default-agent'),
+  'your-rag-bucket',
+  ''
 );
 ```
 
 ### 2. Verify the Agent
 
 ```sql
-SELECT id, name, provider, model, s3_bucket, is_active 
+-- Check agent
+SELECT id, name, provider, model, is_active 
 FROM agents 
 WHERE name = 'default-agent';
+
+-- Check S3 sources
+SELECT bucket, prefix 
+FROM agent_s3_sources 
+WHERE agent_id = (SELECT id FROM agents WHERE name = 'default-agent');
 ```
 
 ### 3. Update Environment Variables
@@ -197,7 +213,6 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 
 VITE_S3_REGION=nyc3
 VITE_S3_ENDPOINT=https://nyc3.digitaloceanspaces.com
-VITE_S3_BUCKET=your-bucket-name
 VITE_S3_ACCESS_KEY_ID=your-access-key
 VITE_S3_SECRET_ACCESS_KEY=your-secret-key
 ```

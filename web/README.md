@@ -67,7 +67,6 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 # S3 Configuration (DigitalOcean Spaces)
 VITE_S3_REGION=nyc3
 VITE_S3_ENDPOINT=https://nyc3.digitaloceanspaces.com
-VITE_S3_BUCKET=your-bucket-name
 VITE_S3_ACCESS_KEY_ID=your-access-key-id
 VITE_S3_SECRET_ACCESS_KEY=your-secret-access-key
 ```

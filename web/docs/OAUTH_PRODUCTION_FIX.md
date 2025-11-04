@@ -52,7 +52,6 @@ We've implemented **runtime environment variable injection** so you can continue
    VITE_SUPABASE_ANON_KEY=your-anon-key
    VITE_S3_REGION=nyc3
    VITE_S3_ENDPOINT=https://nyc3.digitaloceanspaces.com
-   VITE_S3_BUCKET=your-bucket
    VITE_S3_ACCESS_KEY_ID=your-access-key
    VITE_S3_SECRET_ACCESS_KEY=your-secret-key
 

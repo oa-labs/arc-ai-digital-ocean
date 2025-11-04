@@ -33,7 +33,6 @@ VITE_SUPABASE_ANON_KEY=your-production-anon-key
 # S3 Configuration (DigitalOcean Spaces)
 VITE_S3_REGION=nyc3
 VITE_S3_ENDPOINT=https://nyc3.digitaloceanspaces.com
-VITE_S3_BUCKET=your-production-bucket
 VITE_S3_ACCESS_KEY_ID=your-production-access-key
 VITE_S3_SECRET_ACCESS_KEY=your-production-secret-key
 
@@ -122,7 +121,6 @@ window.ENV = {
   VITE_SUPABASE_ANON_KEY: "...",
   VITE_S3_REGION: "nyc3",
   VITE_S3_ENDPOINT: "https://nyc3.digitaloceanspaces.com",
-  VITE_S3_BUCKET: "your-bucket",
   VITE_S3_ACCESS_KEY_ID: "...",
   VITE_S3_SECRET_ACCESS_KEY: "...",
   VITE_APP_URL: "https://ai.openarc.net"
@@ -569,7 +567,6 @@ VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
 VITE_S3_REGION=nyc3
 VITE_S3_ENDPOINT=https://nyc3.digitaloceanspaces.com
-VITE_S3_BUCKET=your-bucket
 VITE_S3_ACCESS_KEY_ID=your-access-key
 VITE_S3_SECRET_ACCESS_KEY=your-secret-key
 

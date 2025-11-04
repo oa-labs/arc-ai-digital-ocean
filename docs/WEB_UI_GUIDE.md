@@ -41,7 +41,7 @@ The main page for agent management with three tabs.
   - Agent name and description
   - Provider (OpenAI or DigitalOcean)
   - Model name
-  - S3 bucket configuration
+  - S3 sources (from agent_s3_sources table)
   - Active/inactive status
 
 **Actions:**
@@ -103,8 +103,7 @@ Modal form for creating and editing agents.
 - **Max Tokens** (optional) - Maximum tokens per response, default 1000
 
 **RAG Configuration:**
-- **S3 Bucket** (required) - Bucket name for RAG documents
-
+- Configured via agent_s3_sources table (can have multiple S3 sources)
 
 **System Prompt:**
 - **Custom System Prompt** (optional) - Override default system prompt
@@ -255,7 +254,6 @@ VITE_S3_ENDPOINT=https://nyc3.digitaloceanspaces.com
 VITE_S3_REGION=nyc3
 VITE_S3_ACCESS_KEY_ID=your-access-key
 VITE_S3_SECRET_ACCESS_KEY=your-secret-key
-VITE_S3_BUCKET=your-bucket-name
 ```
 
 ## Development

@@ -19,8 +19,6 @@ CREATE TABLE IF NOT EXISTS agents (
   max_tokens INTEGER DEFAULT 1000 CHECK (max_tokens > 0),
   endpoint TEXT, -- Required for DigitalOcean provider
   organization TEXT, -- Optional for OpenAI
-  s3_bucket TEXT NOT NULL, -- S3 bucket name for RAG database
-  s3_prefix TEXT, -- Optional prefix/path within bucket (e.g., 'safety-docs/')
   system_prompt TEXT, -- Default system prompt for this agent
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
@@ -35,10 +33,8 @@ CREATE INDEX IF NOT EXISTS idx_agents_provider ON agents(provider);
 CREATE INDEX IF NOT EXISTS idx_agents_created_at ON agents(created_at DESC);
 
 -- Comments for agents table
-COMMENT ON TABLE agents IS 'AI agent configurations with provider settings and RAG database references';
+COMMENT ON TABLE agents IS 'AI agent configurations with provider settings';
 COMMENT ON COLUMN agents.api_key_env_var IS 'Name of environment variable containing the API key (not the key itself)';
-COMMENT ON COLUMN agents.s3_bucket IS 'S3 bucket name where RAG documents are stored';
-COMMENT ON COLUMN agents.s3_prefix IS 'Optional path prefix within the S3 bucket';
 
 -- ============================================================================
 -- Table: slack_channel_agents

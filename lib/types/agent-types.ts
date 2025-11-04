@@ -25,8 +25,6 @@ export interface AgentRecord {
   temperature?: number;
   max_tokens?: number;
   endpoint?: string;
-  s3_bucket?: string; // DEPRECATED: use s3_sources instead
-  s3_prefix?: string; // DEPRECATED: use s3_sources instead
   s3_sources?: AgentS3Source[]; // Multiple S3 sources for this agent
   system_prompt?: string;
   created_at: string;

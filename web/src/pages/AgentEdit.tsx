@@ -22,7 +22,6 @@ export function AgentEdit() {
     provider: 'digitalocean';
 
     api_key_env_var: string;
-    s3_bucket: string;
 
     endpoint: string;
     system_prompt: string;
@@ -33,7 +32,6 @@ export function AgentEdit() {
     description: '',
     provider: 'digitalocean',
     api_key_env_var: '',
-    s3_bucket: '',
     endpoint: '',
     system_prompt: '',
     is_active: true,
@@ -64,7 +62,6 @@ export function AgentEdit() {
           description: foundAgent.description || '',
           provider: 'digitalocean',
           api_key_env_var: foundAgent.api_key_env_var,
-          s3_bucket: foundAgent.s3_bucket || '',
           endpoint: foundAgent.endpoint || '',
           system_prompt: foundAgent.system_prompt || '',
           is_active: foundAgent.is_active,
@@ -257,6 +254,7 @@ Are you absolutely sure?`)) {
                     rows={3}
                     value={formData.description}
                     onChange={handleChange}
+                    placeholder="Enter a description of the agent which is displayed in Slack to assist in agent selection"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   />
                 </div>
@@ -308,28 +306,6 @@ Are you absolutely sure?`)) {
                     value={formData.endpoint}
                     readOnly
                     placeholder="e.g., https://api.example.com"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* S3 Configuration */}
-            <div className="pt-6 border-t border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">S3 Configuration</h2>
-              <div className="grid grid-cols-1 gap-6">
-                <div>
-                  <label htmlFor="s3_bucket" className="block text-sm font-medium text-gray-700 mb-2">
-                    S3 Bucket
-                  </label>
-                  <input
-                    type="text"
-                    id="s3_bucket"
-                    name="s3_bucket"
-                    required
-                    value={formData.s3_bucket}
-                    onChange={handleChange}
-                    readOnly
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed"
                   />
                 </div>

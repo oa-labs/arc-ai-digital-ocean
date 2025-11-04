@@ -46,29 +46,45 @@ Run SQL to create your first agent:
 
 - [ ] Create OpenAI agent:
   ```sql
-  INSERT INTO agents (name, description, provider, api_key_env_var, model, s3_bucket, system_prompt)
+  -- Create the agent
+  INSERT INTO agents (name, description, provider, api_key_env_var, model, system_prompt)
   VALUES (
     'safety-bot',
     'AI agent specialized in workplace safety',
     'openai',
     'AGENT_SAFETY_OPENAI_KEY',
     'gpt-4',
-    'my-rag-bucket',
     'You are a workplace safety expert. Provide clear, actionable safety guidance.'
+  );
+  
+  -- Add S3 source for RAG documents
+  INSERT INTO agent_s3_sources (agent_id, bucket, prefix)
+  VALUES (
+    (SELECT id FROM agents WHERE name = 'safety-bot'),
+    'my-rag-bucket',
+    'safety-docs/'
   );
   ```
 
 - [ ] OR create DigitalOcean agent:
   ```sql
-  INSERT INTO agents (name, description, provider, api_key_env_var, model, endpoint, s3_bucket)
+  -- Create the agent
+  INSERT INTO agents (name, description, provider, api_key_env_var, model, endpoint)
   VALUES (
     'support-bot',
     'AI agent for customer support',
     'digitalocean',
     'AGENT_SUPPORT_DIGITALOCEAN_KEY',
     'gpt-5-nano-2025-08-07',
-    'https://api.digitalocean.com/v2/ai/chat/completions',
-    'my-rag-bucket'
+    'https://api.digitalocean.com/v2/ai/chat/completions'
+  );
+  
+  -- Add S3 source for RAG documents
+  INSERT INTO agent_s3_sources (agent_id, bucket, prefix)
+  VALUES (
+    (SELECT id FROM agents WHERE name = 'support-bot'),
+    'my-rag-bucket',
+    'support-docs/'
   );
   ```
 

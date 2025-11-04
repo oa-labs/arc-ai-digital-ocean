@@ -42,11 +42,13 @@ export function BucketDetail() {
       }
 
       try {
-        // Load agents that use this bucket
-        const buckets = await agentManagementService.getS3Buckets();
-        const bucketAgents = buckets.get(decodedBucketName);
+        // Load all agents and find ones that use this bucket
+        const allAgents = await agentManagementService.listAgents(true);
+        const bucketAgents = allAgents.filter(agent => 
+          agent.s3_sources?.some(source => source.bucket_name === decodedBucketName)
+        );
 
-        if (!bucketAgents || bucketAgents.length === 0) {
+        if (bucketAgents.length === 0) {
           setError('No agents found for this bucket');
           setLoading(false);
           return;

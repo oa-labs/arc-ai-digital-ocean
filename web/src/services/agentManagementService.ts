@@ -19,8 +19,6 @@ export interface Agent {
   temperature?: number;
   max_tokens?: number;
   endpoint?: string;
-  s3_bucket?: string; // DEPRECATED: use s3_sources instead
-  s3_prefix?: string; // DEPRECATED: use s3_sources instead
   s3_sources?: AgentS3Source[];
   system_prompt?: string;
   is_active: boolean;
@@ -37,8 +35,6 @@ export interface CreateAgentInput {
   temperature?: number;
   max_tokens?: number;
   endpoint?: string;
-  s3_bucket?: string; // DEPRECATED: use s3_sources instead
-  s3_prefix?: string; // DEPRECATED: use s3_sources instead
   s3_sources?: { bucket_name: string; prefix?: string }[];
   system_prompt?: string;
   is_active?: boolean;
@@ -143,8 +139,6 @@ class AgentManagementService {
       .insert({
         ...agentData,
         is_active: agentData.is_active ?? true,
-        s3_bucket: null,
-        s3_prefix: null,
       })
       .select()
       .single();
@@ -408,27 +402,7 @@ class AgentManagementService {
     return data || [];
   }
 
-  /**
-   * Get unique S3 buckets with their associated agents
-   * @deprecated Legacy method for backward compatibility
-   */
-  async getS3Buckets(): Promise<Map<string, Agent[]>> {
-    const agents = await this.listAgents(true); // Only active agents
 
-    const bucketMap = new Map<string, Agent[]>();
-
-    for (const agent of agents) {
-      const bucket = agent.s3_bucket;
-      if (bucket) {
-        if (!bucketMap.has(bucket)) {
-          bucketMap.set(bucket, []);
-        }
-        bucketMap.get(bucket)!.push(agent);
-      }
-    }
-
-    return bucketMap;
-  }
 }
 
 export const agentManagementService = new AgentManagementService();

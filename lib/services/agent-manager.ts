@@ -313,31 +313,42 @@ export class AgentManager {
       return [];
     }
 
-    // Use s3_bucket for backward compatibility, fallback to empty if not present
-    const s3Bucket = agent.s3_bucket;
-    if (!s3Bucket) {
-      console.warn('[AgentManager] No S3 bucket configured for agent:', agent.id);
+    // Load documents from all configured S3 sources
+    if (!agent.s3_sources || agent.s3_sources.length === 0) {
+      console.warn('[AgentManager] No S3 sources configured for agent:', agent.id);
       return [];
     }
 
-    // Check cache first
-    const cacheKey = s3Bucket;
-    const cached = this.ragDocumentCache.get(cacheKey);
-    if (cached) {
-      return cached;
+    const allDocuments: RAGDocument[] = [];
+
+    for (const source of agent.s3_sources) {
+      const cacheKey = `${source.bucket_name}:${source.prefix || ''}`;
+      
+      // Check cache first
+      const cached = this.ragDocumentCache.get(cacheKey);
+      if (cached) {
+        allDocuments.push(...cached);
+        continue;
+      }
+
+      try {
+        const documents = await this.ragService.loadDocuments(
+          source.bucket_name,
+          source.prefix
+        );
+
+        // Cache the documents for this source
+        this.ragDocumentCache.set(cacheKey, documents);
+        allDocuments.push(...documents);
+      } catch (error) {
+        console.error(
+          `[AgentManager] Failed to load RAG documents from ${source.bucket_name}/${source.prefix}:`,
+          error
+        );
+      }
     }
 
-    try {
-      const documents = await this.ragService.loadDocuments(s3Bucket);
-
-      // Cache the documents
-      this.ragDocumentCache.set(cacheKey, documents);
-
-      return documents;
-    } catch (error) {
-      console.error('[AgentManager] Failed to load RAG documents:', error);
-      return [];
-    }
+    return allDocuments;
   }
 
   /**

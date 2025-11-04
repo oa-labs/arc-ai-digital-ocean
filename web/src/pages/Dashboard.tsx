@@ -13,7 +13,21 @@ export function Dashboard() {
   const loadBuckets = async () => {
     try {
       setLoading(true);
-      const bucketMap = await agentManagementService.getS3Buckets();
+      const allAgents = await agentManagementService.listAgents(true);
+      
+      // Build bucket map from s3_sources
+      const bucketMap = new Map<string, Agent[]>();
+      for (const agent of allAgents) {
+        if (agent.s3_sources) {
+          for (const source of agent.s3_sources) {
+            if (!bucketMap.has(source.bucket_name)) {
+              bucketMap.set(source.bucket_name, []);
+            }
+            bucketMap.get(source.bucket_name)!.push(agent);
+          }
+        }
+      }
+      
       setBuckets(bucketMap);
     } catch (error) {
       console.error('Error loading buckets:', error);

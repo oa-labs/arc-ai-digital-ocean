@@ -229,7 +229,9 @@ async function handleAgentInfo({
     return;
   }
 
-  const ragInfo = `s3://${agentInfo.s3_bucket}`;
+  const ragInfo = agentInfo.s3_sources && agentInfo.s3_sources.length > 0
+    ? agentInfo.s3_sources.map(s => `s3://${s.bucket_name}${s.prefix ? '/' + s.prefix : ''}`).join(', ')
+    : 'No S3 sources configured';
 
   const systemPromptPreview = agentInfo.system_prompt
     ? agentInfo.system_prompt.substring(0, 100) + (agentInfo.system_prompt.length > 100 ? '...' : '')
@@ -238,7 +240,7 @@ async function handleAgentInfo({
   await client.chat.postEphemeral({
     channel: channelId,
     user: userId,
-    text: `🌊 *Current Agent: ${agentInfo.name}*\n\n*RAG Database:* ${ragInfo}\n*System Prompt:* ${systemPromptPreview}\n\n_Use \`/agent list\` to see all available agents_`,
+    text: `🌊 *Current Agent: ${agentInfo.name}*\n\n*RAG Sources:* ${ragInfo}\n*System Prompt:* ${systemPromptPreview}\n\n_Use \`/agent list\` to see all available agents_`,
   });
 }
 
