@@ -20,11 +20,18 @@ export interface DigitalOceanAgent {
   // Add other fields as needed from the API response
 }
 
+export interface DigitalOceanKnowledgeBaseRef {
+  uuid?: string;
+  id?: string;
+  name?: string;
+  [key: string]: any;
+}
+
 export interface DigitalOceanAgentDetail extends DigitalOceanAgent {
   // Additional fields that might be in the detail response
   endpoint?: string;
   model?: string;
-  knowledge_bases?: string[];
+  knowledge_bases?: (string | DigitalOceanKnowledgeBaseRef)[];
   [key: string]: any;
 }
 
@@ -52,6 +59,14 @@ export interface KnowledgeBaseDataSourcesResponse {
 
 class DigitalOceanService {
   private readonly baseUrl = 'https://api.digitalocean.com/v2';
+
+  /**
+   * Resolve knowledge base ID from either a string or object reference
+   */
+  private resolveKnowledgeBaseId(kb: string | DigitalOceanKnowledgeBaseRef): string | null {
+    if (typeof kb === 'string') return kb;
+    return kb?.uuid || kb?.id || null;
+  }
 
   /**
    * List all deployed agents from DigitalOcean
@@ -187,14 +202,16 @@ class DigitalOceanService {
     agentDetail: DigitalOceanAgentDetail
   ): Promise<string[]> {
     try {
-      const knowledgeBases = agentDetail.knowledge_bases || [];
+      const kbIds = (agentDetail.knowledge_bases || [])
+        .map(kb => this.resolveKnowledgeBaseId(kb))
+        .filter((id): id is string => !!id);
       
-      if (knowledgeBases.length === 0) {
+      if (kbIds.length === 0) {
         return [];
       }
 
       // Fetch data sources for all knowledge bases in parallel
-      const dataSourcesPromises = knowledgeBases.map((kbId) =>
+      const dataSourcesPromises = kbIds.map((kbId) =>
         this.getKnowledgeBaseDataSources(apiToken, kbId)
       );
 
@@ -225,14 +242,16 @@ class DigitalOceanService {
     agentDetail: DigitalOceanAgentDetail
   ): Promise<{ bucket_name: string; prefix?: string }[]> {
     try {
-      const knowledgeBases = agentDetail.knowledge_bases || [];
+      const kbIds = (agentDetail.knowledge_bases || [])
+        .map(kb => this.resolveKnowledgeBaseId(kb))
+        .filter((id): id is string => !!id);
       
-      if (knowledgeBases.length === 0) {
+      if (kbIds.length === 0) {
         return [];
       }
 
       // Fetch data sources for all knowledge bases in parallel
-      const dataSourcesPromises = knowledgeBases.map((kbId) =>
+      const dataSourcesPromises = kbIds.map((kbId) =>
         this.getKnowledgeBaseDataSources(apiToken, kbId)
       );
 
