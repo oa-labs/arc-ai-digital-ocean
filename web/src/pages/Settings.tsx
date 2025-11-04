@@ -111,7 +111,7 @@ export function Settings() {
             className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />
-            <span>Back to Dashboard</span>
+            <span>Back to Analytics</span>
           </button>
         </div>
 

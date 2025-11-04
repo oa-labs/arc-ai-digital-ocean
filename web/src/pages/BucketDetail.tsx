@@ -110,7 +110,7 @@ export function BucketDetail() {
             onClick={() => navigate('/')}
             className="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
           >
-            Back to Dashboard
+            Back to Files
           </button>
         </div>
       </div>
@@ -127,7 +127,7 @@ export function BucketDetail() {
               <button
                 onClick={() => navigate('/')}
                 className="p-2 text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
-                title="Back to Dashboard"
+                title="Back to Files"
               >
                 <ArrowLeft className="h-5 w-5" />
               </button>

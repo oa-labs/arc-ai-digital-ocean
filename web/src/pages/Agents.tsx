@@ -4,19 +4,17 @@ import { agentManagementService, Agent } from '@/services/agentManagementService
 import { userSettingsService } from '@/services/userSettingsService';
 import { AddAgentFromDigitalOcean } from '@/components/AddAgentFromDigitalOcean';
 import { ChannelMappings } from '@/components/ChannelMappings';
-import { AgentAnalytics } from '@/components/AgentAnalytics';
 import { AppHeader } from '@/components/AppHeader';
 import { Footer } from '@/components/Footer';
 import {
   Bot,
   Activity,
   Settings,
-  BarChart3,
   Download,
 } from 'lucide-react';
 import { showToast } from '@/lib/toast';
 
-type TabType = 'agents' | 'mappings' | 'analytics';
+type TabType = 'agents' | 'mappings';
 
 export function Agents() {
   const navigate = useNavigate();
@@ -95,19 +93,6 @@ export function Agents() {
               <div className="flex items-center space-x-2">
                 <Activity className="h-5 w-5" />
                 <span>Channel Mappings</span>
-              </div>
-            </button>
-            <button
-              onClick={() => setActiveTab('analytics')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                activeTab === 'analytics'
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <div className="flex items-center space-x-2">
-                <BarChart3 className="h-5 w-5" />
-                <span>Analytics</span>
               </div>
             </button>
           </nav>
@@ -216,7 +201,6 @@ export function Agents() {
         )}
 
         {activeTab === 'mappings' && <ChannelMappings />}
-        {activeTab === 'analytics' && <AgentAnalytics agents={agents} />}
       </main>
 
       <Footer />

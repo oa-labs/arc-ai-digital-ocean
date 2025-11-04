@@ -6,7 +6,7 @@ import { agentManagementService, Agent } from '@/services/agentManagementService
 import { Cloud } from 'lucide-react';
 import { showToast } from '@/lib/toast';
 
-export function Dashboard() {
+export function Files() {
   const [buckets, setBuckets] = useState<Map<string, Agent[]>>(new Map());
   const [loading, setLoading] = useState(true);
 
@@ -43,7 +43,7 @@ export function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <AppHeader title="ArcAI Portal" icon={Cloud} currentPage="dashboard" />
+      <AppHeader title="File Management" icon={Cloud} currentPage="files" />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -69,4 +69,3 @@ export function Dashboard() {
     </div>
   );
 }
-
