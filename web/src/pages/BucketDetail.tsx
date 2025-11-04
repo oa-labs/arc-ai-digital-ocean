@@ -42,19 +42,24 @@ export function BucketDetail() {
       }
 
       try {
-        // Load all agents and find ones that use this bucket
-        const allAgents = await agentManagementService.listAgents(true);
-        const bucketAgents = allAgents.filter(agent => 
-          agent.s3_sources?.some(source => source.bucket_name === decodedBucketName)
+        // Get all S3 sources for this bucket with their agents
+        const allS3Sources = await agentManagementService.getAllS3Sources();
+        const bucketSources = allS3Sources.filter(
+          source => source.bucket_name === decodedBucketName
         );
 
-        if (bucketAgents.length === 0) {
+        if (bucketSources.length === 0) {
           setError('No agents found for this bucket');
           setLoading(false);
           return;
         }
 
-        setAgents(bucketAgents);
+        // Extract unique agents from the sources
+        const uniqueAgents = Array.from(
+          new Map(bucketSources.map(source => [source.agent.id, source.agent])).values()
+        );
+
+        setAgents(uniqueAgents);
       } catch (err) {
         console.error('Error loading bucket info:', err);
         setError('Failed to load bucket information');

@@ -19,6 +19,7 @@ export function Settings() {
   const [availableModels, setAvailableModels] = useState<AIModel[]>([]);
   const [selectedModel, setSelectedModel] = useState<string>('');
   const [loadingModels, setLoadingModels] = useState(false);
+  const [defaultInstructions, setDefaultInstructions] = useState<string>('');
 
   useEffect(() => {
     loadSettings();
@@ -36,13 +37,17 @@ export function Settings() {
       if (isOwner) {
         setLoadingModels(true);
         try {
-          const [models, defaultModel] = await Promise.all([
+          const [models, defaultModel, defaultInstructions] = await Promise.all([
             systemPreferencesService.getAvailableModels(),
             systemPreferencesService.getDefaultModel(),
+            systemPreferencesService.getDefaultAgentInstructions(),
           ]);
           setAvailableModels(models);
           if (defaultModel) {
             setSelectedModel(defaultModel);
+          }
+          if (defaultInstructions) {
+            setDefaultInstructions(defaultInstructions);
           }
         } catch (error) {
           console.error('Error loading models:', error);
@@ -70,10 +75,17 @@ export function Settings() {
         })
       ];
 
-      if (isOwner && selectedModel) {
-        promises.push(
-          systemPreferencesService.setDefaultModel(selectedModel)
-        );
+      if (isOwner) {
+        if (selectedModel) {
+          promises.push(
+            systemPreferencesService.setDefaultModel(selectedModel)
+          );
+        }
+        if (defaultInstructions) {
+          promises.push(
+            systemPreferencesService.setDefaultAgentInstructions(defaultInstructions)
+          );
+        }
       }
 
       await Promise.all(promises);
@@ -190,39 +202,58 @@ export function Settings() {
                   Configure system-wide settings that apply to all users.
                 </p>
 
-                <div>
-                  <label htmlFor="default_model" className="block text-sm font-medium text-gray-700 mb-2">
-                    Default AI Model
-                  </label>
-                  {loadingModels ? (
-                    <div className="flex items-center space-x-2 text-gray-500">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></div>
-                      <span className="text-sm">Loading models...</span>
-                    </div>
-                  ) : availableModels.length > 0 ? (
-                    <>
-                      <select
-                        id="default_model"
-                        value={selectedModel}
-                        onChange={(e) => setSelectedModel(e.target.value)}
-                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                      >
-                        <option value="">Select a model...</option>
-                        {availableModels.map((model) => (
-                          <option key={model.id} value={model.id}>
-                            {model.name} {model.description && `- ${model.description}`}
-                          </option>
-                        ))}
-                      </select>
-                      <p className="mt-2 text-xs text-gray-500">
-                        This model will be used by default for all agents in the system.
+                <div className="space-y-6">
+                  <div>
+                    <label htmlFor="default_model" className="block text-sm font-medium text-gray-700 mb-2">
+                      Default AI Model
+                    </label>
+                    {loadingModels ? (
+                      <div className="flex items-center space-x-2 text-gray-500">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></div>
+                        <span className="text-sm">Loading models...</span>
+                      </div>
+                    ) : availableModels.length > 0 ? (
+                      <>
+                        <select
+                          id="default_model"
+                          value={selectedModel}
+                          onChange={(e) => setSelectedModel(e.target.value)}
+                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                        >
+                          <option value="">Select a model...</option>
+                          {availableModels.map((model) => (
+                            <option key={model.id} value={model.id}>
+                              {model.name} {model.description && `- ${model.description}`}
+                            </option>
+                          ))}
+                        </select>
+                        <p className="mt-2 text-xs text-gray-500">
+                          This model will be used by default for all agents in the system.
+                        </p>
+                      </>
+                    ) : (
+                      <p className="text-sm text-gray-500">
+                        No models available. Please ensure DigitalOcean API is configured.
                       </p>
-                    </>
-                  ) : (
-                    <p className="text-sm text-gray-500">
-                      No models available. Please ensure DigitalOcean API is configured.
+                    )}
+                  </div>
+
+                  <div>
+                    <label htmlFor="default_instructions" className="block text-sm font-medium text-gray-700 mb-2">
+                      Default Agent Instructions
+                    </label>
+                    <textarea
+                      id="default_instructions"
+                      value={defaultInstructions}
+                      onChange={(e) => setDefaultInstructions(e.target.value)}
+                      rows={8}
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm font-mono"
+                      placeholder="Enter default system instructions for new agents..."
+                    />
+                    <p className="mt-2 text-xs text-gray-500">
+                      These instructions will be used as the default system prompt when creating new agents.
                     </p>
-                  )}
+                  </div>
                 </div>
               </div>
             )}

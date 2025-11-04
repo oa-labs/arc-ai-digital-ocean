@@ -187,9 +187,8 @@ export function Agents() {
                         )}
                       </div>
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-500">URL:</span>
-                        <span className="text-gray-900 font-mono text-xs truncate max-w-[150px]">
-                          {agent.endpoint || 'N/A'}
+                        <span className="text-gray-500 font-mono text-xs truncate max-w-[350px]">
+                          URL: {agent.endpoint || 'N/A'}
                         </span>
                       </div>
                     </div>

@@ -103,6 +103,15 @@ class SystemPreferencesService {
   async setDefaultModel(modelId: string): Promise<void> {
     await this.updatePreference('default_ai_model', { model_id: modelId });
   }
+
+  async getDefaultAgentInstructions(): Promise<string | null> {
+    const pref = await this.getPreference('default_agent_instructions');
+    return pref?.preference_value?.instructions || null;
+  }
+
+  async setDefaultAgentInstructions(instructions: string): Promise<void> {
+    await this.updatePreference('default_agent_instructions', { instructions });
+  }
 }
 
 export const systemPreferencesService = new SystemPreferencesService();
