@@ -12,13 +12,12 @@ CREATE TABLE IF NOT EXISTS agents (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL UNIQUE,
   description TEXT,
-  provider TEXT NOT NULL CHECK (provider IN ('openai', 'digitalocean')),
-  api_key_env_var TEXT NOT NULL, -- Environment variable name (e.g., 'AGENT_SAFETY_OPENAI_KEY')
+  provider TEXT NOT NULL CHECK (provider IN ('digitalocean')),
+  api_key_env_var TEXT NOT NULL, -- Environment variable name (e.g., 'AGENT_SAFETY_DO_KEY')
   model TEXT, -- e.g., 'gpt-4', 'gpt-5-nano-2025-08-07'
   temperature DECIMAL(3,2) DEFAULT 0.7 CHECK (temperature >= 0 AND temperature <= 2),
   max_tokens INTEGER DEFAULT 1000 CHECK (max_tokens > 0),
   endpoint TEXT, -- Required for DigitalOcean provider
-  organization TEXT, -- Optional for OpenAI
   system_prompt TEXT, -- Default system prompt for this agent
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
@@ -288,8 +287,8 @@ CREATE POLICY "Service role manages manager assignments"
 -- VALUES (
 --   'default-agent',
 --   'Default AI assistant for general queries',
---   'openai',
---   'OPENAI_API_KEY',
+--   'digitalocean',
+--   'DIGITALOCEAN_API_KEY',
 --   'gpt-3.5-turbo',
 --   'arc-ai-kb',
 --   'You are a helpful AI assistant for workplace safety and internal communications. Provide clear, professional responses.'

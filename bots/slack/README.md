@@ -26,7 +26,7 @@ pnpm run dev
 ### Path Aliases
 The project uses TypeScript path mapping with the `@lib` alias to import from the shared library:
 ```typescript
-import { OpenAiAgentService, getConfig, validateConfig } from '@lib/index.js';
+import { DigitalOceanAgentService, getConfig, validateConfig } from '@lib/index.js';
 ```
 
 This is configured in `tsconfig.json` for build-time resolution.

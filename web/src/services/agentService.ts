@@ -1,7 +1,7 @@
-import { OpenAiAgentService, getConfig, validateConfig, AgentMessage, AgentResponse } from '@arc-ai/shared';
+import { DigitalOceanAgentService, getConfig, validateConfig, AgentMessage, AgentResponse } from '@arc-ai/shared';
 
 class WebAgentService {
-  private agentService: OpenAiAgentService;
+  private agentService: DigitalOceanAgentService;
 
   constructor() {
     const config = getConfig();
@@ -11,7 +11,7 @@ class WebAgentService {
       throw new Error(`Configuration validation failed: ${configValidation.errors.join(', ')}`);
     }
 
-    this.agentService = new OpenAiAgentService(config.agent);
+    this.agentService = new DigitalOceanAgentService(config.agent);
   }
 
   /**

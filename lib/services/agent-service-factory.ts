@@ -8,11 +8,6 @@ export type AgentService = DigitalOceanAgentService;
  */
 export function createAgentService(): AgentService {
   const config = getConfig();
-
-  if (config.agentProvider !== 'digitalocean') {
-    throw new Error(`Only DigitalOcean provider is supported. Got: ${config.agentProvider}`);
-  }
-
   return new DigitalOceanAgentService(config.agent);
 }
 

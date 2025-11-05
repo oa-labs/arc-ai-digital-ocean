@@ -14,8 +14,7 @@
     "push:containers": "pnpm --filter @arc-ai/web-ui run push:container && pnpm --filter @arc-ai/server run push:container && pnpm --filter @arc-ai/slack-bot run push:container"
   },
   "dependencies": {
-    "@slack/bolt": "^4.5.0",
-    "openai": "^4.0.0"
+    "@slack/bolt": "^4.5.0"
   },
   "devDependencies": {
     "autoevals": "^0.0.104",

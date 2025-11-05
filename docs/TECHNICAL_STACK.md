@@ -60,7 +60,6 @@ graph TD
     "@supabase/supabase-js": "^2.39.0",
     "@trpc/server": "^10.45.0",
     "hono": "^4.0.0",
-    "openai": "^4.0.0",
     "langchain": "^0.1.0",
     "zod": "^3.22.0"
   }
@@ -194,8 +193,8 @@ export const EscalatedQuery = z.object({
 
 ### Vector Storage
 
-- **Embeddings Model**: OpenAI text-embedding-ada-002
-- **Vector Dimensions**: 1536 (OpenAI standard)
+- **Embeddings Model**: DigitalOcean embeddings
+- **Vector Dimensions**: Standard embedding dimensions
 - **Storage Granularity**: Document sections (chunks) with embeddings
 - **Similarity Search**: Cosine similarity via pgvector on document sections
 - **Indexing**: HNSW index on DocumentSection.Embedding for efficient similarity search

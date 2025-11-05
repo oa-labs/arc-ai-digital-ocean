@@ -5,7 +5,7 @@ Command line tool for interacting with the ArcAI  agent service.
 ## Features
 
 - **TypeScript**: Fully typed CLI implementation
-- **Multiple Agent Providers**: Supports both OpenAI and DigitalOcean AI providers
+- **DigitalOcean AI Provider**: Supports DigitalOcean AI agents
 - **Interactive Mode**: Chat with the agent in real-time
 - **Pipe Support**: Read messages from stdin
 - **Custom System Prompts**: Override the default system prompt
@@ -89,21 +89,9 @@ arcai-cli -v
 
 The CLI uses environment variables for configuration. Create a `.env` file in the project root or set these variables:
 
-### OpenAI Provider (Default)
-
-```bash
-AGENT_PROVIDER=openai
-OPENAI_API_KEY=your-api-key-here
-OPENAI_MODEL=gpt-3.5-turbo
-OPENAI_TEMPERATURE=0.7
-OPENAI_MAX_TOKENS=1000
-OPENAI_ORGANIZATION=your-org-id  # Optional
-```
-
 ### DigitalOcean Provider
 
 ```bash
-AGENT_PROVIDER=digitalocean
 DIGITALOCEAN_API_KEY=your-api-key-here
 DIGITALOCEAN_AGENT_ENDPOINT=https://your-endpoint.com
 DIGITALOCEAN_MODEL=gpt-3.5-turbo
@@ -159,8 +147,8 @@ arcai-cli config get <key>              # Get configuration
 The CLI uses the centralized `createAgentService` factory function from the shared library, which:
 
 1. Validates the configuration
-2. Determines the appropriate agent provider (OpenAI or DigitalOcean)
-3. Creates and returns the correct service instance
+2. Creates the DigitalOcean agent service instance
+3. Returns the configured service
 
 This ensures consistency across all ArcAI  applications (CLI, Slack bot, web app).
 

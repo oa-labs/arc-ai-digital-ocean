@@ -6,7 +6,7 @@ This guide walks through setting up the Slack Assistant integration for threaded
 
 1. Slack App with Socket Mode enabled
 2. Supabase project (for thread context storage)
-3. OpenAI or DigitalOcean AI API key
+3. DigitalOcean AI API key
 
 ## Slack App Configuration
 
@@ -48,12 +48,12 @@ SLACK_SOCKET_MODE=true
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your-anon-key
 
-# AI Provider (OpenAI or DigitalOcean)
-AGENT_PROVIDER=openai  # or 'digitalocean'
-OPENAI_API_KEY=your-openai-key
-OPENAI_MODEL=gpt-4  # or gpt-3.5-turbo
-OPENAI_TEMPERATURE=0.7
-OPENAI_MAX_TOKENS=1000
+# AI Provider (DigitalOcean)
+DIGITALOCEAN_API_KEY=your-digitalocean-key
+DIGITALOCEAN_AGENT_ENDPOINT=https://your-agent-endpoint.digitalocean.com
+DIGITALOCEAN_MODEL=gpt-4  # or gpt-3.5-turbo
+DIGITALOCEAN_TEMPERATURE=0.7
+DIGITALOCEAN_MAX_TOKENS=1000
 
 # Debug mode
 DEBUG=1  # Optional, for verbose logging
@@ -126,7 +126,7 @@ User Message → Assistant Middleware → Thread Context Store (Supabase)
                       ↓
             Retrieve Thread History
                       ↓
-              AI Agent Service (OpenAI/DO)
+              AI Agent Service (DigitalOcean)
                       ↓
           Stream Response → Feedback Buttons
 ```

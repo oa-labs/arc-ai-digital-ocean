@@ -4,7 +4,7 @@ This shared library provides common functionality for both the Slack bot and web
 
 ## Features
 
-- **AI Agent Service**: OpenAI integration with configurable models and parameters
+- **AI Agent Service**: DigitalOcean AI integration with configurable models and parameters
 - **Shared Configuration**: Centralized configuration management for all projects
 - **TypeScript Support**: Full TypeScript definitions and type safety
 - **Modular Architecture**: Easy to extend and maintain
@@ -22,11 +22,11 @@ npm run build:shared
 ### Agent Service
 
 ```typescript
-import { OpenAiAgentService, getConfig } from '@arc-ai/shared';
+import { DigitalOceanAgentService, getConfig } from '@arc-ai/shared';
 
 // Initialize with configuration
 const config = getConfig();
-const agent = new OpenAiAgentService(config.agent);
+const agent = new DigitalOceanAgentService(config.agent);
 
 // Send a message
 const response = await agent.sendMessage("Hello, how can I help?");
@@ -59,7 +59,7 @@ lib/
 ├── types/
 │   └── index.ts              # TypeScript definitions
 ├── services/
-│   └── openai-agent-service.ts      # OpenAI agent service implementation
+│   └── digitalocean-agent-service.ts # DigitalOcean agent service implementation
 ├── config/
 │   └── index.ts              # Configuration management
 ├── package.json              # Library package configuration
@@ -79,11 +79,11 @@ To work on the shared library:
 
 The shared library uses the following environment variables:
 
-- `OPENAI_API_KEY`: Your OpenAI API key (required)
-- `OPENAI_MODEL`: Model to use (default: gpt-3.5-turbo)
-- `OPENAI_TEMPERATURE`: Response temperature (default: 0.7)
-- `OPENAI_MAX_TOKENS`: Maximum tokens per response (default: 1000)
-- `OPENAI_ORGANIZATION`: OpenAI organization ID (optional)
+- `DIGITALOCEAN_API_KEY`: Your DigitalOcean API key (required)
+- `DIGITALOCEAN_MODEL`: Model to use (default: gpt-3.5-turbo)
+- `DIGITALOCEAN_TEMPERATURE`: Response temperature (default: 0.7)
+- `DIGITALOCEAN_MAX_TOKENS`: Maximum tokens per response (default: 1000)
+- `DIGITALOCEAN_AGENT_ENDPOINT`: DigitalOcean agent endpoint (required)
 - `NODE_ENV`: Environment mode (development/production/test)
 - `DEBUG`: Enable debug logging (set to '1')
 

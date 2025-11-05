@@ -269,7 +269,7 @@ Are you absolutely sure?`)) {
                       required
                       value={formData.api_key_env_var}
                       onChange={handleChange}
-                      placeholder="e.g., AGENT_SAFETY_OPENAI_KEY"
+                      placeholder="e.g., AGENT_SAFETY_DO_KEY"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono"
                     />
                   </div>

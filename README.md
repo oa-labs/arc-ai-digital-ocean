@@ -45,10 +45,10 @@ arc-ai/
 
 2. **Set Up Environment Variables**
 
-   Create a `.env` file with required API keys and configuration. The tests support multiple LLM providers (OpenAI, DigitalOcean, etc.):
+   Create a `.env` file with required API keys and configuration. The tests support DigitalOcean LLM provider:
    ```bash
    # See .env.example for full configuration options
-   OPENAI_API_KEY=your_api_key_here
+   DIGITALOCEAN_API_KEY=your_api_key_here
    ```
 
 3. **Run Quality Tests**
@@ -79,12 +79,12 @@ A passing test indicates the AI response meets quality standards for correctness
 - **Package Manager**: pnpm workspaces (monorepo)
 - **Database**: Supabase PostgreSQL with pgvector extension
 - **Storage**: S3-compatible storage (AWS S3, DigitalOcean Spaces)
-- **LLM Providers**: OpenAI GPT-4/GPT-3.5-turbo, DigitalOcean (configurable)
+- **LLM Providers**: DigitalOcean AI
 - **Integrations**: Slack Bot API (`@slack/bolt` v4.5+), Outline API
 - **Testing**: Vitest with `vitest-evals` and `autoevals` metrics
 - **Frontend**: React 18 with Vite 5.0+, Tailwind CSS, TanStack Query v5
 - **Backend**: Express.js with TypeScript, CORS, Multer for file uploads
-- **Libraries**: `@aws-sdk/client-s3` v3.913+, `@supabase/supabase-js` v2.75+, OpenAI SDK v4.0+
+- **Libraries**: `@aws-sdk/client-s3` v3.913+, `@supabase/supabase-js` v2.75+
 - **Containerization**: Docker with multi-stage builds for all services
 - **Deployment**: Automated container building and pushing via `deploy` script
 
@@ -96,7 +96,7 @@ A passing test indicates the AI response meets quality standards for correctness
 - pnpm package manager
 - Supabase account with PostgreSQL and pgvector
 - S3-compatible storage (DigitalOcean Spaces or AWS S3)
-- LLM API key (OpenAI or DigitalOcean)
+- LLM API key (DigitalOcean)
 - (Optional) Slack workspace for bot integration
 - (Optional) Outline instance for document sync
 

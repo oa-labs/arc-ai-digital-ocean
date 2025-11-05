@@ -41,7 +41,7 @@ The ArcAI web portal provides a user-friendly interface for managing agents, fil
 2. Click "Add Agent" button
 3. Configure agent settings:
    - Name and description
-   - AI provider (OpenAI, DigitalOcean)
+   - AI provider (DigitalOcean)
    - Model selection
    - System prompt
    - Temperature and token limits
@@ -230,8 +230,7 @@ arcai-cli system status
 arcai-cli config get
 
 # Set configuration
-arcai-cli config set AGENT_PROVIDER openai
-arcai-cli config set OPENAI_MODEL gpt-4
+arcai-cli config set DIGITALOCEAN_MODEL gpt-4
 ```
 
 #### Query Management
@@ -247,12 +246,6 @@ arcai-cli queries respond <query-id> "Response text"
 
 #### Environment Variables
 ```bash
-# OpenAI Configuration
-OPENAI_API_KEY=your-api-key
-OPENAI_MODEL=gpt-4
-OPENAI_TEMPERATURE=0.7
-OPENAI_MAX_TOKENS=1000
-
 # DigitalOcean Configuration
 DIGITALOCEAN_API_KEY=your-api-key
 DIGITALOCEAN_AGENT_ENDPOINT=https://your-endpoint.com

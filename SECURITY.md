@@ -14,7 +14,7 @@ We take the security of ArcAI seriously. If you discover a security vulnerabilit
 
 **Please do not report security vulnerabilities through public GitHub issues.**
 
-Instead, please send an email to: **security@arc-ai.com**
+Instead, please send an email to: **support@openarc.net**
 
 When reporting a vulnerability, please include:
 

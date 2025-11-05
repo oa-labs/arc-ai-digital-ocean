@@ -39,7 +39,7 @@ The main page for agent management with three tabs.
 - **Delete agents** - Soft delete (sets `is_active` to false)
 - **Agent cards** show:
   - Agent name and description
-  - Provider (OpenAI or DigitalOcean)
+  - Provider (DigitalOcean)
   - Model name
   - S3 sources (from agent_s3_sources table)
   - Active/inactive status

@@ -180,7 +180,7 @@ export function AgentForm({ agent, onClose }: AgentFormProps) {
                 value={formData.api_key_env_var}
                 onChange={handleChange}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm font-mono"
-                placeholder="e.g., AGENT_SAFETY_OPENAI_KEY"
+                placeholder="e.g., AGENT_SAFETY_DO_KEY"
               />
               <p className="mt-1 text-xs text-gray-500">
                 The environment variable name containing the API key (not the key itself)

@@ -19,7 +19,6 @@ const debug = (...args: any[]): void => {
  * Handles channel-based agent retrieval and RAG context building
  *
  * RAG Architecture:
- * - OpenAI agents: RAG documents are loaded from S3 and searched client-side
  * - DigitalOcean agents: RAG is configured on the DigitalOcean backend and handled automatically
  *   (S3 buckets are still used to manage the files that DigitalOcean's RAG uses)
  */
@@ -113,8 +112,7 @@ export class SlackAgentManager {
 
   /**
    * Build RAG context for a message
-   * NOTE: Only builds RAG context for OpenAI agents.
-   * DigitalOcean agents handle RAG automatically on their backend.
+   * NOTE: DigitalOcean agents handle RAG automatically on their backend.
    */
   async buildRAGContext(channelId: string, message: string): Promise<string> {
     if (!this.agentManager || !this.ragService) {
@@ -129,37 +127,12 @@ export class SlackAgentManager {
         return '';
       }
 
-      // Only build RAG context for OpenAI agents
       // DigitalOcean agents have RAG configured on their backend
-      if (agent.provider === 'digitalocean') {
-        debug(`Agent ${agent.name} is DigitalOcean provider - RAG handled by backend`);
-        return '';
-      }
+      debug(`Agent ${agent.name} is DigitalOcean provider - RAG handled by backend`);
+      return '';
 
-      // Load RAG documents for this agent
-      const documents = await this.agentManager.loadRAGDocuments(agent);
-      if (documents.length === 0) {
-        debug('No RAG documents found for agent', agent.name);
-        return '';
-      }
-
-      debug(`Loaded ${documents.length} RAG documents for agent ${agent.name}`);
-
-      // Search for relevant documents
-      const searchResults = await this.ragService.searchDocuments(documents, message, 5);
-      if (searchResults.length === 0) {
-        debug('No relevant documents found for query');
-        return '';
-      }
-
-      debug(`Found ${searchResults.length} relevant documents`);
-
-      // Build context string
-      const context = this.ragService.buildContext(searchResults, 4000);
-
-      return context;
     } catch (error) {
-      console.error('[SlackAgentManager] Failed to build RAG context:', error);
+      console.error('[SlackAgentManager] Error building RAG context:', error);
       return '';
     }
   }
@@ -187,18 +160,11 @@ export class SlackAgentManager {
 
   /**
    * Build enhanced prompt with RAG context
-   * NOTE: For OpenAI agents, this loads documents from S3 and builds context.
-   * For DigitalOcean agents, this returns the message unchanged since RAG is handled automatically.
+   * NOTE: For DigitalOcean agents, this returns the message unchanged since RAG is handled automatically.
    */
   async buildEnhancedPrompt(channelId: string, userMessage: string): Promise<string> {
-    const ragContext = await this.buildRAGContext(channelId, userMessage);
-
-    if (!ragContext) {
-      return userMessage;
-    }
-
-    // Prepend RAG context to the user message (OpenAI agents only)
-    return `Context from knowledge base:\n${ragContext}\n\n---\n\nUser question: ${userMessage}`;
+    // DigitalOcean agents handle RAG automatically on their backend
+    return userMessage;
   }
 
   /**

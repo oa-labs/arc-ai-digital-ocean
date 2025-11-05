@@ -8,8 +8,8 @@
       "instruction": "You are a helpful assistant to engineers and IT personnel custom supporting payroll integrations across several customers. ",
       "model": {
         "uuid": "18bc9b8f-73c5-11f0-b074-4e013e2ddde4",
-        "name": "OpenAI GPT-oss-120b",
-        "inference_name": "openai-gpt-oss-120b",
+        "name": "DigitalOcean GPT-oss-120b",
+        "inference_name": "digitalocean-gpt-oss-120b",
         "version": { "major": 1 },
         "inference_version": "4294967296",
         "is_foundational": true,
@@ -24,7 +24,7 @@
                 "url": "https://www.apache.org/licenses/LICENSE-2.0"
               }
             ],
-            "title": "OpenAI GPT-oss-120b"
+            "title": "DigitalOcean GPT-oss-120b"
           },
           "description": "A larger, more capable 120B parameter open-source model optimized for complex reasoning and high-quality output.",
           "max_tokens": { "default": 2048, "max": 16384, "min": 128 },
@@ -74,8 +74,8 @@
       "instruction": "Act as a manager of the company who provides helpful and friendly answers to employees. Always respond in 400 words or less.",
       "model": {
         "uuid": "18bc9b8f-73c5-11f0-b074-4e013e2ddde4",
-        "name": "OpenAI GPT-oss-120b",
-        "inference_name": "openai-gpt-oss-120b",
+        "name": "DigitalOcean GPT-oss-120b",
+        "inference_name": "digitalocean-gpt-oss-120b",
         "version": { "major": 1 },
         "inference_version": "4294967296",
         "is_foundational": true,
@@ -90,7 +90,7 @@
                 "url": "https://www.apache.org/licenses/LICENSE-2.0"
               }
             ],
-            "title": "OpenAI GPT-oss-120b"
+            "title": "DigitalOcean GPT-oss-120b"
           },
           "description": "A larger, more capable 120B parameter open-source model optimized for complex reasoning and high-quality output.",
           "max_tokens": { "default": 2048, "max": 16384, "min": 128 },
