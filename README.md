@@ -188,10 +188,24 @@ Container names:
 - It would be nice to have the ability to have scheduled agent posts, for example, to the CS sales channel news on startups that have received funding.
 - It would be nice to have a more robust logging and monitoring system.
 
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on how to get started.
+
+## Security
+
+For security concerns, please review our [Security Policy](SECURITY.md) and report vulnerabilities responsibly.
+
 ## License
 
-Proprietary - Internal use only
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Support
+
+- 📖 [Documentation](docs/) - Comprehensive guides and API reference
+- 🐛 [Issues](https://github.com/your-username/arc-ai/issues) - Bug reports and feature requests
+- 💬 [Discussions](https://github.com/your-username/arc-ai/discussions) - Community discussions and questions
 
 ---
 
-For questions or support, contact the development team.
+Built with ❤️ by the ArcAI contributors
