@@ -1,6 +1,6 @@
 {
   "name": "arc-ai",
-  "version": "1.0.56",
+  "version": "1.0.57",
   "description": "AI-powered internal chat agent",
   "private": true,
   "type": "module",

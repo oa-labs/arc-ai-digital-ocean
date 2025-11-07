@@ -15,7 +15,7 @@ Thank you for your interest in contributing to ArcAI! This document provides gui
 
 1. **Fork and Clone**
    ```bash
-   git clone https://github.com/your-username/arc-ai.git
+   git clone https://github.com/oa-labs/arc-ai.git
    cd arc-ai
    ```
 
