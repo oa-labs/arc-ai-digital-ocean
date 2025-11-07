@@ -316,7 +316,8 @@ class AgentManagementService {
       .from('agent_usage_logs')
       .select('*')
       .eq('agent_id', agentId)
-      .gte('created_at', startDate.toISOString());
+      .gte('created_at', startDate.toISOString())
+      .order('created_at', { ascending: false });
 
     if (error) {
       console.error('Failed to get agent stats:', error);

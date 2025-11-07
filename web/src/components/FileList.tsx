@@ -7,18 +7,35 @@ import type { S3Service } from '@/services/s3Service';
 import { FolderOpen } from 'lucide-react';
 import { showToast } from '@/lib/toast';
 
+export type SortBy = 'name' | 'size' | 'date';
+
 interface FileListProps {
   files: S3File[];
   onFileChange: () => void;
   loading: boolean;
   s3Service: S3Service;
+  sortBy?: SortBy;
 }
 
-export function FileList({ files, onFileChange, loading, s3Service }: FileListProps) {
+export function FileList({ files, onFileChange, loading, s3Service, sortBy = 'name' }: FileListProps) {
   const [fileToDelete, setFileToDelete] = useState<S3File | null>(null);
   const [fileToRename, setFileToRename] = useState<S3File | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
+
+  const sortFiles = (filesToSort: S3File[]): S3File[] => {
+    const sorted = [...filesToSort];
+    switch (sortBy) {
+      case 'name':
+        return sorted.sort((a, b) => a.key.localeCompare(b.key));
+      case 'size':
+        return sorted.sort((a, b) => b.size - a.size);
+      case 'date':
+        return sorted.sort((a, b) => b.lastModified.getTime() - a.lastModified.getTime());
+      default:
+        return sorted;
+    }
+  };
 
   const handleDelete = async () => {
     if (!fileToDelete) return;
@@ -73,17 +90,15 @@ export function FileList({ files, onFileChange, loading, s3Service }: FileListPr
   return (
     <>
       <div className="space-y-3">
-        {files
-          .sort((a, b) => a.key.localeCompare(b.key))
-          .map((file) => (
-            <FileItem
-              key={file.key}
-              file={file}
-              onDelete={setFileToDelete}
-              onRename={setFileToRename}
-              s3Service={s3Service}
-            />
-          ))}
+        {sortFiles(files).map((file) => (
+          <FileItem
+            key={file.key}
+            file={file}
+            onDelete={setFileToDelete}
+            onRename={setFileToRename}
+            s3Service={s3Service}
+          />
+        ))}
       </div>
 
       {fileToDelete && (

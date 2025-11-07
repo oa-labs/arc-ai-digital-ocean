@@ -1,14 +1,27 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { FileUpload } from '@/components/FileUpload';
-import { FileList } from '@/components/FileList';
-import { createS3Service, type S3Config } from '@/services/s3Service';
-import { agentManagementService, Agent } from '@/services/agentManagementService';
-import { S3File } from '@/types/file';
-import { Cloud, LogOut, RefreshCw, Bot, ArrowLeft, AlertCircle, Users } from 'lucide-react';
-import { config } from '@/config/env';
-import { Footer } from '@/components/Footer';
+import { useState, useEffect, useMemo } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { FileUpload } from "@/components/FileUpload";
+import { FileList, type SortBy } from "@/components/FileList";
+import { createS3Service, type S3Config } from "@/services/s3Service";
+import {
+  agentManagementService,
+  Agent,
+} from "@/services/agentManagementService";
+import { S3File } from "@/types/file";
+import {
+  Cloud,
+  LogOut,
+  RefreshCw,
+  Bot,
+  ArrowLeft,
+  AlertCircle,
+  Users,
+} from "lucide-react";
+import { config } from "@/config/env";
+import { Footer } from "@/components/Footer";
+
+const SORT_STORAGE_KEY = "file-list-sort-by";
 
 export function BucketDetail() {
   const { bucketName } = useParams<{ bucketName: string }>();
@@ -19,8 +32,17 @@ export function BucketDetail() {
   const [refreshing, setRefreshing] = useState(false);
   const [agents, setAgents] = useState<Agent[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<SortBy>(() => {
+    const saved = localStorage.getItem(SORT_STORAGE_KEY);
+    return (saved as SortBy) || "name";
+  });
 
-  const decodedBucketName = bucketName ? decodeURIComponent(bucketName) : '';
+  const decodedBucketName = bucketName ? decodeURIComponent(bucketName) : "";
+
+  const handleSortChange = (newSortBy: SortBy) => {
+    setSortBy(newSortBy);
+    localStorage.setItem(SORT_STORAGE_KEY, newSortBy);
+  };
 
   const s3Service = useMemo(() => {
     if (!decodedBucketName) return null;
@@ -36,7 +58,7 @@ export function BucketDetail() {
   useEffect(() => {
     const loadBucketInfo = async () => {
       if (!decodedBucketName) {
-        setError('Bucket name is required');
+        setError("Bucket name is required");
         setLoading(false);
         return;
       }
@@ -45,24 +67,26 @@ export function BucketDetail() {
         // Get all S3 sources for this bucket with their agents
         const allS3Sources = await agentManagementService.getAllS3Sources();
         const bucketSources = allS3Sources.filter(
-          source => source.bucket_name === decodedBucketName
+          (source) => source.bucket_name === decodedBucketName
         );
 
         if (bucketSources.length === 0) {
-          setError('No agents found for this bucket');
+          setError("No agents found for this bucket");
           setLoading(false);
           return;
         }
 
         // Extract unique agents from the sources
         const uniqueAgents = Array.from(
-          new Map(bucketSources.map(source => [source.agent.id, source.agent])).values()
+          new Map(
+            bucketSources.map((source) => [source.agent.id, source.agent])
+          ).values()
         );
 
         setAgents(uniqueAgents);
       } catch (err) {
-        console.error('Error loading bucket info:', err);
-        setError('Failed to load bucket information');
+        console.error("Error loading bucket info:", err);
+        setError("Failed to load bucket information");
       } finally {
         setLoading(false);
       }
@@ -80,8 +104,11 @@ export function BucketDetail() {
       const fileList = await s3Service.listFiles();
       setFiles(fileList);
     } catch (err) {
-      console.error('Error loading files:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load files. Please check your S3 configuration.';
+      console.error("Error loading files:", err);
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Failed to load files. Please check your S3 configuration.";
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -109,10 +136,12 @@ export function BucketDetail() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="bg-white rounded-lg shadow-lg p-8 max-w-md">
           <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-gray-900 text-center mb-2">Error</h2>
+          <h2 className="text-xl font-bold text-gray-900 text-center mb-2">
+            Error
+          </h2>
           <p className="text-gray-600 text-center mb-6">{error}</p>
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
             className="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
           >
             Back to Files
@@ -130,7 +159,7 @@ export function BucketDetail() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <button
-                onClick={() => navigate('/')}
+                onClick={() => navigate("/")}
                 className="p-2 text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
                 title="Back to Files"
               >
@@ -144,7 +173,8 @@ export function BucketDetail() {
                   {decodedBucketName}
                 </h1>
                 <p className="text-sm text-gray-500">
-                  {agents.length} {agents.length === 1 ? 'agent' : 'agents'} using this bucket
+                  {agents.length} {agents.length === 1 ? "agent" : "agents"}{" "}
+                  using this bucket
                 </p>
               </div>
             </div>
@@ -174,7 +204,7 @@ export function BucketDetail() {
                 title="Refresh"
               >
                 <RefreshCw
-                  className={`h-5 w-5 ${refreshing ? 'animate-spin' : ''}`}
+                  className={`h-5 w-5 ${refreshing ? "animate-spin" : ""}`}
                 />
               </button>
               <button
@@ -194,7 +224,9 @@ export function BucketDetail() {
         <div className="space-y-8">
           {/* Agents using this bucket */}
           <section className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Agents Using This Bucket</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Agents Using This Bucket
+            </h2>
             <div className="flex flex-wrap gap-2">
               {agents.map((agent) => (
                 <Link
@@ -202,7 +234,9 @@ export function BucketDetail() {
                   to={`/agents/${agent.id}`}
                   className="inline-flex items-center px-3 py-2 rounded-lg bg-gray-100 text-sm hover:bg-gray-200 transition-colors"
                 >
-                  <span className="font-medium text-gray-900">{agent.name}</span>
+                  <span className="font-medium text-gray-900">
+                    {agent.name}
+                  </span>
                   <span className="ml-2 text-gray-500">({agent.provider})</span>
                 </Link>
               ))}
@@ -221,7 +255,9 @@ export function BucketDetail() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Upload Files
             </h2>
-            {s3Service && <FileUpload onUploadComplete={loadFiles} s3Service={s3Service} />}
+            {s3Service && (
+              <FileUpload onUploadComplete={loadFiles} s3Service={s3Service} />
+            )}
           </section>
 
           {/* Files Section */}
@@ -231,12 +267,55 @@ export function BucketDetail() {
                 Files
                 {!loading && (
                   <span className="ml-2 text-sm font-normal text-gray-500">
-                    ({files.length} {files.length === 1 ? 'file' : 'files'})
+                    ({files.length} {files.length === 1 ? "file" : "files"})
                   </span>
                 )}
               </h2>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600">Sort by:</span>
+                <div className="flex bg-gray-100 rounded-lg p-1">
+                  <button
+                    onClick={() => handleSortChange("name")}
+                    className={`px-3 py-1 text-sm rounded transition-colors ${
+                      sortBy === "name"
+                        ? "bg-white text-gray-900 shadow-sm"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    Name
+                  </button>
+                  <button
+                    onClick={() => handleSortChange("size")}
+                    className={`px-3 py-1 text-sm rounded transition-colors ${
+                      sortBy === "size"
+                        ? "bg-white text-gray-900 shadow-sm"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    Size
+                  </button>
+                  <button
+                    onClick={() => handleSortChange("date")}
+                    className={`px-3 py-1 text-sm rounded transition-colors ${
+                      sortBy === "date"
+                        ? "bg-white text-gray-900 shadow-sm"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    Date
+                  </button>
+                </div>
+              </div>
             </div>
-            {s3Service && <FileList files={files} onFileChange={loadFiles} loading={loading} s3Service={s3Service} />}
+            {s3Service && (
+              <FileList
+                files={files}
+                onFileChange={loadFiles}
+                loading={loading}
+                s3Service={s3Service}
+                sortBy={sortBy}
+              />
+            )}
           </section>
         </div>
       </main>
@@ -245,4 +324,3 @@ export function BucketDetail() {
     </div>
   );
 }
-
