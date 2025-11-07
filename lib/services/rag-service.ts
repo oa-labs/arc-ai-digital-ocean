@@ -34,6 +34,37 @@ export class RAGService {
   }
 
   /**
+   * Get the latest modified date for documents in an S3 bucket/prefix
+   */
+  async getLatestModified(bucket: string, prefix?: string): Promise<Date | null> {
+    try {
+      const listCommand = new ListObjectsV2Command({
+        Bucket: bucket,
+        Prefix: prefix || '',
+      });
+
+      const listResponse = await this.client.send(listCommand);
+
+      if (!listResponse.Contents || listResponse.Contents.length === 0) {
+        return null;
+      }
+
+      // Find the most recent LastModified
+      let latest: Date | null = null;
+      for (const item of listResponse.Contents) {
+        if (item.LastModified && (!latest || item.LastModified > latest)) {
+          latest = item.LastModified;
+        }
+      }
+
+      return latest;
+    } catch (error) {
+      console.error('[RAG] Failed to get latest modified from S3:', error);
+      return null;
+    }
+  }
+
+  /**
    * Load all documents from an S3 bucket/prefix
    */
   async loadDocuments(bucket: string, prefix?: string): Promise<RAGDocument[]> {

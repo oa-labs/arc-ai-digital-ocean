@@ -1,6 +1,7 @@
 import { SlackCommandMiddlewareArgs, AllMiddlewareArgs } from '@slack/bolt';
 import { canManageAgents, getPermissionDeniedMessage } from './permissions.js';
 import { AgentManager, createAgentManager, createRAGService } from '@arc-ai/shared';
+import { RAGService } from '@arc-ai/shared';
 
 // Create singleton instances
 const ragService = createRAGService();
@@ -229,18 +230,43 @@ async function handleAgentInfo({
     return;
   }
 
-  const ragInfo = agentInfo.s3_sources && agentInfo.s3_sources.length > 0
-    ? agentInfo.s3_sources.map(s => `s3://${s.bucket_name}${s.prefix ? '/' + s.prefix : ''}`).join(', ')
-    : 'No S3 sources configured';
+  // Build RAG sources info with last updated dates
+  let ragInfo = 'No S3 sources configured';
+  if (agentInfo.s3_sources && agentInfo.s3_sources.length > 0) {
+    const ragSources: string[] = [];
+    for (const source of agentInfo.s3_sources) {
+      const sourcePath = `s3://${source.bucket_name}${source.prefix ? '/' + source.prefix : ''}`;
+      let lastUpdated = 'Unknown';
 
-  const systemPromptPreview = agentInfo.system_prompt
-    ? agentInfo.system_prompt.substring(0, 100) + (agentInfo.system_prompt.length > 100 ? '...' : '')
-    : 'Default prompt';
+      if (ragService) {
+        try {
+          const latestModified = await ragService.getLatestModified(source.bucket_name, source.prefix);
+          if (latestModified) {
+            lastUpdated = latestModified.toLocaleString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              timeZoneName: 'short'
+            });
+          }
+        } catch (error) {
+          console.error('[AgentInfo] Failed to get last modified for RAG source:', error);
+        }
+      }
+
+      ragSources.push(`${sourcePath} (Last updated: ${lastUpdated})`);
+    }
+    ragInfo = ragSources.join('\n');
+  }
+
+  const systemPrompt = agentInfo.system_prompt || 'Default prompt';
 
   await client.chat.postEphemeral({
     channel: channelId,
     user: userId,
-    text: `🌊 *Current Agent: ${agentInfo.name}*\n\n*RAG Sources:* ${ragInfo}\n*System Prompt:* ${systemPromptPreview}\n\n_Use \`/agent list\` to see all available agents_`,
+    text: `🌊 *Current Agent: ${agentInfo.name}*\n\n*RAG Sources:*\n${ragInfo}\n\n*System Prompt:*\n${systemPrompt}\n\n_Use \`/agent list\` to see all available agents_`,
   });
 }
 

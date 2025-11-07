@@ -56,6 +56,17 @@ The bot will reply with AI-generated responses to messages directed at it.
 
 ### Debug Mode
 To enable detailed debug logging:
+## Slash Commands
+
+The bot supports the following slash commands:
+
+- `/agent list` - List all available agents
+- `/agent select <name>` - Change the agent for the current channel (admin only)
+- `/agent info` - Show information about the current channel's agent
+- `/agent help` - Display help for agent commands
+
+For more details on permissions and usage, see the help command.
+
 ```bash
 DEBUG=1 pnpm run start
 ```
