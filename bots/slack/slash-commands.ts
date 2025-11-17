@@ -1,7 +1,6 @@
 import { SlackCommandMiddlewareArgs, AllMiddlewareArgs } from '@slack/bolt';
 import { canManageAgents, getPermissionDeniedMessage } from './permissions.js';
-import { AgentManager, createAgentManager, createRAGService } from '@arc-ai/shared';
-import { RAGService } from '@arc-ai/shared';
+import { AgentManager, createAgentManager, createRAGService, RAGService } from '@arc-ai/shared';
 
 // Create singleton instances
 const ragService = createRAGService();
@@ -240,7 +239,7 @@ async function handleAgentInfo({
 
       if (ragService) {
         try {
-          const latestModified = await ragService.getLatestModified(source.bucket_name, source.prefix);
+          const latestModified = await (ragService as any).getLatestModified(source.bucket_name, source.prefix);
           if (latestModified) {
             lastUpdated = latestModified.toLocaleString('en-US', {
               year: 'numeric',
