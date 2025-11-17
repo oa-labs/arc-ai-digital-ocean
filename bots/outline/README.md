@@ -2,6 +2,33 @@
 
 Synchronizes Outline documents to S3-compatible storage (DigitalOcean Spaces, AWS S3) with automatic deduplication and cleanup.
 
+## Quick Start
+
+1. **Prerequisites**
+   - Node.js 20+ or Docker
+   - Outline API token with read access
+   - S3-compatible storage (DigitalOcean Spaces, AWS S3)
+
+2. **Installation**
+   ```bash
+   cd bots/outline
+   pnpm install
+   ```
+   
+   *Note: This is part of a pnpm workspace monorepo. Dependencies are managed from the root.*
+
+3. **Environment Configuration**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your Outline API and S3 credentials
+   ```
+
+4. **Build and Run**
+   ```bash
+   pnpm run build
+   pnpm start
+   ```
+
 ## Features
 
 - ✅ Fetches all collections and documents from Outline
@@ -62,7 +89,7 @@ pnpm install
 ### 3. Build
 
 ```bash
-pnpm --filter @arc-ai/outline-bot build
+pnpm build
 ```
 
 ## Usage
@@ -85,82 +112,32 @@ pnpm --filter @arc-ai/outline-bot start
 Build the container:
 
 ```bash
-docker build -f bots/outline/Dockerfile -t outline-sync:latest .
+docker build -t outline-sync:latest .
 ```
 
 Run the sync:
 
 ```bash
-docker run --rm --env-file bots/outline/.env outline-sync:latest
+docker run --rm --env-file .env outline-sync:latest
 ```
 
-## Production Deployment with systemd Timer
+### Automated Container Build
 
-### 1. Create systemd Service
-
-Create `/etc/systemd/system/outline-sync.service`:
-
-```ini
-[Unit]
-Description=Outline to S3 Document Sync
-After=network.target
-
-[Service]
-Type=oneshot
-User=www-data
-Group=www-data
-WorkingDirectory=/opt/outline-sync
-ExecStart=/usr/bin/docker run --rm --env-file /opt/outline-sync/.env outline-sync:latest
-StandardOutput=journal
-StandardError=journal
-SyslogIdentifier=outline-sync
-
-[Install]
-WantedBy=multi-user.target
-```
-
-### 2. Create systemd Timer
-
-Create `/etc/systemd/system/outline-sync.timer`:
-
-```ini
-[Unit]
-Description=Run Outline sync every hour
-Requires=outline-sync.service
-
-[Timer]
-OnBootSec=5min
-OnUnitActiveSec=1h
-Unit=outline-sync.service
-
-[Install]
-WantedBy=timers.target
-```
-
-### 3. Enable and Start Timer
+The project includes automated container build scripts:
 
 ```bash
-# Reload systemd
-sudo systemctl daemon-reload
+# Build and tag container with version and git hash
+pnpm run build:container
 
-# Enable timer to start on boot
-sudo systemctl enable outline-sync.timer
-
-# Start timer immediately
-sudo systemctl start outline-sync.timer
-
-# Check timer status
-sudo systemctl status outline-sync.timer
-
-# View logs
-sudo journalctl -u outline-sync.service -f
+# Push to container registry
+pnpm run push:container
 ```
 
-### 4. Manual Trigger
+These scripts use the monorepo version and git short hash for tagging.
 
-```bash
-sudo systemctl start outline-sync.service
-```
+## Production Deployment
+
+See [Production Deployment Guide](PRODUCTION.md) for Docker-based production setup with monitoring and security.
 
 ## How It Works
 
@@ -179,7 +156,7 @@ sudo systemctl start outline-sync.service
 
 ```
 Outline → S3 Sync Service
-==========================
+=========================
 
 Blacklisted collections: ops, private
 
@@ -256,14 +233,11 @@ The bot uses MD5 content hashing to detect changes:
 View sync logs:
 
 ```bash
-# Real-time logs
-sudo journalctl -u outline-sync.service -f
+# Real-time logs (when running manually)
+docker-compose -f docker-compose.prod.yml logs -f outline-sync
 
-# Last sync run
-sudo journalctl -u outline-sync.service -n 100
-
-# Today's syncs
-sudo journalctl -u outline-sync.service --since today
+# Previous runs
+docker-compose -f docker-compose.prod.yml logs --tail=100 outline-sync
 ```
 
 ## Troubleshooting
@@ -316,6 +290,15 @@ pnpm --filter @arc-ai/outline-bot dev
 - **index.ts**: Entry point and configuration
 - **types.ts**: TypeScript interfaces
 
+## Security Considerations
+
+- Store API tokens and credentials in environment variables
+- Use read-only API tokens with minimal permissions
+- Enable HTTPS for all API communications
+- Regularly rotate S3 access keys
+- Monitor sync logs for unauthorized access attempts
+- Use S3 bucket policies to restrict access
+
 ## License
 
-Part of the ArcAI  monorepo.
+Part of the ArcAI monorepo.

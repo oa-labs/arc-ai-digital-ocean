@@ -262,7 +262,7 @@ User Message → Assistant Middleware → Thread Context Store (PostgreSQL)
 
 This Slack bot is part of the ArcAI ecosystem. For more information:
 
-- [Production Deployment Guide](PRODUCTION.md) - Docker deployment with nginx reverse proxy
+- [Production Deployment Guide](PRODUCTION.md) - Docker deployment
 - [Main Project README](../README.md) - Overview of the complete ArcAI system
 - [Shared Library](../lib/README.md) - Common functionality and agent services
 
