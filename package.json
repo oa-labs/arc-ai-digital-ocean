@@ -1,6 +1,6 @@
 {
   "name": "arc-ai",
-  "version": "1.0.58",
+  "version": "1.0.59",
   "description": "AI-powered internal chat agent",
   "private": true,
   "type": "module",
@@ -11,7 +11,8 @@
     "test:deepeval": "vitest run tests/deepeval.test.js",
     "docker:clean": "docker image prune -a --force --filter \"until=120h\"",
     "build:containers": "pnpm --filter @arc-ai/web-ui run build:container && pnpm --filter @arc-ai/server run build:container && pnpm --filter @arc-ai/slack-bot run build:container",
-    "push:containers": "pnpm --filter @arc-ai/web-ui run push:container && pnpm --filter @arc-ai/server run push:container && pnpm --filter @arc-ai/slack-bot run push:container"
+    "push:containers": "pnpm --filter @arc-ai/web-ui run push:container && pnpm --filter @arc-ai/server run push:container && pnpm --filter @arc-ai/slack-bot run push:container",
+    "release": "./scripts/create-release.sh"
   },
   "dependencies": {
     "@slack/bolt": "^4.5.0"
