@@ -8,10 +8,12 @@
     "ghcr.io/devcontainers/features/common-utils:2": {
       "installZsh": true,
       "configureZshAsDefaultShell": true,
-      "installOhMyZsh": true,
+      "installOhMyZsh": false,
       "upgradePackages": true,
       "userUid": "automatic",
       "userGid": "automatic"
+    },
+    "ghcr.io/devcontainers/features/sshd:1.1.0": {
     },
     "ghcr.io/devcontainers/features/git:1": {
       "ppa": true,
@@ -43,7 +45,6 @@
         "sourcegraph.amp",
         "kilocode.kilo-code",
         "editorconfig.editorconfig",
-        "Augment.vscode-augment"
       ]
     }
   },
@@ -62,7 +63,8 @@
       "onAutoForward": "notify"
     }
   },
-  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "initializeCommand": "mkdir -p ~/.zsh",
+  "postCreateCommand": "zsh .devcontainer/setup.sh",
   "remoteUser": "node",
   "remoteEnv": {
     "GITHUB_USERNAME": "${localEnv:GITHUB_USERNAME}",
@@ -78,7 +80,7 @@
   ],
   "containerUser": "node",
   "mounts": [
-    "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.zsh,target=/home/node/.zsh,type=bind,consistency=cached",
     "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
   ]
 }
