@@ -20,9 +20,10 @@ sudo chown $(whoami) /var/run/docker.sock
 # login to docker so we can push images
 docker login ghcr.io -u $GITHUB_USERNAME -p $GITHUB_TOKEN
 
-# Make release.sh available in PATH
-sudo cp .devcontainer/release.sh /usr/local/bin/release
-sudo chmod +x /usr/local/bin/release
+# Make helper scripts available in PATH
+sudo cp -v .devcontainer/release.sh /usr/local/bin/release
+sudo cp -v .devcontainer/update-packages.sh /usr/local/bin/update-packages
+sudo chmod +x /usr/local/bin/release /usr/local/bin/update-packages
 cp .devcontainer/zshrc /home/node/.zshrc
 
 # Initialize pnpm and pmg

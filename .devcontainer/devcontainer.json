@@ -15,10 +15,6 @@
     },
     "ghcr.io/devcontainers/features/sshd:1.1.0": {
     },
-    "ghcr.io/devcontainers/features/git:1": {
-      "ppa": true,
-      "version": "latest"
-    },
     "ghcr.io/devcontainers/features/github-cli:1": {
       "installDirectlyFromGitHubRelease": true,
       "version": "latest"
@@ -44,7 +40,7 @@
         "patcx.vscode-nuget-gallery",
         "sourcegraph.amp",
         "kilocode.kilo-code",
-        "editorconfig.editorconfig",
+        "editorconfig.editorconfig"
       ]
     }
   },

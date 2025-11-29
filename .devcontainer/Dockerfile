@@ -24,7 +24,13 @@ RUN apt update && apt install --no-install-recommends -y \
         uidmap
 
 # Install pmg (package manager tool)
-RUN curl -fsSL https://github.com/safedep/pmg/releases/download/v0.1.0/pmg_Linux_x86_64.tar.gz | tar -C /usr/local/bin -xz pmg
+# Set the version as an ARG for easy updates
+ARG PMG_VERSION=v0.1.0
+
+RUN ARCH=$(uname -m) && \
+    # Map aarch64 to arm64, keep x86_64 as is
+    if [ "$ARCH" = "aarch64" ]; then ARCH="arm64"; fi && \
+    curl -fsSL "https://github.com/safedep/pmg/releases/download/${PMG_VERSION}/pmg_Linux_${ARCH}.tar.gz" | tar -C /usr/local/bin -xz pmg
 
 USER 1000
 
