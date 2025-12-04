@@ -1,2 +1,4 @@
 # Source all .inc files in ~/.zsh/
-for file in ~/.zsh/*.inc; do echo sourcing $file && source "$file"; done
+if [ -d ~/.zsh ]; then
+  for file in ~/.zsh/*.inc; do echo sourcing $file && source "$file"; done
+fi
