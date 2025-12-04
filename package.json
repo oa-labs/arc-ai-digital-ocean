@@ -1,6 +1,6 @@
 {
   "name": "arc-ai",
-  "version": "1.0.59",
+  "version": "1.0.60",
   "description": "AI-powered internal chat agent",
   "private": true,
   "type": "module",
@@ -20,7 +20,7 @@
   "devDependencies": {
     "autoevals": "^0.0.131",
     "dotenv": "^17.2.3",
-    "vitest": "^4.0.14",
+    "vitest": "^4.0.15",
     "vitest-evals": "^0.5.0"
   },
   "engines": {
